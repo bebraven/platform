@@ -28,7 +28,11 @@ class CasController < ApplicationController
   end
 
   def sso_discovery
-    render layout: 'minimal'
+    render layout: 'discovery'
+  end
+  
+  def nlu_discovery
+    render layout: 'discovery'
   end
 
   def login

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     post '/admin/users', to: 'users#create'
   end
   get 'cas/sso_discovery', to: 'cas#sso_discovery'
+  get 'cas/nlu_discovery', to: 'cas#nlu_discovery'
   
   get 'home/welcome'
 

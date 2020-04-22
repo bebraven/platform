@@ -1,12 +1,10 @@
 <div id="sso_discovery">
-  <script>document.body.className = 'sso_discovery';</script>
-
   <img src="/bebraven/braven_logo.png" alt="" />
   <h1>Choose Your University</h1>
 
   <div id="main_university_choice">
     <div class="choose-your-university">
-      <a class="university" onclick="return showNlu();" href="//<%= Rails.application.secrets.canvas_server %>/login/cas/6">
+      <a class="university" href="nlu_discovery">
         <div><img src="/images/universities/nlu.png" alt="" /></div>
         <span>National Louis University</span>
       </a>
@@ -56,17 +54,4 @@
     </div>
 
   </div>
-
-  <script>
-    function showAll() {
-      document.getElementById("nlu_university_choice").style.display = "none";
-      document.getElementById("main_university_choice").style.display = "";
-      return false;
-    }
-    function showNlu() {
-      document.getElementById("nlu_university_choice").style.display = "";
-      document.getElementById("main_university_choice").style.display = "none";
-      return false;
-    }
-  </script>
 </div>
