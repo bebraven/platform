@@ -25,7 +25,7 @@ require 'rails_helper'
 
 RSpec.describe CourseContentHistoriesController, type: :controller do
   render_views
-  let(:user) { create :user, admin: true }
+  let(:user) { create :admin_user }
 
   let(:course_content) { create(:course_content) }
   let(:course_content_history) { create(:course_content_history, attributes) }

@@ -19,7 +19,7 @@ WORKDIR /usr/src/app
 
 ENV BUNDLE_PATH /gems
 
-RUN bundle install
+RUN bundle install && cp Gemfile.lock /tmp
 RUN yarn install --check-files
 
 COPY . /usr/src/app/

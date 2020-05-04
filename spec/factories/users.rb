@@ -17,5 +17,15 @@ FactoryBot.define do
     sequence(:first_name) { |i| names[i % names.size][0] }
     sequence(:last_name) { |i| names[i % names.size][1] }
     admin { false }
+    
+    factory :registered_user do
+      sequence(:password) { |i| "password#{i}" }
+      confirmed_at { DateTime.now }
+
+      factory :admin_user do
+        admin { true }
+      end
+    end
+
   end
 end

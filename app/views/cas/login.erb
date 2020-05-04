@@ -27,9 +27,13 @@
 
         <br />
 
-        <a href="//<%= @settings[:public_site_domain] %>/signup/new">Sign up</a><br />
-        <a href="//<%= @settings[:public_site_domain] %>/users/password/new">Forgot your password?</a><br />
-        <a href="//<%= @settings[:public_site_domain] %>/users/confirmation/new">Didn&#39;t receive confirmation instructions?</a><br />
+        <% if ENV['BZ_AUTH_SERVER'] %>
+          <a href="//<%= @settings[:public_site_domain] %>/signup/new">Sign up</a><br />
+          <a href="//<%= @settings[:public_site_domain] %>/users/password/new">Forgot your password?</a><br />
+          <a href="//<%= @settings[:public_site_domain] %>/users/confirmation/new">Didn&#39;t receive confirmation instructions?</a><br />
+        <% else %>
+          <%= render "devise/shared/links" %>
+        <% end %>
       </div>
     </section>
   </div>

@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :project_submission do
-    user
+    user { build(:registered_user) }
     project
   end
 end

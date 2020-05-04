@@ -21,16 +21,31 @@ Devise.setup do |config|
   config.mailer_sender = Rails.application.secrets.mailer_from_email
 
   # Configure the class responsible to send e-mails.
-  config.mailer = 'Devise::Mailer'
+  #config.mailer = 'Devise::Mailer'
+  config.mailer = 'BravenDeviseMailer'
 
   # Configure the parent class responsible to send e-mails.
   config.parent_mailer = 'ActionMailer::Base'
   
   # ==> CAS configuration
+  # We can operate the server in two modes. 1) the old mode where we connect
+  # to the Join server to check their credentials because that is where the account 
+  # was created 2) we check the local database credentials because they created the account here.
+  # We're in a transition, so remove this toggle and switch to only supporting the local database
+  # once we don't have to run the old mode to allow folks to continue to be able to login to the running
+  # course.
+  if ENV['BZ_AUTH_SERVER']
+    config.cas_create_user = true
+  else
+    config.cas_create_user = false
+    config.cas_logout_url_param = "destination"
+    config.cas_destination_logout_param_name = "service"
+    config.warden do |manager|
+      manager.failure_app = DeviseCasAuthenticatable::SingleSignOut::WardenFailureApp
+    end
+  end
   config.cas_base_url = Rails.application.secrets.sso_url
-  config.cas_create_user = true
   config.cas_enable_single_sign_out = true
-
   config.cas_username_column = 'email'
 
   # ==> ORM configuration
@@ -88,7 +103,7 @@ Devise.setup do |config|
   # It will change confirmation, password recovery and other workflows
   # to behave the same regardless if the e-mail provided was right or wrong.
   # Does not affect registerable.
-  # config.paranoid = true
+  config.paranoid = true
 
   # By default Devise will store the user in session. You can skip storage for
   # particular strategies by setting this option.
@@ -127,7 +142,7 @@ Devise.setup do |config|
   # config.send_email_changed_notification = false
 
   # Send a notification email when the user's password is changed.
-  # config.send_password_change_notification = false
+  config.send_password_change_notification = false
 
   # ==> Configuration for :confirmable
   # A period that the user is allowed to access the website even without
@@ -149,7 +164,8 @@ Devise.setup do |config|
   # initial account confirmation) to be applied. Requires additional unconfirmed_email
   # db field (see migrations). Until confirmed, new email is stored in
   # unconfirmed_email column, and copied to email column on successful confirmation.
-  config.reconfirmable = true
+  #config.reconfirmable = true
+  config.reconfirmable = false
 
   # Defines which key will be used when confirming an account
   # config.confirmation_keys = [:email]
@@ -170,7 +186,7 @@ Devise.setup do |config|
 
   # ==> Configuration for :validatable
   # Range for password length.
-  config.password_length = 4..128
+  config.password_length = 8..128
 
   # Email regex used to validate email formats. It simply asserts that
   # one (and only one) @ exists in the given string. This is mainly
@@ -216,7 +232,7 @@ Devise.setup do |config|
   # Time interval you can reset your password with a reset password key.
   # Don't put a too small interval or your users won't have the time to
   # change their passwords.
-  config.reset_password_within = 6.hours
+  config.reset_password_within = 24.hours
 
   # When set to false, does not sign a user in automatically after their password is
   # reset. Defaults to true, so a user is signed in automatically after a reset.

@@ -24,6 +24,7 @@ import ImageCaption from '@ckeditor/ckeditor5-image/src/imagecaption';
 import ImageStyle from '@ckeditor/ckeditor5-image/src/imagestyle';
 import ImageToolbar from '@ckeditor/ckeditor5-image/src/imagetoolbar';
 import ImageUpload from '@ckeditor/ckeditor5-image/src/imageupload';
+import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
 import Indent from '@ckeditor/ckeditor5-indent/src/indent';
 import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import Link from '@ckeditor/ckeditor5-link/src/link';
@@ -34,6 +35,8 @@ import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefrom
 import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline';
+import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment';
+import Font from '@ckeditor/ckeditor5-font/src/font';
 import SimpleUploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter';
 
 
@@ -85,6 +88,7 @@ BalloonEditor.builtinPlugins = [
     ImageStyle,
     ImageToolbar,
     ImageUpload,
+    ImageResize,
     Indent,
     Italic,
     Link,
@@ -96,6 +100,8 @@ BalloonEditor.builtinPlugins = [
     PasteFromOffice,
     Table,
     TableToolbar,
+    Alignment,
+    Font,
     SimpleUploadAdapter,
 
     RetainedData,
@@ -128,10 +134,10 @@ BalloonEditor.defaultConfig = {
         'indent',
         'outdent',
         '|',
+        'alignment',
+        '|',
         'imageUpload',
-        'blockQuote',
         'insertTable',
-        'mediaEmbed',
         '|',
         'undo',
         'redo'
@@ -150,8 +156,9 @@ BalloonEditor.defaultConfig = {
             'indent',
             'outdent',
             '|',
+            'alignment',
+            '|',
             'imageUpload',
-            'blockQuote',
             'insertTable',
             'undo',
             'redo'
@@ -162,7 +169,7 @@ BalloonEditor.defaultConfig = {
             'imageStyle:full',
             'imageStyle:side',
             '|',
-            'imageTextAlternative'
+            'imageTextAlternative',
         ]
     },
     table: {
@@ -184,7 +191,7 @@ BalloonEditor.defaultConfig = {
     },
     simpleUpload: {
         // The URL that the images are uploaded to.
-        uploadUrl: '/image_upload_api',
+        uploadUrl: '/file_upload.json',
 
         // Headers sent along with the XMLHttpRequest to the upload server.
         headers: {
@@ -788,11 +795,10 @@ class ContentEditor extends Component {
                                         this.editor.execute( 'imageUpload', {file: e.target.files[0]} );
                                         this.editor.editing.view.focus();
                                     }}
-                                    onClickDisabled={() => this.editor.editing.view.focus()}
                                 />
                                 <ContentPartPreview
                                     key="imageUpload"
-                                    enabled={false}
+                                    enabled={this.state.enabledCommands.includes('imageUpload')}
                                     onClick={this.showFileUpload}
                                     onClickDisabled={() => this.editor.editing.view.focus()}
                                     {...{name: 'Image (Upload)'}}

@@ -2,12 +2,24 @@
 # This SHOULD NOT be used in production, which is why it's separate from the
 # seeds file.
 
-if User.count == 0
-  User.create [{first_name: 'Dev', last_name: 'Admin', email: 'admin@beyondz.org', admin: true}]
+# Add the admin users
+User.find_or_create_by email: 'admin@beyondz.org' do |u|
+  u.first_name = 'Dev'
+  u.last_name = 'Admin(BZ)'
+  u.password = "#{ENV['DEV_ENV_USER_PASSWORD']}"
+  u.confirmed_at = DateTime.now
+  u.admin = true
+end
+User.find_or_create_by email: 'admin@bebraven.org' do |u|
+  u.first_name = 'Dev'
+  u.last_name = 'Admin(BV)'
+  u.password = "#{ENV['DEV_ENV_USER_PASSWORD']}"
+  u.confirmed_at = DateTime.now
+  u.admin = true
 end
 
 user_count = User.count
-FactoryBot.create_list(:user, 5) unless user_count > 1
+FactoryBot.create_list(:registered_user, 5) unless user_count > 2
 puts "Created #{User.count - user_count} users"
 
 org = Organization.find_or_create_by! name: 'San Jose State University'
@@ -20,17 +32,6 @@ User.all.each{|p| p.start_membership(course.id, role.id) if p.program_membership
 # TODO: this is just quick and dirty for testing the grading related models I'm working on. Clean it up
 ####
 
-# Add the admin users
-User.find_or_create_by email: 'admin@beyondz.org' do |u|
-  u.first_name = 'Dev'
-  u.last_name = 'Admin(BZ)'
-  u.admin = true
-end
-User.find_or_create_by email: 'admin@bebraven.org' do |u|
-  u.first_name = 'Dev'
-  u.last_name = 'Admin(BV)'
-  u.admin = true
-end
 
 grade_category1 = GradeCategory.find_or_create_by! name: 'Category 1', program: course, percent_of_grade: 0.75
 grade_category2 = GradeCategory.find_or_create_by! name: 'Category 2', program: course, percent_of_grade: 0.25

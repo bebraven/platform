@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :lesson_submission do
-    user
+    user { build(:registered_user) }
     lesson
   end
 end

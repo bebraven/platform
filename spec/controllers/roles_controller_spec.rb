@@ -26,7 +26,7 @@ require 'rails_helper'
 RSpec.describe RolesController, type: :controller do
   render_views
   
-  let(:user) { create :user, admin: true }
+  let(:user) { create :admin_user }
 
   # This should return the minimal set of attributes required to create a valid
   # Role. As you add validations to Role, be sure to

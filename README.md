@@ -89,6 +89,7 @@ first ask someone to create a Salesforce account for you (or get the admin accou
 1. Login and go to Setup (the little gear in the top right)
 2. In the Quick Find type "App Manager". 
 3. Under App Manager, you can create a "New Connected App" in the top right.
+4. Enable OAuth settings, put in anything for the callback URL (since we don't currently use it), and give it Full Access scope.
 
 *Tip*: If you want to get the key/secret for an existing app click on the little dropdown arrow to the right of it and choose "View".
 

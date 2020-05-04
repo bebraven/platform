@@ -3,6 +3,35 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 /* assets/styles.css */
 
+
+/* custom temporary hacks for content editor demo */
+#content-editor form {
+  height: 100%;
+}
+
+#content-editor div.field {
+  height: 100%;
+}
+
+#content-editor div.field > div {
+  height: 100%;
+}
+
+#content-editor div#raw-html-container > textarea {
+  width: 100%;
+  min-height: 400px;
+}
+#content-editor .ck.ck-editor__editable_inline {
+  min-height: 370px;
+}
+#content-editor span#autosave-indicator {
+  display: none;
+}
+#content-editor textarea.secret-html {
+  display: none;
+}
+/* /hacks */
+
 /* --- Show module --- */
 .show-module-notice {
 	font-size: 20px;

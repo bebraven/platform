@@ -1,22 +1,22 @@
 require "rails_helper"
 require "capybara_helper"
-require "platform_helper"
 
 include ERB::Util
 include Rack::Utils
 
+unless ENV['BZ_AUTH_SERVER'] # Only run these specs if on a server with local database authentication enabled
+
 RSpec.describe CasController, type: :routing do
   describe "RubyCAS routing" do
-    let(:valid_user) {{ email: 'platform_user', password: 'rspec_test' }}
-    let(:host_servers) {{ join_server: "#{ENV['VCR_JOIN_SERVER']}", canvas_server: "#{ENV['VCR_CANVAS_SERVER']}" }}
+    let!(:valid_user) { create(:registered_user) }
+    let(:valid_user_creds) {{ email: valid_user.email, password: valid_user.password }}
   
     let(:return_service) { 'http://braven/' }
     let(:proxy_service) { 'http://bravenproxy/' }
 
     describe "/cas/serviceValidate" do
-      let(:join_cassette) { "join_auth_valid" }
-      let(:username) { valid_user[:email] }
-      let(:password) { valid_user[:password] }
+      let(:username) { valid_user_creds[:email] }
+      let(:password) { valid_user_creds[:password] }
 
       context "without a login ticket" do 
         it "fails validate a service" do
@@ -31,9 +31,7 @@ RSpec.describe CasController, type: :routing do
       context "with valid user" do
         before(:each) do
           visit "/cas/login?service=#{url_encode(return_service)}"
-          VCR.use_cassette(join_cassette, :erb => host_servers) do
-            fill_and_submit_login(username, password)
-          end
+          fill_and_submit_login(username, password)
         end
 
         context "with a valid login ticket" do 
@@ -43,16 +41,16 @@ RSpec.describe CasController, type: :routing do
           it "logs in successfully and validates service" do
             visit "/cas/serviceValidate?ticket=#{@params['ticket']}&service=#{url_encode(return_service)}"
             expect(page.body).to include("cas:authenticationSuccess>")
-            expect(page.body).to include('platform_user')
+            expect(page.body).to include(valid_user.email)
           end
 
-          it "logs in successfully and validates service with proxy url" do
-            pending "Need to get proxy service set up"
+          #it "logs in successfully and validates service with proxy url" do
+          #  pending "Need to get proxy service set up"
 
-            visit "/cas/serviceValidate?ticket=#{@params['ticket']}&service=#{url_encode(return_service)}&pgtUrl=#{proxy_service}"
-            expect(page.body).to include("cas:authenticationSuccess>")
-            expect(page.body).to include('platform_usr')
-          end
+          #  visit "/cas/serviceValidate?ticket=#{@params['ticket']}&service=#{url_encode(return_service)}&pgtUrl=#{proxy_service}"
+          #  expect(page.body).to include("cas:authenticationSuccess>")
+          #  expect(page.body).to include('platform_usr')
+          #end
 
           it "fails validate a service because no service specified" do
             # Attempt to validate the service
@@ -79,3 +77,5 @@ RSpec.describe CasController, type: :routing do
     end
   end
 end
+
+end # unless ENV['BZ_AUTH_SERVER']

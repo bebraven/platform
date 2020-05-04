@@ -5,7 +5,7 @@
     courseContents: @course_contents
 }) %>
 
-<%= form_with(model: course_content, local: true) do |form| %>
+<%= form_with(model: course_content, id: 'content-editor', local: true) do |form| %>
 
   <% if course_content.errors.any? %>
     <div id="error_explanation">

@@ -26,7 +26,7 @@ require 'rails_helper'
 RSpec.describe ValidationsController, type: :controller do
   render_views
   
-  let(:user) { create :user, admin: true }
+  let(:user) { create :admin_user }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in

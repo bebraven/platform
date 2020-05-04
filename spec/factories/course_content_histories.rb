@@ -3,7 +3,7 @@ FactoryBot.define do
     title { "MyString" }
     body { "MyText" }
 
-    user
+    user { build(:admin_user) }
     course_content
   end
 end

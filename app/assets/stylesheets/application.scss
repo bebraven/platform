@@ -32,32 +32,6 @@
        unicode-range: U+0020-2122;
 }
 
-/* custom temporary hacks for content editor demo */
-form {
-  height: 100%;
-}
-
-div.field {
-  height: 100%;
-}
-
-div.field > div {
-  height: 100%;
-}
-div#raw-html-container > textarea {
-  width: 100%;
-  min-height: 400px;
-}
-.ck.ck-editor__editable_inline {
-  min-height: 370px;
-}
-span#autosave-indicator {
-  display: none;
-}
-textarea.secret-html {
-  display: none;
-}
-/* /hacks */
 
 body {
   font-size: .875rem;

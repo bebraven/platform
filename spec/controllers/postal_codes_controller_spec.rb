@@ -26,7 +26,7 @@ require 'rails_helper'
 RSpec.describe PostalCodesController, type: :controller do
   render_views
   
-  let(:user) { create :user, admin: true }
+  let(:user) { create :admin_user }
 
   # This should return the minimal set of attributes required to create a valid
   # PostalCode. As you add validations to PostalCode, be sure to

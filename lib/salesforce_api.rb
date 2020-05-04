@@ -1,11 +1,22 @@
 require 'rest-client'
 
+# Allows you to call into the Salesforce API and retrieve information.
+# Example Usage:
+# contact_info = SalesforceAPI.client.get_contact_info('some_sf_contact_id')
 class SalesforceAPI
 
   # Pass these into any POST or PUT request where the body is json.
   JSON_HEADERS = {content_type: :json, accept: :json}
 
-  def initialize
+  class SalesforceDataError < StandardError; end
+
+  # Use this to get an authenticated instance of the API client
+  def self.client
+    s = new
+    s.authenticate
+  end
+
+  def authenticate
     # For authentication against the Salesforce API we use what is called a Session ID token as detailed here:
     # https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/quickstart_oauth.htm 
     auth_params = {
@@ -33,6 +44,7 @@ class SalesforceAPI
     @salesforce_url = token_response_json['instance_url']
     @access_token = token_response_json['access_token']
     @global_headers = { 'Authorization' => "Bearer #{@access_token}" }
+    self
   end
 
   def get(path, params={}, headers={})
@@ -79,6 +91,15 @@ class SalesforceAPI
     end
     # Defined in CourseParticipantInfoService Apex class in Salesforce
     response = get("/services/apexrest/participants/currentandfuture/#{query_params}") 
+    JSON.parse(response.body)
+  end
+
+  # Get information about a Contact record
+  def get_contact_info(contact_id)
+    response = get("/services/data/v48.0/sobjects/Contact/#{contact_id}" \
+      "?fields=Id,FirstName,LastName,Email,Phone,BZ_Region__c,Preferred_First_Name__c,CreatedDate,Signup_Date__c," \
+      "IsEmailBounced,BZ_Geographical_Region__c,Current_Employer__c,Career__c,Title,Job_Function__c,Current_Major__c," \
+      "High_School_Graduation_Date__c,Anticipated_Graduation__c,Graduate_Year__c")
     JSON.parse(response.body)
   end
 

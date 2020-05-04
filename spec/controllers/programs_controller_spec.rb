@@ -26,7 +26,7 @@ require 'rails_helper'
 RSpec.describe ProgramsController, type: :controller do
   render_views
   
-  let(:user) { create :user, admin: true }
+  let(:user) { create :admin_user }
   let(:org) { create :organization }
   let(:program) { create(:program, attributes) }
   let(:attributes) { valid_attributes }

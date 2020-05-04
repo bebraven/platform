@@ -90,4 +90,23 @@ RSpec.describe CanvasAPI do
     end
   end
 
+  describe '#upload_file_to_course' do
+    let(:course_id) { 1 }
+
+    it 'POSTS to upload URL' do
+      stub_request(:post, "#{CANVAS_API_URL}/courses/#{course_id}/files").
+        to_return(body: '{"upload_url":"http://mock.example.com/test", "upload_params":{"test":"param"}}')
+      stub_request(:post, "http://mock.example.com/test").
+        to_return(body: '{"id":1}')
+
+      upload = canvas.upload_file_to_course(Tempfile.new, 'test.jpg', 'image/jpeg')
+
+      expect(WebMock).to have_requested(:post, "#{CANVAS_API_URL}/courses/#{course_id}/files")
+        .with(headers: {'Authorization'=>'Bearer test-token'}).once
+      expect(WebMock).to have_requested(:post, "http://mock.example.com/test")
+        .once
+      expect(upload).to eq({url: "http://canvas.example.com/courses/1/files/1/preview"})
+    end
+  end
+
 end

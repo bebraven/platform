@@ -6,4 +6,4 @@ elsif @course_content.content_type == 'assignment'
   canvas_name = 'assignments'
 end
 
-json.canvas_url "#{CanvasProdClient.canvas_url}courses/#{@course_content.course_id}/#{canvas_name}/#{@course_content.secondary_id}"
+json.canvas_url "#{CanvasAPI.client.canvas_url}courses/#{@course_content.course_id}/#{canvas_name}/#{@course_content.secondary_id}"

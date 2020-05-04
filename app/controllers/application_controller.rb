@@ -1,5 +1,6 @@
 require 'rubycas-server-core/tickets'
 require 'dry_crud'
+require 'canvas_api'
 
 class ApplicationController < ActionController::Base
   include RubyCAS::Server::Core::Tickets
@@ -13,10 +14,11 @@ class ApplicationController < ActionController::Base
   def authenticate_user!
     super unless authorized_by_token? || cas_ticket?
   end
-  
+
   def ensure_admin!
     if current_user
-      redirect_to('/unauthorized') unless current_user.admin?
+      return redirect_to(CanvasAPI.client.canvas_url) if current_user.canvas_id && !current_user.admin?
+      return redirect_to('/unauthorized') unless current_user.admin?
     end
   end
   
@@ -35,4 +37,18 @@ class ApplicationController < ActionController::Base
 
     ServiceTicket.exists?(ticket: ticket)
   end
+
+  # This is defined by :database_authenticable on the User model, but we're using :cas_authenticatable
+  # However, we still want to support account creation, registration, and confirmation which is 
+  # database_authenticable functionality so we need to define this for those built-in views to work.
+  def new_session_path(_)
+    new_user_session_path
+  end
+  helper_method :new_session_path
+
+  def canvas_url
+    CanvasAPI.client.canvas_url
+  end
+  helper_method :canvas_url
+
 end

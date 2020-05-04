@@ -11,5 +11,6 @@ def yaml label
 end
 
 if User.count == 0
-  User.create [{first_name: 'Dev', last_name: 'Admin', email: 'admin@beyondz.org', admin: true}]
+  User.create! [{first_name: 'Dev', last_name: 'AdminBZ', email: 'admin@beyondz.org', admin: true, password: "#{ENV['DEV_ENV_USER_PASSWORD']}", confirmed_at: DateTime.now}]
+  User.create! [{first_name: 'Dev', last_name: 'AdminBV', email: 'admin@bebraven.org', admin: true, password: "#{ENV['DEV_ENV_USER_PASSWORD']}", confirmed_at: DateTime.now}]
 end

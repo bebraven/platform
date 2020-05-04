@@ -1,0 +1,26 @@
+<h2>Thanks you for registering</h2>
+<div>
+Thank you for creating your account. Please click the link in the email you just got to complete registration and login.
+</div>
+
+<!-- TODO: everything below here is commented out. This is a prototype. Implement me! -->
+<!-- If you don't receive the email you can resend it below. -->
+<% if false %>
+<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Resend confirmation instructions" %>
+  </div>
+<% end %>
+
+<!-- end comment -->
+<% end %>
+
+<br/><br/>
+<%# render "devise/shared/links" %>

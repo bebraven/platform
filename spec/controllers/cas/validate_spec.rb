@@ -1,15 +1,15 @@
 require "rails_helper"
 require "capybara_helper"
-require "platform_helper"
 require "json"
 include ERB::Util
 include Rack::Utils
 
+unless ENV['BZ_AUTH_SERVER'] # Only run these specs if on a server with local database authentication enabled
 
 RSpec.describe CasController, type: :routing do
   describe "RubyCAS routing" do
-    let(:valid_user) {{ email: 'platform_user', password: 'rspec_test' }}
-    let(:host_servers) {{ join_server: "#{ENV['VCR_JOIN_SERVER']}", canvas_server: "#{ENV['VCR_CANVAS_SERVER']}" }}
+    let!(:valid_user) { create(:registered_user) }
+    let(:valid_user_creds) {{ email: valid_user.email, password: valid_user.password }}
     let(:return_service) { 'http://braven/' }
 
     it "fails validate a service ticket because no ticket specified" do
@@ -26,15 +26,12 @@ RSpec.describe CasController, type: :routing do
     describe "/cas/validate" do
       before(:each) do 
         visit "/cas/login?service=#{url_encode(return_service)}"
-        VCR.use_cassette(join_cassette, :erb => host_servers) do
-          fill_and_submit_login(username, password)
-        end
+        fill_and_submit_login(username, password)
       end
 
       context "when username and password are valid" do
-        let(:join_cassette) { "join_auth_valid" }
-        let(:username) { valid_user[:email] }
-        let(:password) { valid_user[:password] }
+        let(:username) { valid_user_creds[:email] }
+        let(:password) { valid_user_creds[:password] }
 
         it "contain a ticket" do
           expect(current_url).to include("ticket")
@@ -83,3 +80,5 @@ RSpec.describe CasController, type: :routing do
     end
   end
 end
+
+end # unless ENV['BZ_AUTH_SERVER']

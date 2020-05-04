@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "course_content_histories/show", type: :view do
   let(:course_content) { create(:course_content) }
-  let(:user) { create(:user) }
+  let(:user) { create(:admin_user) }
 
   before(:each) do
     assign(:course_content, course_content)

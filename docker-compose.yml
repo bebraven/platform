@@ -18,6 +18,7 @@ services:
       - .:/usr/src/app
       - node-modules:/usr/src/app/node_modules
       - /usr/src/app/tmp
+      - webpack-cache:/usr/src/app/tmp/cache/webpacker
       - /usr/src/app/log
     depends_on:
       - platform_chrome
@@ -25,7 +26,7 @@ services:
     env_file:
       - .env
     # These take precedence over any values in the above file.
-    # Set them in your shell before using docker-compose so they get passed in.
+    # Set them in your shell before using docker-compose so they get passed in. See the README for how to get them.
     environment:
       SALESFORCE_PLATFORM_CONSUMER_KEY: ${SALESFORCE_PLATFORM_CONSUMER_KEY}
       SALESFORCE_PLATFORM_CONSUMER_SECRET: ${SALESFORCE_PLATFORM_CONSUMER_SECRET}
@@ -35,14 +36,7 @@ services:
     
     networks:
       - bravendev
-    # Note: there are some issues with the listen gem and certain editors
-    # where gaurd won't detect changes made from the host machine on a Mac
-    # inside the container when the volume is mounted. For VIM, you need to add
-    #   set backupcopy=yes 
-    # in your .vimrc
-    # See: https://github.com/guard/listen/issues/434
-    # Also, if you force polling it will absolutely destroy your CPU.
-    command: bundle exec guard -di
+    command: ./docker-compose/scripts/docker_compose_run.sh
 
   platformdb:
     image: postgres
@@ -70,6 +64,7 @@ services:
 volumes:
   db-platform:
   node-modules:
+  webpack-cache:
 
 # Note all Braven web app docker dev envs use this same network so they can talk to each other.
 # E.g. the hostname joinweb will resolve inside the ssoweb container if they are on the same docker network.
