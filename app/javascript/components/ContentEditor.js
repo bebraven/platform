@@ -771,11 +771,21 @@ class ContentEditor extends Component {
                                     key="insertTextArea"
                                     enabled={this.state.enabledCommands.includes('insertTextArea')}
                                     onClick={( id ) => {
-                                        this.editor.execute( 'insertTextArea' );
+                                        this.editor.execute( 'insertTextArea', '' );
                                         this.editor.editing.view.focus();
                                     }}
                                     onClickDisabled={() => this.editor.editing.view.focus()}
                                     {...{name: 'Text Area'}}
+                                />
+                                <ContentPartPreview
+                                    key="insertTextInput"
+                                    enabled={this.state.enabledCommands.includes('insertTextInput')}
+                                    onClick={( id ) => {
+                                        this.editor.execute( 'insertTextInput', '' );
+                                        this.editor.editing.view.focus();
+                                    }}
+                                    onClickDisabled={() => this.editor.editing.view.focus()}
+                                    {...{name: 'Text Input'}}
                                 />
                                 <ContentPartPreview
                                     key="insertSlider"
