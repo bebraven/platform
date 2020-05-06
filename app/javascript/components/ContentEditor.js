@@ -543,6 +543,12 @@ class ContentEditor extends Component {
                                     }
                                     const inputElement = getNamedChildOrSibling( inputTypes[modelElement], this.state['selectedElement'] );
 
+                                    if (inputElement === undefined) {
+                                        // The selection changed out from under us!
+                                        // We can just return and let React re-render with the new selection.
+                                        return;
+                                    }
+
                                     return (
                                         <>
                                             <h4>Option</h4>
@@ -768,6 +774,16 @@ class ContentEditor extends Component {
                                     {...{name: 'IFrame'}}
                                 />
                                 <ContentPartPreview
+                                    key="insertChecklistOther"
+                                    enabled={this.state.enabledCommands.includes('insertChecklistOther')}
+                                    onClick={( id ) => {
+                                        this.editor.execute( 'insertChecklistOther', '' );
+                                        this.editor.editing.view.focus();
+                                    }}
+                                    onClickDisabled={() => this.editor.editing.view.focus()}
+                                    {...{name: '"Other" Checkbox with Text Area'}}
+                                />
+                                <ContentPartPreview
                                     key="insertTextArea"
                                     enabled={this.state.enabledCommands.includes('insertTextArea')}
                                     onClick={( id ) => {
@@ -796,6 +812,16 @@ class ContentEditor extends Component {
                                     }}
                                     onClickDisabled={() => this.editor.editing.view.focus()}
                                     {...{name: 'Slider'}}
+                                />
+                                <ContentPartPreview
+                                    key="insertDoneButton"
+                                    enabled={this.state.enabledCommands.includes('insertDoneButton')}
+                                    onClick={( id ) => {
+                                        this.editor.execute( 'insertDoneButton' );
+                                        this.editor.editing.view.focus();
+                                    }}
+                                    onClickDisabled={() => this.editor.editing.view.focus()}
+                                    {...{name: 'Done Button'}}
                                 />
                                 <input
                                     type="file"

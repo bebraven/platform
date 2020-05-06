@@ -18,7 +18,7 @@ export function preventCKEditorHandling( domElement, editor ) {
 
 // Return the model element that is a parent of modelElement, with the model
 // name ancestorName. If there are multiple matching elements, return only the
-// topmost one.
+// topmost one. modelElement can also be a `Postition` inside the model.
 export function getNamedAncestor( ancestorName, modelElement ) {
     return modelElement.getAncestors().filter( x => { return x.name == ancestorName } )[0];
 }
