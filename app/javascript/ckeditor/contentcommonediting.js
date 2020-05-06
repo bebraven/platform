@@ -448,7 +448,7 @@ export default class ContentCommonEditing extends Plugin {
         conversion.for( 'dataDowncast' ).elementToElement( {
             model: 'doneButton',
             view: ( modelElement, viewWriter ) => {
-                return viewWriter.createContainerElement( 'input', {
+                return viewWriter.createEmptyElement( 'input', {
                     'type': 'button',
                     'value': 'Done',
                     'class': 'done-button',
@@ -460,7 +460,7 @@ export default class ContentCommonEditing extends Plugin {
         conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'doneButton',
             view: ( modelElement, viewWriter ) => {
-                return viewWriter.createContainerElement( 'input', {
+                return viewWriter.createEmptyElement( 'input', {
                     'type': 'button',
                     'value': 'Done',
                     'class': 'done-button',

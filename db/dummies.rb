@@ -17,9 +17,16 @@ User.find_or_create_by email: 'admin@bebraven.org' do |u|
   u.confirmed_at = DateTime.now
   u.admin = true
 end
+User.find_or_create_by email: 'booster.admin@bebraven.org' do |u|
+ u.first_name = 'Dev'
+ u.last_name = 'Admin(Booster)'
+ u.password = "#{ENV['DEV_ENV_USER_PASSWORD']}"
+ u.confirmed_at = DateTime.now
+ u.admin = true
+end
 
 user_count = User.count
-FactoryBot.create_list(:registered_user, 5) unless user_count > 2
+FactoryBot.create_list(:registered_user, 5) unless user_count > 3
 puts "Created #{User.count - user_count} users"
 
 org = Organization.find_or_create_by! name: 'San Jose State University'

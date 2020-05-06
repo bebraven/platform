@@ -265,7 +265,8 @@ section.content-section {
 }
 
 div#wysiwyg-container {
-    max-height: 672px;
+    // Set a max height that matches the right-sidebar... for now.
+    max-height: 825px;
     overflow-y: auto;
 }
 

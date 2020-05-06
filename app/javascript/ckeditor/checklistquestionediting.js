@@ -5,6 +5,7 @@ import Widget from '@ckeditor/ckeditor5-widget/src/widget';
 import RetainedData from './retaineddata';
 import InsertChecklistQuestionCommand from './insertchecklistquestioncommand';
 import InsertCheckboxCommand from './insertcheckboxcommand';
+import InsertChecklistOtherCommand from './insertchecklistothercommand';
 import SetAttributesCommand from './setattributescommand';
 import { ALLOWED_ATTRIBUTES, filterAllowedAttributes } from './customelementattributepreservation';
 
@@ -19,6 +20,7 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         this.editor.commands.add( 'insertChecklistQuestion', new InsertChecklistQuestionCommand( this.editor ) );
         this.editor.commands.add( 'insertCheckbox', new InsertCheckboxCommand( this.editor ) );
+        this.editor.commands.add( 'insertChecklistOther', new InsertChecklistOtherCommand( this.editor ) );
         this.editor.commands.add( 'setAttributes', new SetAttributesCommand( this.editor ) );
 
         // Add a shortcut to the retained data ID function.
