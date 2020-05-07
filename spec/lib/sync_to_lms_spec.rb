@@ -3,8 +3,9 @@ require 'sync_to_lms'
 
 RSpec.describe SyncToLMS do
 
-  describe '#execute' do
+  describe '#for_program' do
     let(:program_info) { build(:salesforce_program_record) }
+    let(:program_id) { program_info['Id'] }
     let(:fellow_course_id) { program_info['Target_Course_ID_in_LMS__c'].to_i }
     let(:lc_course_id) { program_info['LMS_Coach_Course_Id__c'].to_i }
     let(:section) { build(:canvas_section) }
@@ -12,7 +13,7 @@ RSpec.describe SyncToLMS do
     let(:users) { build_list(:canvas_user, 2) }
     let(:enrollment) { build(:canvas_enrollment_student) }
     let(:enrollments) { build_list(:canvas_enrollment_student, 2) }
-    let(:participants) { build_list(:salesforce_participant_fellow, 2) }
+    let(:participants) { build_list(:salesforce_participant_fellow, 2, ProgramId: program_id) }
 
     # Basic mocks that return a default value that is good enough to get
     # SyncToLMS not to throw any exceptions when running. Override how they 
@@ -23,70 +24,71 @@ RSpec.describe SyncToLMS do
       instance_double(CanvasAPI, 
         :find_user_in_canvas => nil, :create_user => user, 
         :get_enrollments => [], :enroll_user_in_course => enrollment,
+        :get_user_enrollments => nil,
         :get_sections => [], :create_section => section)
     }
     let!(:canvas_api) { class_double(CanvasAPI, :client => canvas_api_client).as_stubbed_const(:transfer_nested_constants => true) }
 
     subject(:sync) { SyncToLMS.new() } 
 
-    it 'fetches Program info' do
-      expect(sf_api_client).to receive(:get_program_info).with(fellow_course_id).and_return(program_info)
-      sync.execute(fellow_course_id)
-    end
-
     context 'when there are Participants' do
       let(:sf_api_client) { instance_double(SalesforceAPI, :get_program_info => program_info, :get_participants => participants) }
 
+      it 'fetches Program info' do
+        expect(sf_api_client).to receive(:get_program_info).with(program_id).and_return(program_info).once
+        sync.for_program(program_id)
+      end
+
       it 'fetches Participants' do
-        expect(sf_api_client).to receive(:get_participants).with(fellow_course_id).once
-        sync.execute(fellow_course_id)
+        expect(sf_api_client).to receive(:get_participants).with(program_id).once
+        sync.for_program(program_id)
       end
 
       it 'creates new Canvas users' do
         expect(canvas_api_client).to receive(:create_user).with(anything, anything, anything, participants[0]['Email'], any_args).and_return(users[0]).once
         expect(canvas_api_client).to receive(:create_user).with(anything, anything, anything, participants[1]['Email'], any_args).and_return(users[1]).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       it 'skips creating existing Canvas users' do
         allow(canvas_api_client).to receive(:find_user_in_canvas).with(participants[0]['Email']).and_return(users[0])
         expect(canvas_api_client).not_to receive(:create_user).with(anything, anything, anything, participants[0]['Email'], any_args)
         expect(canvas_api_client).to receive(:create_user).with(anything, anything, anything, participants[1]['Email'], any_args).and_return(users[1]).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       it 'creates a new Canvas section' do
         section['name'] = participants[0]['CohortName']
         expect(canvas_api_client).to receive(:create_section).with(fellow_course_id, section['name']).and_return(section).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       it 'does not create a duplicate Canvas section' do
         section['name'] = participants[0]['CohortName']
         allow(canvas_api_client).to receive(:get_sections).and_return([section])
         expect(canvas_api_client).not_to receive(:create_section).with(anything, section['name'])
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       it 'gets Canvas section list once' do
         expect(canvas_api_client).to receive(:get_sections).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       it 'gets Canvas enrollments list once' do
         expect(canvas_api_client).to receive(:get_enrollments).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       it 'handles missing timezone' do
         program_info['Default_Timezone__c'] = nil
-        expect { sync.execute(fellow_course_id) }.to raise_error(SalesforceAPI::SalesforceDataError)
+        expect { sync.for_program(program_id) }.to raise_error(SalesforceAPI::SalesforceDataError)
       end
 
       it 'handles missing DocuSign template' do
         program_info['Docusign_Template_ID__c'] = nil
         expect(canvas_api_client).to receive(:create_user).with(anything, anything, anything, anything, anything, anything, anything, nil ).twice
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
     end
@@ -99,7 +101,7 @@ RSpec.describe SyncToLMS do
         allow(canvas_api_client).to receive(:find_user_in_canvas).with(participants[1]['Email']).and_return(users[1])
         expect(canvas_api_client).to receive(:enroll_user_in_course).with(users[0]['id'], fellow_course_id, :StudentEnrollment, section['id']).once
         expect(canvas_api_client).to receive(:enroll_user_in_course).with(users[1]['id'], fellow_course_id, :StudentEnrollment, section['id']).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       let(:old_section) { build(:canvas_section, :name => 'Old Section') }
@@ -113,7 +115,7 @@ RSpec.describe SyncToLMS do
         expect(canvas_api_client).to receive(:create_section).with(fellow_course_id, new_section['name']).and_return(new_section).once
         expect(canvas_api_client).to receive(:cancel_enrollment).with(enrollment).once
         expect(canvas_api_client).to receive(:enroll_user_in_course).with(enrollment['user']['id'], fellow_course_id, :StudentEnrollment, new_section['id']).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       it 'skips them if theyre in the right section' do
@@ -123,7 +125,7 @@ RSpec.describe SyncToLMS do
         allow(canvas_api_client).to receive(:get_enrollments).and_return([enrollment])
         allow(canvas_api_client).to receive(:find_user_in_canvas).with(participants[0]['Email']).and_return(enrollment['user']).once
         expect(canvas_api_client).not_to receive(:enroll_user_in_course).with(enrollment['user']['id'], any_args)
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
 #      xit 'handles a missing Student ID' do
@@ -155,7 +157,7 @@ RSpec.describe SyncToLMS do
         allow(canvas_api_client).to receive(:find_user_in_canvas).with(participants[1]['Email']).and_return(users[1])
         expect(canvas_api_client).to receive(:enroll_user_in_course).with(users[0]['id'], fellow_course_id, :TaEnrollment, section['id']).once
         expect(canvas_api_client).to receive(:enroll_user_in_course).with(users[1]['id'], fellow_course_id, :TaEnrollment, section['id']).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
       it 'adds them to the correct LC Playbook section + role' do
@@ -163,11 +165,58 @@ RSpec.describe SyncToLMS do
         allow(canvas_api_client).to receive(:find_user_in_canvas).with(participants[1]['Email']).and_return(users[1])
         expect(canvas_api_client).to receive(:enroll_user_in_course).with(users[0]['id'], lc_course_id, :StudentEnrollment, section['id']).once
         expect(canvas_api_client).to receive(:enroll_user_in_course).with(users[1]['id'], lc_course_id, :StudentEnrollment, section['id']).once
-        sync.execute(fellow_course_id)
+        sync.for_program(program_id)
       end
 
     end
 
+  end
+
+  describe '#for_contact' do
+    let(:program_info) { build(:salesforce_program_record) }
+    let(:program_id) { program_info['Id'] }
+    let(:fellow_course_id) { program_info['Target_Course_ID_in_LMS__c'].to_i }
+    let(:section) { build(:canvas_section) }
+    let(:user) { build(:canvas_user) }
+    let(:enrollment) { build(:canvas_enrollment_student) }
+    let(:participants) { build_list(:salesforce_participant_fellow, 1, ProgramId: program_id) }
+
+    # Basic mocks that return a default value that is good enough to get
+    # SyncToLMS not to throw any exceptions when running. Override how they 
+    # respond depending on what each test is targeting.
+    let(:sf_api_client) { instance_double(SalesforceAPI, :get_program_info => program_info, :get_participants => []) }
+    let!(:sf_api) { class_double(SalesforceAPI, :client => sf_api_client).as_stubbed_const(:transfer_nested_constants => true) }
+    let(:canvas_api_client) { 
+      instance_double(CanvasAPI, 
+        :find_user_in_canvas => nil, :create_user => user, 
+        :get_enrollments => [], :enroll_user_in_course => enrollment,
+        :get_user_enrollments => nil,
+        :get_sections => [], :create_section => section)
+    }
+    let!(:canvas_api) { class_double(CanvasAPI, :client => canvas_api_client).as_stubbed_const(:transfer_nested_constants => true) }
+
+    subject(:sync) { SyncToLMS.new() } 
+
+    context 'when they are a Participant in one Program' do
+      let(:sf_api_client) { instance_double(SalesforceAPI, :get_program_info => program_info, :get_participants => participants) }
+
+      it 'fetches only Participants for this contact' do
+        expect(sf_api_client).to receive(:get_participants).with(nil, participants[0]['ContactId']).once
+        sync.for_contact(participants[0]['ContactId'])
+      end
+
+      it 'creates a new Canvas user' do
+        expect(canvas_api_client).to receive(:create_user).with(anything, anything, anything, participants[0]['Email'], any_args).and_return(user).once
+        sync.for_contact(participants[0]['ContactId'])
+      end
+
+      it 'adds them to the correct section + role' do
+        allow(canvas_api_client).to receive(:find_user_in_canvas).with(participants[0]['Email']).and_return(user)
+        expect(canvas_api_client).to receive(:enroll_user_in_course).with(user['id'], fellow_course_id, :StudentEnrollment, section['id']).once
+        sync.for_contact(participants[0]['ContactId'])
+      end
+
+    end
   end
 
 end

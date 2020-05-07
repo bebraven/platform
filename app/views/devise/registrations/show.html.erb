@@ -1,0 +1,20 @@
+<h2>Thanks you for registering</h2>
+<div>
+Thank you for creating your account. Please click the link in the email you just received to complete registration and login.
+</div>
+
+<div>
+<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post}) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <p>Didn't receive confirmation instructions and it's been a few minutes?</p>
+
+  <div class="field">
+    <%= f.hidden_field :salesforce_id, value: params[:u] %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Resend confirmation instructions" %>
+  </div>
+<% end %>
+</div>

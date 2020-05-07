@@ -10,12 +10,12 @@ class SalesforceController < ApplicationController
     # Say it takes a minute or two to run, can we have Salesforce wait for the response?
     # If not, queue this up on the background and have a page listing recent runs and their status?
     # Send an email?
-    course_id = params[:course_id]
-    if course_id
-      SyncToLMS.new.execute(course_id) 
-      @user_notification = "Sync To LMS has been submitted for course #{course_id}"
+    program_id = params[:program_id]
+    if program_id
+      SyncToLMS.new.for_program(program_id) 
+      @user_notification = "Sync To LMS has been submitted for program #{program_id}"
     else
-      @user_notification = "Please enter the Course ID to sync below and hit Enter"
+      @user_notification = "Please enter the Program ID to sync below and hit Enter"
     end
      
   end

@@ -42,35 +42,51 @@ RSpec.describe SalesforceAPI do
     
   end
 
-  describe '#get_program_info(course_id)' do
+  describe '#get_program_info(program_id)' do
     let(:salesforce) { SalesforceAPI.client }
-    let(:course_id) { 71 }
+    let(:program_id) { '003170000125IpSAAU' }
 
     it 'calls the correct endpoint' do
       request_url_regex = /#{SALESFORCE_INSTANCE_URL}\/services\/data\/.*/
       program_json = FactoryBot.json(:salesforce_program)
       stub_request(:get, request_url_regex).to_return(body: program_json )
 
-      response = salesforce.get_program_info(course_id)
+      response = salesforce.get_program_info(program_id)
 
       expect(WebMock).to have_requested(:get, request_url_regex).once
       expect(response).to eq(JSON.parse(program_json)['records'][0])
     end
   end
 
-  describe '#get_participants(course_id)' do
+  describe '#get_participants()' do
     let(:salesforce) { SalesforceAPI.client }
-    let(:course_id) { 71 }
+    let(:program_id) { '003170000125IpSAAU' }
+    let(:contact_id) { '004170000125IpSAOX' }
 
-    it 'calls the correct endpoint' do
-      request_url = "#{SALESFORCE_INSTANCE_URL}/services/apexrest/participants/currentandfuture/?course_id=#{course_id}" 
-      participant_json = "[#{FactoryBot.json(:salesforce_participant_fellow)}]"
-      stub_request(:get, request_url).to_return(body: participant_json)
+    context 'with program_id only' do
+      it 'calls the correct endpoint' do
+        request_url = "#{SALESFORCE_INSTANCE_URL}/services/apexrest/participants/currentandfuture/?program_id=#{program_id}" 
+        participant_json = "[#{FactoryBot.json(:salesforce_participant_fellow)}]"
+        stub_request(:get, request_url).to_return(body: participant_json)
 
-      response = salesforce.get_participants(course_id)
+        response = salesforce.get_participants(program_id)
 
-      expect(WebMock).to have_requested(:get, request_url).once
-      expect(response).to eq(JSON.parse(participant_json))
+        expect(WebMock).to have_requested(:get, request_url).once
+        expect(response).to eq(JSON.parse(participant_json))
+      end
+    end
+
+    context 'with program_id and contact_id' do
+      it 'calls the correct endpoint' do
+        request_url = "#{SALESFORCE_INSTANCE_URL}/services/apexrest/participants/currentandfuture/?program_id=#{program_id}&contact_id=#{contact_id}" 
+        participant_json = "[#{FactoryBot.json(:salesforce_participant_fellow)}]"
+        stub_request(:get, request_url).to_return(body: participant_json)
+
+        response = salesforce.get_participants(program_id, contact_id)
+
+        expect(WebMock).to have_requested(:get, request_url).once
+        expect(response).to eq(JSON.parse(participant_json))
+      end
     end
   end
 

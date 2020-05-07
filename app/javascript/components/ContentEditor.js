@@ -554,7 +554,7 @@ class ContentEditor extends Component {
                                             <h4>Option</h4>
                                             <select
                                                 id='input-correctness'
-                                                defaultValue={inputElement.getAttribute('data-correctness')}
+                                                value={inputElement.getAttribute('data-correctness') || ""}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'data-correctness': evt.target.value }, inputElement );
                                                 }}

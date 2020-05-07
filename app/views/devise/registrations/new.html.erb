@@ -10,7 +10,7 @@
 
 <br/>
 
-  <div>
+  <div class="field">
     <%= f.label :password %>
     <% if @minimum_password_length %>
     <em>(<%= @minimum_password_length %> characters minimum)</em>
@@ -18,7 +18,7 @@
     <%= f.password_field :password, autocomplete: "new-password" %>
   </div>
 
-  <div>
+  <div class="field">
     <%= f.label :password_confirmation %><br />
     <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
   </div>
@@ -30,7 +30,7 @@
   </div>
 <% end %>
 
-<em>Note: If you wish to use a different email from the one that you used to sign-up for Braven in order to login to the Portal, you can change it after your account has been setup. If you don't have access to the email you signed up, please. <a href="mailto:support@bebraven.org">contact us here</a>   </em>
+<em>Note: If you wish to use a different email from the one that you used to sign-up for Braven in order to login to the Portal, you can change it after your account has been setup. If you don't have access to the email you signed up, please <a href="mailto:support@bebraven.org">contact us here</a>   </em>
 
 <% else %>
 
@@ -42,7 +42,7 @@ You should have a received a link from Braven after signing up for the program a
 </div>
 <br/>
 <div>
-The link should look something like <strong><%= root_url %>users/sign_up?u=003170000125IpSAAU</strong>
+If you don't have access to the email you signed up with or didn't receive an email with a link, please <a href="mailto:support@bebraven.org">contact us here</a>
 </div>
 
 <% end %>
