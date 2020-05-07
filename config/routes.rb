@@ -7,6 +7,11 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: { registrations: 'users/registrations', confirmations: 'users/confirmations', passwords: 'users/passwords' }
 
+  devise_scope :user do
+    get 'users/password/check_email', to: "users/passwords#check_email"
+    get 'users/registration', to: "users/registrations#show"
+  end
+
   get 'home/welcome'
 
   resources :industries, except: [:show]

@@ -49,22 +49,28 @@ class SalesforceAPI
 
   def get(path, params={}, headers={})
     RestClient.get("#{@salesforce_url}#{path}", {params: params}.merge(@global_headers.merge(headers)))
+  rescue => e
+    handle_rest_client_error(e)
   end
 
   def post(path, body, headers={})
     RestClient.post("#{@salesforce_url}#{path}", body, @global_headers.merge(headers))
+  rescue => e
+    handle_rest_client_error(e)
   end
 
   def put(path, body, headers={})
     RestClient.put("#{@salesforce_url}#{path}", body, @global_headers.merge(headers))
+  rescue => e
+    handle_rest_client_error(e)
   end
 
-  def get_program_info(course_id)
+  def get_program_info(program_id)
     soql_query = 
       "SELECT Id, Name, Target_Course_ID_in_LMS__c, LMS_Coach_Course_Id__c, School__c, " \
         "Section_Name_in_LMS_Coach_Course__c, Default_Timezone__c, Docusign_Template_ID__c, " \
         "Preaccelerator_Qualtrics_Survey_ID__c, Postaccelerator_Qualtrics_Survey_ID__c " \
-      "FROM Program__c WHERE Target_Course_ID_in_LMS__c = '#{course_id}'"
+      "FROM Program__c WHERE Id = '#{program_id}'"
 
     response = get("/services/data/v48.0/query?q=#{CGI.escape(soql_query)}")
     JSON.parse(response.body)['records'][0]
@@ -73,6 +79,8 @@ class SalesforceAPI
   # Gets a list of all Participants in the Program. These are folks who are
   # enrolled and should have Portal access.
   #
+  # program_id: if specified, filters the Participants returned down to only that Program. E.g. a2Y1J000000YpQFUA0
+  # contact_id: if specified, filters the Participants returned down to only that Contact. E.g. 0037A00000RUoz4QAD
   # last_modified_since: specifies that we should only get participants whose info has been  modified since this value.
 
   # TODO: need to figure out what format we need to use. The below format is what is sent back from SF
@@ -81,15 +89,16 @@ class SalesforceAPI
   # The format is the Salesforce database datetime format in GMT. For example:
   #    2020-04-06T20:19:23.000+0000 
   # Also, it's only down to the second precision, not millisecond.
-  def get_participants(course_id, last_modified_since = nil)
+  def get_participants(program_id = nil, contact_id = nil, last_modified_since = nil)
     query_params = ''
-    if course_id || last_modified_since
+    if program_id || contact_id || last_modified_since
       query_params = '?'
-      query_params += "course_id=#{course_id}" if course_id
-      query_params += '&' if course_id && last_modified_since
-      query_params += "last_modified_since=#{CGI.escape(last_modified_since)}" if last_modified_since 
+      query_params += "program_id=#{program_id}&" if program_id
+      query_params += "contact_id=#{contact_id}&" if contact_id
+      query_params += "last_modified_since=#{CGI.escape(last_modified_since)}&" if last_modified_since 
+      query_params.chop! # Remove the trailing &
     end
-    # Defined in CourseParticipantInfoService Apex class in Salesforce
+    # Defined in BZ_ProgramParticipantInfoService Apex class in Salesforce
     response = get("/services/apexrest/participants/currentandfuture/#{query_params}") 
     JSON.parse(response.body)
   end
@@ -112,7 +121,13 @@ class SalesforceAPI
 #      "courseId" => "#{course_id}",
 #      "last_modified_since" => last_modified_since
 #    }
-#    post("/services/apexrest/participants/currentandfuture/", body.to_json, JSON_HEADERS) # Defined in CourseParticipantInfoService apex class in Salesforce
+#    post("/services/apexrest/participants/currentandfuture/", body.to_json, JSON_HEADERS) # Defined in BZ_ProgramParticipantInfoService apex class in Salesforce
 #  end
+
+  def handle_rest_client_error(e)
+    Rails.logger.error("{\"Error\":\"#{e.message}\"}")
+    Rails.logger.error(e.response.body)
+    raise
+  end
 
 end

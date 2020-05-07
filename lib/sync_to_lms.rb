@@ -13,18 +13,31 @@ class SyncToLMS
   def initialize
     @salesforce_api = SalesforceAPI.client
     @canvas_api = CanvasAPI.client
+    @programs = {}
   end
 
-  # Syncs all folks from Salesforce to Canvas for the specified course.
-  def execute(course_id)
+  # Syncs all folks from the specific Salesforce Program to Canvas.
+  def for_program(salesforce_program_id)
+    @sync_mode = :program_sync
     @all_existing_course_enrollments = {}
     @all_existing_course_sections_by_name = {}
-    @program = get_program(course_id)
 
     # TODO: store the last time this was run for this course and in subsequent calls, pass that in as the last_modified_since parameter.
-    participants = @salesforce_api.get_participants(course_id)
-    Rails.logger.debug("Processing #{participants.count} Salesforce Participants to sync to Canvas for course_id = #{course_id}")
+    participants = @salesforce_api.get_participants(salesforce_program_id)
+    Rails.logger.debug("Processing #{participants.count} Salesforce Participants to sync to Canvas for salesforce_program_id = #{salesforce_program_id}")
     participants.each { |p| sync_participant(p) }
+  end
+
+  def for_contact(contact_id)
+    @sync_mode = :contact_sync
+    @all_existing_course_sections_by_name = {}
+
+    participants = @salesforce_api.get_participants(nil, contact_id)
+    Rails.logger.debug("Processing #{participants.count} Salesforce Participant objects to sync for contact_id = #{contact_id}")
+
+    canvas_id = nil
+    participants.each { |p| canvas_id = sync_participant(p) }
+    canvas_id
   end
 
   # The logic for who get's sync'd is anyone with a ParticipantStatus == 'Enrolled'. If they have a CohortName
@@ -40,17 +53,16 @@ class SyncToLMS
     last_name = participant['LastName']
     email = participant['Email']
     role = participant['Role'].to_sym
-    salesforce_id = participant['ContactId']
+    program_id = participant['ProgramId']
+    contact_id = participant['ContactId']
     #last_modified_date = participant['LastModifiedDate'] # TODO: implement me
-    section_name = participant['CohortName']
     participant_status = participant['ParticipantStatus'] # E.g. 'Enrolled' 
     #candidate_status = participant['CandidateStatus']  # E.g. 'Fully Confirmed'
     student_id = participant['StudentId']
     #school_id = participant['SchoolId'] # This is the Salesforce ID for their school # TODO: implement me
     username = email # TODO: if they are nlu, their username isn't their email. it's "#{user_student_id}@nlu.edu"
 
-    # TODO: if the CohortName isn't set, get their LL day/time and map to the placeholder cohorts that we setup before
-    # they are mapped to their real cohort in the 2nd or 3rd week.
+    program = get_program(program_id)
 
     # Create or update the Canvas user account.
     canvas_user_id = nil
@@ -63,51 +75,53 @@ class SyncToLMS
       # The DocuSign template could have changed after we first created the user with it. So update it for existing users.
       # update_user_in_canvas(user, :docusign_template_id => docusign_template_id)
     elsif participant_status == 'Enrolled'
-      new_canvas_user = @canvas_api.create_user(first_name, last_name, username, email, salesforce_id, student_id, @program.timezone, @program.docusign_template_id)
+      new_canvas_user = @canvas_api.create_user(first_name, last_name, username, email, contact_id, student_id, program.timezone, program.docusign_template_id)
       canvas_user_id = new_canvas_user['id']
       Rails.logger.debug("Created new canvas_user_id = #{canvas_user_id}")
     end
 
     case participant_status
     when 'Enrolled'
-      enroll_user(canvas_user_id, role, section_name)
+      section_name = get_section_name(participant)
+      enroll_user(canvas_user_id, program, role, section_name)
     when 'Dropped'
-      drop_user_enrollment(canvas_user_id, role)
+      drop_user_enrollment(canvas_user_id, program, role)
     when 'Completed'
       complete_user_enrollment(canvas_user_id)
     else
-      Rails.logger.warn("Unrecognized Participant.Status sent from Salesforce: #{participant_status}. canvas_user_id = #{canvas_user_id}, salesforce_id = #{salesforce_id}")
+      Rails.logger.warn("Unrecognized Participant.Status sent from Salesforce: #{participant_status}. canvas_user_id = #{canvas_user_id}, contact_id = #{contact_id}")
     end
 
     # TODO: reimplement the following logic to sync their enrollment info
     # taken from salesforce_controller.rb in Join code
     # qr = lms.trigger_qualtrics_preparation(campaign.Target_Course_ID_In_LMS__c[0].to_i, campaign.Preaccelerator_Qualtrics_Survey_ID__c, campaign.Postaccelerator_Qualtrics_Survey_ID__c, additional_data)
 
+    canvas_user_id
   end
 
   # Enroll or update their enrollment in the proper course and section
-  def enroll_user(canvas_user_id, role, fellow_course_section_name)
+  def enroll_user(canvas_user_id, program, role, fellow_course_section_name)
     if role == :Fellow
-      sync_course_enrollment(canvas_user_id, @program.fellow_course_id, :StudentEnrollment, fellow_course_section_name)
+      sync_course_enrollment(canvas_user_id, program.fellow_course_id, :StudentEnrollment, fellow_course_section_name)
     elsif role == :'Leadership Coach'
-      sync_course_enrollment(canvas_user_id, @program.fellow_course_id, :TaEnrollment, fellow_course_section_name)
-      sync_course_enrollment(canvas_user_id, @program.leadership_coach_course_id, :StudentEnrollment, @program.leadership_coach_course_section_name)
+      sync_course_enrollment(canvas_user_id, program.fellow_course_id, :TaEnrollment, fellow_course_section_name)
+      sync_course_enrollment(canvas_user_id, program.leadership_coach_course_id, :StudentEnrollment, program.leadership_coach_course_section_name)
     else
-      Rails.logger.error("Unrecognized role = '#{role}' returned from Salesforce. Skipping Sync To LMS for Salesforce Participant = #{salesforce_id}")
+      Rails.logger.error("Unrecognized role = '#{role}' returned from Salesforce. Skipping Sync To LMS for Salesforce Participant = #{canvas_user_id}")
     end
   end
 
-  def drop_user_enrollment(canvas_user_id, role)
-    existing_fellow_course_enrollment = get_enrollment(canvas_user_id, @program.fellow_course_id)
+  def drop_user_enrollment(canvas_user_id, program, role)
+    existing_fellow_course_enrollment = get_enrollment(canvas_user_id, program.fellow_course_id)
     if existing_fellow_course_enrollment 
-      Rails.logger.debug("Cancelling enrollment for canvas_user_id = #{canvas_user_id} in course_id #{@program.fellow_course_id} because they Dropped.")
+      Rails.logger.debug("Cancelling enrollment for canvas_user_id = #{canvas_user_id} in course_id #{program.fellow_course_id} because they Dropped.")
       @canvas_api.cancel_enrollment(existing_fellow_course_enrollment)
     end
 
     if role == :'Leadership Coach'
-      existing_lc_course_enrollment = get_enrollment(canvas_user_id, @program.leadership_coach_course_id)
+      existing_lc_course_enrollment = get_enrollment(canvas_user_id, program.leadership_coach_course_id)
       if existing_lc_course_enrollment
-        Rails.logger.debug("Cancelling enrollment for canvas_user_id = #{canvas_user_id} in course_id #{@program.leadership_coach_course_id} because they Dropped.")
+        Rails.logger.debug("Cancelling enrollment for canvas_user_id = #{canvas_user_id} in course_id #{program.leadership_coach_course_id} because they Dropped.")
         @canvas_api.cancel_enrollment(existing_lc_course_enrollment)
       end
     end
@@ -154,12 +168,26 @@ class SyncToLMS
 
   end
 
-  # Loads all enrollments for the course on the first call and caches that for future calls.
+  # If the CohortName isn't set, get their LL day/time schedule and use a placeholder section that we setup before
+  # they are mapped to their real cohort in the 2nd or 3rd week.
+  def get_section_name(participant)
+    cohort_name = participant['CohortName']                   # E.g. SJSU Brian (Tues)
+    cohort_schedule = participant['CohortScheduleDayTime']    # E.g. 'Monday, 7:00'
+    cohort_name ||= cohort_schedule
+  end
+
   def get_enrollment(canvas_user_id, course_id)
-    unless @all_existing_course_enrollments[course_id]
-      @all_existing_course_enrollments[course_id] = @canvas_api.get_enrollments(course_id)
+    if @sync_mode == :program_sync
+      # Loads all enrollments for the course on the first call and caches that for future calls.
+      unless @all_existing_course_enrollments[course_id]
+        @all_existing_course_enrollments[course_id] = @canvas_api.get_enrollments(course_id)
+      end
+      @all_existing_course_enrollments[course_id].find { |enrollment| enrollment['user_id'] == canvas_user_id }
+    elsif @sync_mode == :contact_sync
+      @canvas_api.get_user_enrollments(canvas_user_id, course_id)
+    else
+      raise "Unrecognized @sync_mode = #{@sync_mode}"
     end
-    @all_existing_course_enrollments[course_id].find { |enrollment| enrollment['user_id'] == canvas_user_id }
   end
 
   # Loads all sections for the course on the first call and caches that for future calls.
@@ -171,23 +199,27 @@ class SyncToLMS
     @all_existing_course_sections_by_name[course_id][section_name]
   end
 
-  def get_program(course_id)
-    p = Program.new
-    program_info = @salesforce_api.get_program_info(course_id)
-    raise SalesforceAPI::SalesforceDataError.new("Missing 'Default_Timezone__c' data") unless program_info['Default_Timezone__c']
-    p.attributes = {
-      :name                                 => program_info['Name'],
-      :salesforce_id                        => program_info['Id'],
-      :salesforce_school_id                 => program_info['SchoolId'],
-      :fellow_course_id                     => program_info['Target_Course_ID_in_LMS__c'].to_i,
-      :leadership_coach_course_id           => program_info['LMS_Coach_Course_Id__c'].to_i,
-      :leadership_coach_course_section_name => program_info['Section_Name_in_LMS_Coach_Course__c'],
-      :timezone                             => program_info['Default_Timezone__c'].to_sym,
-      :docusign_template_id                 => program_info['Docusign_Template_ID__c'],
-      :pre_accelerator_qualtrics_survey_id  => program_info['Preaccelerator_Qualtrics_Survey_ID__c'],
-      :post_accelerator_qualtrics_survey_id => program_info['Postaccelerator_Qualtrics_Survey_ID__c']
-    }
-    p
+  # Loads the program info on the first call and caches it for future calls.
+  def get_program(program_id)
+    unless @programs[program_id]
+      p = Program.new
+      program_info = @salesforce_api.get_program_info(program_id)
+      raise SalesforceAPI::SalesforceDataError.new("Missing 'Default_Timezone__c' data") unless program_info['Default_Timezone__c']
+      p.attributes = {
+        :name                                 => program_info['Name'],
+        :salesforce_id                        => program_info['Id'],
+        :salesforce_school_id                 => program_info['SchoolId'],
+        :fellow_course_id                     => program_info['Target_Course_ID_in_LMS__c'].to_i,
+        :leadership_coach_course_id           => program_info['LMS_Coach_Course_Id__c'].to_i,
+        :leadership_coach_course_section_name => program_info['Section_Name_in_LMS_Coach_Course__c'],
+        :timezone                             => program_info['Default_Timezone__c'].to_sym,
+        :docusign_template_id                 => program_info['Docusign_Template_ID__c'],
+        :pre_accelerator_qualtrics_survey_id  => program_info['Preaccelerator_Qualtrics_Survey_ID__c'],
+        :post_accelerator_qualtrics_survey_id => program_info['Postaccelerator_Qualtrics_Survey_ID__c']
+      }
+      @programs[program_id] = p
+    end
+    @programs[program_id]
   end
 
 end

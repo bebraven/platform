@@ -7,6 +7,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # GET /resource
   def show
     # Show the thank you for registering page.
+    self.resource = User.find_by(salesforce_id: params[:u])
   end
 
   # GET /resource/sign_up
@@ -62,7 +63,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # The path used after sign up for inactive accounts.
   # This shows a thank you page and let's them know to go confirm their account.
-  def after_inactive_sign_up_path_for(_)
-    new_user_confirmation_path 
+  def after_inactive_sign_up_path_for(resource)
+    users_registration_path(:u => resource.salesforce_id)    
   end
 end

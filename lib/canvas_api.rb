@@ -36,20 +36,28 @@ class CanvasAPI
 
   def get(path, params={}, headers={})
     RestClient.get("#{@api_url}#{path}", {params: params}.merge(@global_headers.merge(headers)))
+  rescue => e
+    handle_rest_client_error(e)
   end
 
   def post(path, body, headers={})
     RestClient.post("#{@api_url}#{path}", body, @global_headers.merge(headers))
+  rescue => e
+    handle_rest_client_error(e)
   end
 
   def put(path, body, headers={})
     RestClient.put("#{@api_url}#{path}", body, @global_headers.merge(headers))
+  rescue => e
+    handle_rest_client_error(e)
   end
 
   def delete(path, body={}, headers={})
     # Delete helper method doesn't accept a payload. Have to drop down lower level.
     RestClient::Request.execute(method: :delete, 
       url: "#{@api_url}#{path}", payload: body, headers: @global_headers.merge(headers))
+  rescue => e
+    handle_rest_client_error(e)
   end
 
   def update_course_page(course_id, wiki_page_id, wiki_page_body)
@@ -97,6 +105,16 @@ class CanvasAPI
     types.each { |t| query_params += "&type[]=#{t}"}
     response = get("/courses/#{course_id}/enrollments?#{query_params}")
     get_all_from_pagination(response)
+  end
+
+  # Same as get_enrollments() but just for a single user
+  def get_user_enrollments(user_id, course_id=nil, types=[])
+    query_params = "per_page=100"
+    types.each { |t| query_params += "&type[]=#{t}"}
+    response = get("/users/#{user_id}/enrollments")
+    # TODO: if course_id is sent, filter the response to only include those for that course
+    enrollments = get_all_from_pagination(response)
+    (enrollments.blank? ? nil : enrollments) # No enrollments returns an empty array and nil is nicer to deal with.
   end
 
   # Enrolls the user in the new course, without modifying any existing data
@@ -183,5 +201,12 @@ class CanvasAPI
     # Return preview URL.
     info = JSON.parse(response.body)
     {url: "#{canvas_url}/courses/#{course_id}/files/#{info['id']}/preview"}
+
+  end
+
+  def handle_rest_client_error(e)
+    Rails.logger.error("{\"Error\":\"#{e.message}\"}")
+    Rails.logger.error(e.response.body)
+    raise
   end
 end

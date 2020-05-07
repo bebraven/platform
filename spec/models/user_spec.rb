@@ -33,7 +33,7 @@ RSpec.describe User, type: :model do
     let(:canvas_user) { build(:canvas_user) }
     let(:sf_api_client) { instance_double(SalesforceAPI) }
     let!(:sf_api) { class_double(SalesforceAPI, :client => sf_api_client).as_stubbed_const(:transfer_nested_constants => true) }
-    let(:canvas_api_client) { instance_double(CanvasAPI, :find_user_in_canvas => nil) }
+    let(:canvas_api_client) { instance_double(CanvasAPI, :find_user_in_canvas => nil, :get_user_enrollments => nil, :get_sections => []) }
     let!(:canvas_api) { class_double(CanvasAPI, :client => canvas_api_client).as_stubbed_const(:transfer_nested_constants => true) }
 
      context 'when bebraven.org email' do
@@ -86,10 +86,19 @@ RSpec.describe User, type: :model do
     end
 
     context 'when canvas user doesnt exist' do
-      it 'raises an exception' do
+      let(:participants) { build_list(:salesforce_participant_fellow, 1, Email: sf_contact['Email']) }
+      let(:sf_program) { build(:salesforce_program_record) }
+      let(:section) { build(:canvas_section) }
+      let(:enrollment) { build(:canvas_enrollment_student) }
+
+      it 'tries to create a canvas user' do
         allow(sf_api_client).to receive(:get_contact_info).and_return(sf_contact)
-        expect(canvas_api_client).to receive(:find_user_in_canvas).with(sf_contact['Email']).and_return(nil).once
-        expect { create :user, salesforce_id: sf_contact['Id'], password: 'somepassword' }.to raise_error(ActiveRecord::RecordInvalid)
+        allow(sf_api_client).to receive(:get_program_info).and_return(sf_program)
+        allow(sf_api_client).to receive(:get_participants).and_return(participants)
+        allow(canvas_api_client).to receive(:create_section).and_return(section)
+        expect(canvas_api_client).to receive(:create_user).with(anything, anything, anything, sf_contact['Email'], any_args).and_return(canvas_user).once
+        expect(canvas_api_client).to receive(:enroll_user_in_course).with(canvas_user['id'], any_args).and_return(enrollment).once
+        create :user, salesforce_id: sf_contact['Id'], password: 'somepassword'
       end
     end
 
