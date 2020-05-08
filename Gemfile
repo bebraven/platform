@@ -42,7 +42,7 @@ group :development do
   gem 'guard-rspec', require: false
   gem 'guard-livereload', require: false
   gem 'libnotify', require: false
-  gem 'rack-livereload', require: false
+  gem 'rack-livereload'
   gem 'guard-webpacker', require: false
   gem 'webpacker-react', "~> 1.0.0.beta.1"
   gem 'guard-bundler', require: false

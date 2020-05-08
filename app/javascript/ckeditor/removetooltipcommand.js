@@ -8,10 +8,10 @@
  */
 
 import Command from '@ckeditor/ckeditor5-core/src/command';
-import findLinkRange from './findtooltiprange';
+import findTooltipRange from './findtooltiprange';
 
 /**
- * The removeTooltip command. It is used by the {@tooltip module:tooltip/tooltip~Link tooltip plugin}.
+ * The removeTooltip command. It is used by the {@tooltip module:tooltip/tooltip~Tooltip tooltip plugin}.
  *
  * @extends module:core/command~Command
  */
@@ -31,7 +31,7 @@ export default class RemoveTooltipCommand extends Command {
 	 *
 	 * # Decorators
 	 *
-	 * If {@tooltip module:tooltip/tooltip~LinkConfig#decorators `config.tooltip.decorators`} is specified,
+	 * If {@tooltip module:tooltip/tooltip~TooltipConfig#decorators `config.tooltip.decorators`} is specified,
 	 * all configured decorators are removed together with the `tooltipText` attribute.
 	 *
 	 * @fires execute
@@ -45,7 +45,7 @@ export default class RemoveTooltipCommand extends Command {
 		model.change( writer => {
 			// Get ranges to remove tooltip from.
 			const rangesToRemove = selection.isCollapsed ?
-				[ findLinkRange( selection.getFirstPosition(), selection.getAttribute( 'tooltipText' ), model ) ] : selection.getRanges();
+				[ findTooltipRange( selection.getFirstPosition(), selection.getAttribute( 'tooltipText' ), model ) ] : selection.getRanges();
 
 			// Remove `tooltipText` attribute from specified ranges.
 			for ( const range of rangesToRemove ) {

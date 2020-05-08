@@ -33,26 +33,20 @@ export default class TooltipEditing extends Plugin {
                 return createTooltipElement( title, writer );
             } } );
 
-        // We have to use a lower-level dispatcher because otherwise this conflicts with the span upcast in
-        // customelementattributepreservation.js and we end up with double spans.
-        // MUST use 'lowest' priority, to avoid converting before parent nodes exist.
-        // See https://github.com/ckeditor/ckeditor5/issues/4529.
-        // Not sure why 'low' specified in the docs doesn't work.
         conversion.for( 'upcast' )
-            .add( dispatcher => { dispatcher.on( 'element:span', ( evt, data, conversionApi ) => {
-                if ( conversionApi.consumable.consume( data.viewItem, { name: true, classes: [ 'has-tooltip' ], attributes: [ 'title' ] } ) ) {
-                    // <span> element is inline and is represented by an attribute in the model.
-                    // This is why we need to convert only children.
-                    const { modelRange } = conversionApi.convertChildren( data.viewItem, data.modelCursor );
-
-                    for ( let item of modelRange.getItems() ) {
-                        if ( conversionApi.schema.checkAttribute( item, 'tooltipText' ) ) {
-                            conversionApi.writer.setAttribute( 'tooltipText', data.viewItem.getAttribute( 'title' ), item );
-                        }
+            .elementToAttribute( {
+                view: {
+                    name: 'span',
+                    classes: [ 'has-tooltip' ],
+                    attributes: {
+                        title: true,
                     }
+                },
+                model: {
+                    key: 'tooltipText',
+                    value: viewElement => viewElement.getAttribute( 'title' )
                 }
-            }, { priority: 'lowest' } );
-        } );
+            } );
 
         editor.commands.add( 'addTooltip', new AddTooltipCommand( editor ) );
         editor.commands.add( 'removeTooltip', new RemoveTooltipCommand( editor ) );

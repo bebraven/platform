@@ -27,7 +27,7 @@ import '../theme/tooltipactions.css';
  *
  * @extends module:ui/view~View
  */
-export default class LinkActionsView extends View {
+export default class TooltipActionsView extends View {
 	/**
 	 * @inheritDoc
 	 */

@@ -3,8 +3,8 @@
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 
 export const ALLOWED_ATTRIBUTES = [
-    'class',
-    'id',
+    // These are safe-ish, because they're bz-namespaced.
+    // We still need to be careful not to use them anywhere else.
     'data-bz-retained',
     'data-bz-weight',
     'data-bz-partial-credit',
@@ -18,15 +18,20 @@ export const ALLOWED_ATTRIBUTES = [
     'data-bz-range-flr',
     'data-bz-reference',
     'data-bz-share-release',
-    'data-content',
-    'data-placement',
+    // These are *dangerous*!
+    // Conflicts with other plugins may cause unhandled exceptions
+    // and/or unintended results.
+    'class',
+    'id',
     'data-original-title',
     'data-target',
     'data-toggle',
-    'title',
     'tabindex',
     'style',
     'align',
+//    'title',
+//    'data-content',
+//    'data-placement',
 ]
 
 export default class CustomElementAttributePreservation extends Plugin {
@@ -173,6 +178,7 @@ function setupAllowedAttributePreservation( editor ) {
         allowContentOf: '$root'
     } );
 
+    /*
     // Allow <span> elements in the model.
     editor.model.schema.register( 'span', {
         isInline: true,
@@ -180,6 +186,7 @@ function setupAllowedAttributePreservation( editor ) {
         allowIn: '$block',
         allowContentOf: '$block'
     } );
+    */
 
     // Elements we want to allow custom attribute preservation on.
     // { view: model }
@@ -223,6 +230,7 @@ function setupAllowedAttributePreservation( editor ) {
         converterPriority: 'high'
     } );
 
+    /*
     // Div and span converters must be normal priority or lower so they don't override more specific converters defined elsewhere.
     editor.conversion.for( 'upcast' ).elementToElement( {
         view: 'div',
@@ -238,6 +246,7 @@ function setupAllowedAttributePreservation( editor ) {
         // Use low priority to make sure existing converters run first.
         converterPriority: 'low'
     } );
+    */
 
     // Model-to-view converter for the <div> element (attrbiutes are converted separately).
     editor.conversion.for( 'downcast' ).elementToElement( {
@@ -245,11 +254,13 @@ function setupAllowedAttributePreservation( editor ) {
         view: 'div'
     } );
 
+    /*
     // Model-to-view converter for the <span> element (attrbiutes are converted separately).
     editor.conversion.for( 'downcast' ).elementToElement( {
         model: 'span',
         view: 'span'
     } );
+    */
 
     // Model-to-view converter for all element attributes.
     // Note that a lower-level, event-based API is used here.
@@ -267,6 +278,7 @@ function setupAllowedAttributePreservation( editor ) {
             // In the model-to-view conversion we convert changes.
             // An attribute can be added or removed or changed.
             // The below code handles all 3 cases.
+            console.log(evt, data);
             if ( data.attributeNewValue ) {
                 viewWriter.setAttribute( data.attributeKey, data.attributeNewValue, viewElement );
             } else {

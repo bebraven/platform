@@ -17,7 +17,7 @@
  * @param {String} value The `tooltipText` attribute value.
  * @returns {module:engine/model/range~Range} The tooltip range.
  */
-export default function findLinkRange( position, value, model ) {
+export default function findTooltipRange( position, value, model ) {
 	return model.createRange( _findBound( position, value, true, model ), _findBound( position, value, false, model ) );
 }
 

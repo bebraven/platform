@@ -158,6 +158,15 @@ export default class ContentCommonEditing extends Plugin {
             allowIn: [ 'select' ],
             allowContentOf: '$block'
         } );
+
+        // Custom elements.
+        schema.register( 'contextNotes', {
+            isInline: true,
+            isObject: true,
+            allowAttributes: [ 'data-placement', 'data-content' ],
+            allowIn: [ '$block' ],
+            allowContentOf: '$block'
+        } );
     }
 
     _defineConverters() {
@@ -830,6 +839,34 @@ export default class ContentCommonEditing extends Plugin {
                 return toWidget( option, viewWriter );
             }
         } );
+
+        // Custom elements.
+
+        // <contextNotes> converters.
+        // Used by resume snippets.
+        conversion.for( 'upcast' ).elementToElement( {
+            view: {
+                name: 'span',
+                classes: [ 'context-notes' ],
+            },
+            model: ( viewElement, modelWriter ) => {
+                return modelWriter.createElement( 'contextNotes', {
+                    'data-content': viewElement.getAttribute('data-content'),
+                    'data-placement': viewElement.getAttribute('data-placement'),
+                } );
+            }
+        } );
+        conversion.for( 'downcast' ).elementToElement( {
+            model: 'selectOption',
+            view: ( modelElement, viewWriter ) => {
+                return viewWriter.createContainerElement( 'option', {
+                    'class': 'context-notes',
+                    'data-content': modelElement.getAttribute('data-content'),
+                    'data-placement': modelElement.getAttribute('data-placement'),
+                } );
+            }
+        } );
+
 
         // Shared attribute converters.
         // We must explicitly define an attributeToAttribute converter in order to live-update
