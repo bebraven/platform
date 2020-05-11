@@ -1,7 +1,7 @@
 import Command from '@ckeditor/ckeditor5-core/src/command';
 
 export default class InsertContentBlockCommand extends Command {
-    execute( classes='module-block module-block-reflection' ) {
+    execute( classes='module-block' ) {
         this.editor.model.change( writer => {
             const { contentBlock, selection } = createContentBlock( writer, classes );
             this.editor.model.insertContent( contentBlock );
@@ -19,7 +19,13 @@ export default class InsertContentBlockCommand extends Command {
 }
 
 function createContentBlock( writer, classes ) {
-    const contentBlock = writer.createElement( 'moduleBlock', { 'class': classes } );
+    const contentBlock = writer.createElement(
+        'moduleBlock',
+        {
+            'class': classes,
+            'data-icon':'module-block-reflection',
+        },
+    );
     const content = writer.createElement( 'content' );
     const contentTitle = writer.createElement( 'contentTitle' );
     const contentBody = writer.createElement( 'contentBody' );

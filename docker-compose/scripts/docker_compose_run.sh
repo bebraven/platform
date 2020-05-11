@@ -27,13 +27,26 @@ function cp_built_lock_file() {
 }
 
 if [ -f "${current_lock_file}" ]; then
-    diff="$(diff "${built_lock_file}" "${current_lock_file}")"
+    diffcmd="diff $built_lock_file $current_lock_file"
+    diff=$diffcmd
     if [ "${diff}" != "" 2>/dev/null ]; then
         cp_built_lock_file
     fi
 else
     cp_built_lock_file
 fi
+
+# Run yarn. Must be BEFORE any rake/rails calls.
+yarn install --check-files
+
+# Migrate the db, if needed.
+bundle exec rake db:migrate
+
+# Fix "inotify event queue has overflowed."
+# https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers
+sysctl fs.inotify.max_user_watches=524288
+sysctl fs.inotify.max_queued_events=524288
+sysctl fs.inotify.max_user_instances=524288
 
 # Note: there are some issues with the listen gem and certain editors
 # where gaurd won't detect changes made from the host machine on a Mac

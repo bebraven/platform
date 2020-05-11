@@ -10,7 +10,7 @@ export default class InsertTableCommand extends Command {
         const columns = parseInt( options.columns ) || 2;
 
         this.editor.model.change( writer => {
-            const tableContent = writer.createElement( 'tableContent' );
+            const tableContent = writer.createElement( 'moduleBlock' );
             const content = writer.createElement( 'content' );
             const contentTitle = writer.createElement( 'contentTitle' );
             const contentBody = writer.createElement( 'contentBody' );
@@ -29,7 +29,7 @@ export default class InsertTableCommand extends Command {
     refresh() {
         const model = this.editor.model;
         const selection = model.document.selection;
-        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'tableContent' );
+        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'moduleBlock' );
 
         this.isEnabled = allowedIn !== null;
     }

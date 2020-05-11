@@ -34,7 +34,7 @@ export default class ContentCommonEditing extends Plugin {
         // Shared elements.
         schema.register( 'content', {
             isObject: true,
-            allowIn: [ 'blockquoteContent', 'tableContent', 'iframeContent', 'videoContent' ],
+            allowIn: [ 'moduleBlock' ],
             allowContentOf: '$root'
         });
 
@@ -53,7 +53,7 @@ export default class ContentCommonEditing extends Plugin {
 
         schema.register( 'question', {
             isObject: true,
-            allowIn: [ 'checklistQuestion', 'radioQuestion', 'matchingQuestion', 'matrixQuestion' ],
+            allowIn: [ 'moduleBlock' ],
             allowAttributes: [ 'data-instant-feedback', 'data-mastery', 'data-grade-as' ]
         } );
 
@@ -105,7 +105,7 @@ export default class ContentCommonEditing extends Plugin {
 
         schema.register( 'answer', {
             isObject: true,
-            allowIn: [ 'checklistQuestion', 'radioQuestion', 'matchingQuestion', 'matrixQuestion' ]
+            allowIn: [ 'moduleBlock' ]
         } );
 
         schema.register( 'answerTitle', {

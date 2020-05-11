@@ -14,6 +14,33 @@ export default class SectionEditing extends Plugin {
         this._defineConverters();
 
         this.editor.commands.add( 'insertSection', new InsertSectionCommand( this.editor ) );
+
+        // Override the default keydown behavior to disallow adding anything but a single
+        // moduleBlock inside a section.
+        this.listenTo( this.editor.editing.view.document, 'keydown', ( evt, data ) => {
+            const selection = this.editor.model.document.selection;
+            const positionParent = selection.getLastPosition().parent;
+            const selectedElement = selection.getSelectedElement();
+
+            // Handle two cases: moduleBlock is selected, or cursor is in a paragraph inside the section.
+            if ( ( selectedElement && selectedElement.name === 'moduleBlock' ) ||
+                    ( positionParent.parent && positionParent.parent.name === 'section' ) ) {
+                if ( data.domEvent.key === 'Enter' ) {
+                    // On Enter, add a new section.
+                    this.editor.execute( 'insertSection' )
+                    data.preventDefault();
+                    evt.stop();
+                } else if ( !( data.domEvent.metaKey || data.domEvent.ctrlKey ) &&
+                        ![ 'Backspace', 'Delete' ].includes( data.domEvent.key ) ) {
+                    // Ignore most other keydowns, excluding control sequences and deletions.
+                    // This sucks, but hopefully it's good enough until we drop sections.
+                    data.preventDefault();
+                    evt.stop();
+                }
+            }
+        // Use 'highest' priority, because Widget._onKeydown listens at 'high'.
+        // https://github.com/ckeditor/ckeditor5-widget/blob/bdeec63534d11a4fa682bb34990c698435bc13e3/src/widget.js#L92
+        }, { priority: 'highest' } );
     }
 
     _defineSchema() {

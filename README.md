@@ -126,10 +126,9 @@ In rare cases, you may need to bypass docker-compose and use docker directly to 
 
     docker volume rm platform_db-platform
 
-If you change JavaScript dependencies, you may need to run `yarn` in the container:
+If you change JavaScript dependencies, you need to restart the container, so yarn runs:
 
     docker-compose down
-    docker-compose run platformweb yarn install --check-files
 
 In all cases, to bring the container back up after a rebuild, run:
 
@@ -271,7 +270,7 @@ CKEditor updates tend to have major breaking changes often, so be sure to test a
 
 Once the dependencies are updated, you will need to rebuild your container:
 
-    docker-compose build && docker-compose run platformweb yarn
+    docker-compose build
 
 ### Accessibility testing
 

@@ -10,14 +10,14 @@ export default class InsertSliderQuestionCommand extends Command {
     refresh() {
         const model = this.editor.model;
         const selection = model.document.selection;
-        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'sliderQuestion' );
+        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'moduleBlock' );
 
         this.isEnabled = allowedIn !== null;
     }
 }
 
 function createSliderQuestion( writer ) {
-    const sliderQuestion = writer.createElement( 'sliderQuestion' );
+    const sliderQuestion = writer.createElement( 'moduleBlock' );
     const question = writer.createElement( 'question', { 'data-grade-as': 'range' } );
     const questionTitle = writer.createElement( 'questionTitle' );
     const questionBody = writer.createElement( 'questionBody' );

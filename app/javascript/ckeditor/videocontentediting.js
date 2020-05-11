@@ -19,11 +19,6 @@ export default class VideoContentEditing extends Plugin {
     _defineSchema() {
         const schema = this.editor.model.schema;
 
-        schema.register( 'videoContent', {
-            isObject: true,
-            allowIn: 'section',
-        } );
-
         schema.register( 'videoFigure', {
             isObject: true,
             allowIn: [ 'content', 'question', '$root' ],

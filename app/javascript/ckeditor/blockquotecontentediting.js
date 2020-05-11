@@ -19,12 +19,6 @@ export default class BlockquoteContentEditing extends Plugin {
     _defineSchema() {
         const schema = this.editor.model.schema;
 
-        schema.register( 'blockquoteContent', {
-            isObject: true,
-            allowIn: 'section',
-            allowAttributes: [ 'class' ]
-        } );
-
         schema.register( 'blockquoteQuote', {
             allowIn: 'content',
             allowContentOf: '$root'
@@ -40,38 +34,6 @@ export default class BlockquoteContentEditing extends Plugin {
         const editor = this.editor;
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
-
-        // <blockquoteContent> converters
-        conversion.for( 'upcast' ).elementToElement( {
-            view: {
-                name: 'div',
-                classes: ['module-block', 'module-block-quote']
-            },
-            model: ( viewElement, modelWriter ) => {
-                // Read the "data-id" attribute from the view and set it as the "id" in the model.
-                return modelWriter.createElement( 'blockquoteContent' );
-            }
-        } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'blockquoteContent',
-            view: ( modelElement, viewWriter ) => {
-                return viewWriter.createEditableElement( 'div', {
-                    'class': 'module-block module-block-quote',
-                } );
-
-            }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'blockquoteContent',
-            view: ( modelElement, viewWriter ) => {
-
-                const blockquoteContent = viewWriter.createContainerElement( 'div', {
-                    'class': 'module-block module-block-quote',
-                } );
-
-                return toWidget( blockquoteContent, viewWriter, { label: 'blockquote widget' } );
-            }
-        } );
 
         // <blockquoteQuote> converters
         conversion.for( 'upcast' ).elementToElement( {

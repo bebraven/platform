@@ -33,6 +33,8 @@ services:
       SALESFORCE_PLATFORM_USERNAME: ${SALESFORCE_PLATFORM_USERNAME}
       SALESFORCE_PLATFORM_PASSWORD: ${SALESFORCE_PLATFORM_PASSWORD}
       SALESFORCE_PLATFORM_SECURITY_TOKEN: ${SALESFORCE_PLATFORM_SECURITY_TOKEN}
+    # Need privileged mode to change the sysctl flags in docker-compose/scripts/docker_compose_run.sh
+    privileged: true
     
     networks:
       - bravendev

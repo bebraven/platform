@@ -1,9 +1,30 @@
 import Command from '@ckeditor/ckeditor5-core/src/command';
+import { getNamedAncestor } from './utils';
 
 export default class InsertSectionCommand extends Command {
     execute() {
         this.editor.model.change( writer => {
-            this.editor.model.insertContent( createSection( writer ) );
+            const selection = this.editor.model.document.selection;
+            const position = selection.getFirstPosition();
+
+            const section = getNamedAncestor( 'section', position );
+            if ( section ) {
+                // IFF we're not in the root, before inserting, modify the current
+                // selection to after the section.
+                writer.setSelection( section, 'after' );
+            }
+
+            const newSection = createSection( writer );
+            this.editor.model.insertContent( newSection );
+
+            // HACK: If there's nothing after this section, append a paragraph, to
+            // allow typing outside of the section. If we don't do this check first,
+            // we might end up with a bunch of paragraphs instead of just one.
+            if ( !newSection.nextSibling ) {
+                writer.insertElement( 'paragraph', newSection, 'after' );
+            }
+
+            writer.setSelection( newSection, 'in' );
         } );
     }
 
