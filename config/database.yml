@@ -13,3 +13,10 @@ development:
 test:
   <<: *default
   database: platform_test
+
+# Heroku takes care of the production database config, but if you want
+# to add more options other than DATABASE_URL you can do so here. 
+production:
+  <<: *default
+  database: platform_production
+  url: <%= ENV['DATABASE_URL'] %> # This is just so we can build in production mode on local dev. It's what Heroku does.

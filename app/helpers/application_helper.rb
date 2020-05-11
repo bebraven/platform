@@ -53,7 +53,7 @@ module ApplicationHelper
     ENV['HEROKU_APP_NAME'] == 'braven-platform'
   end
 
-  def braven_stylesheet_link_tag
+  def portal_stylesheet_link_tag
     # Choose S3 resource based on where we're running.
     assets = if is_production_app?
       "canvas-prod-assets"

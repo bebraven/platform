@@ -1,4 +1,5 @@
 class CourseContentHistoriesController < ApplicationController
+  layout 'content_editor'
   before_action :set_course_content, only: [:index, :show]
 
   include DryCrud::Controllers::Nestable

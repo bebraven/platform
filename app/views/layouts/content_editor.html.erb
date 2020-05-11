@@ -1,0 +1,15 @@
+<% content_for :title, 'Content Editor' %>
+
+<% content_for :head do %>
+    <%= portal_stylesheet_link_tag %>
+    <%= stylesheet_link_tag 'content_editor', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'sidebar' %>
+    <%= javascript_pack_tag 'content_editor' %>
+<% end %>
+
+<%# Add stuff to the body here %>
+<% content_for :content do %>
+  <%= yield %>
+<% end %>
+
+<%= render template: "layouts/application" %>

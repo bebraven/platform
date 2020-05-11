@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Users::ConfirmationsController < Devise::ConfirmationsController
+  layout 'accounts'
   before_action :configure_permitted_parameters
 
   # GET /resource/confirmation/new
