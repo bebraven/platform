@@ -1,4 +1,10 @@
 import Command from '@ckeditor/ckeditor5-core/src/command';
+import { 
+    DEFAULT_ANSWER, 
+    DEFAULT_MIN, 
+    DEFAULT_MAX, 
+    DEFAULT_STEP,
+} from '../constants/sliderquestionconstants';
 
 export default class InsertSliderQuestionCommand extends Command {
     execute() {
@@ -25,10 +31,11 @@ function createSliderQuestion( writer ) {
     const questionForm = writer.createElement( 'questionForm' );
     const questionFieldset = writer.createElement( 'questionFieldset' );
     const slider = writer.createElement( 'slider', {
-        'min': 0,
-        'max': 10,
-        'data-bz-answer': 0,
-        'data-bz-range-answer': 0,
+        'min': DEFAULT_MIN,
+        'max': DEFAULT_MAX,
+        'step': DEFAULT_STEP,
+        'data-bz-answer': DEFAULT_ANSWER,
+        'data-bz-range-answer': DEFAULT_ANSWER,
     } );
     const displayValueDiv = writer.createElement( 'displayValueDiv' );
     const currentValueSpan = writer.createElement( 'currentValueSpan' );

@@ -521,12 +521,13 @@ class ContentEditor extends Component {
                                     );
                                 } else if ( 'slider' === modelElement ) {
                                     // Sliders have several different settings to change.
-                                    const min = this.state['selectedElement'].getAttribute('min');
-                                    const max = this.state['selectedElement'].getAttribute('max');
-                                    const step = this.state['selectedElement'].getAttribute('step');
+                                    const selectedElement = this.state['selectedElement'];
+                                    if (selectedElement === undefined) {
+                                        return;
+                                    }
 
-                                    const answer = this.state['selectedElement'].getAttribute('data-bz-answer');
-                                    const rangeAnswer = this.state['selectedElement'].getAttribute('data-bz-range-answer');
+                                    const answer = selectedElement.getAttribute('data-bz-answer');
+                                    const rangeAnswer = selectedElement.getAttribute('data-bz-range-answer');
 
                                     return (
                                         <>
@@ -535,7 +536,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='number'
                                                 id='input-min'
-                                                defaultValue={min}
+                                                value={selectedElement.getAttribute('min')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'min': evt.target.value } );
                                                 }}
@@ -545,7 +546,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='number'
                                                 id='input-max'
-                                                defaultValue={max}
+                                                value={selectedElement.getAttribute('max')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'max': evt.target.value } );
                                                 }}
@@ -555,7 +556,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='number'
                                                 id='input-step'
-                                                defaultValue={step}
+                                                value={selectedElement.getAttribute('step')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'step': evt.target.value } );
                                                 }}
@@ -565,7 +566,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='number'
                                                 id='input-answer'
-                                                defaultValue={answer}
+                                                value={answer}
                                                 disabled={!(answer || rangeAnswer)}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', {
@@ -656,7 +657,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='text'
                                                 id='input-url'
-                                                defaultValue={this.state['selectedElement'].getAttribute('src')}
+                                                value={this.state['selectedElement'].getAttribute('src')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'src': evt.target.value } );
                                                 }}

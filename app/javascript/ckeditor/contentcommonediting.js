@@ -9,6 +9,7 @@ import InsertDoneButtonCommand from './insertdonebuttoncommand';
 import InsertContentBlockCommand from './insertcontentblockcommand';
 import InsertFileUploadQuestionCommand from './insertfileuploadquestioncommand';
 import { ALLOWED_ATTRIBUTES, filterAllowedAttributes } from './customelementattributepreservation';
+import * as Slider from '../constants/sliderquestionconstants';
 
 export default class ContentCommonEditing extends Plugin {
     static get requires() {
@@ -714,9 +715,6 @@ export default class ContentCommonEditing extends Plugin {
         } );
 
         // <slider> converters
-        const sliderMin = 0;
-        const sliderMax = 10;
-        const sliderStep = 1;
         conversion.for( 'upcast' ).elementToElement( {
             view: {
                 name: 'input',
@@ -728,9 +726,9 @@ export default class ContentCommonEditing extends Plugin {
                 return modelWriter.createElement( 'slider', new Map( [
                     ...filterAllowedAttributes(viewElement.getAttributes()),
                     [ 'data-bz-retained', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
-                    [ 'min', viewElement.getAttribute('min') || sliderMin ],
-                    [ 'max', viewElement.getAttribute('max') || sliderMax ],
-                    [ 'step', viewElement.getAttribute('step') || sliderStep ],
+                    [ 'min', viewElement.getAttribute('min') || Slider.DEFAULT_MIN ],
+                    [ 'max', viewElement.getAttribute('max') || Slider.DEFAULT_MAX ],
+                    [ 'step', viewElement.getAttribute('step') || Slider.DEFAULT_STEP ],
                 ] ) );
             }
         } );
@@ -741,9 +739,9 @@ export default class ContentCommonEditing extends Plugin {
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'range' ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
-                    [ 'min', modelElement.getAttribute('min') || sliderMin ],
-                    [ 'max', modelElement.getAttribute('max') || sliderMax ],
-                    [ 'step', modelElement.getAttribute('step') || sliderStep ],
+                    [ 'min', modelElement.getAttribute('min') || Slider.DEFAULT_MIN ],
+                    [ 'max', modelElement.getAttribute('max') || Slider.DEFAULT_MAX ],
+                    [ 'step', modelElement.getAttribute('step') || Slider.DEFAULT_STEP ],
                 ] ) );
             }
         } );
@@ -754,9 +752,9 @@ export default class ContentCommonEditing extends Plugin {
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'range' ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
-                    [ 'min', modelElement.getAttribute('min') || sliderMin ],
-                    [ 'max', modelElement.getAttribute('max') || sliderMax ],
-                    [ 'step', modelElement.getAttribute('step') || sliderStep ],
+                    [ 'min', modelElement.getAttribute('min') || Slider.DEFAULT_MIN ],
+                    [ 'max', modelElement.getAttribute('max') || Slider.DEFAULT_MAX ],
+                    [ 'step', modelElement.getAttribute('step') || Slider.DEFAULT_STEP ],
                 ] ) );
                 return toWidget( input, viewWriter );
             }

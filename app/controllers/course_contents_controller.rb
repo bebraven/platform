@@ -1,4 +1,5 @@
 class CourseContentsController < ApplicationController
+  layout 'content_editor'
   before_action :set_course_content, only: [:show, :edit, :update, :destroy, :publish]
   before_action :set_course_contents, only: [:index, :edit, :new]
 

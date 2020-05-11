@@ -4,6 +4,7 @@ require 'rubycas-server-core/tickets/validations'
 require 'rubycas-server-core/tickets/generations'
 
 class CasController < ApplicationController
+  layout 'accounts'
   skip_before_action :authenticate_user!
   skip_before_action :ensure_admin!
   

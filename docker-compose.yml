@@ -5,6 +5,10 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+      args:
+        # Allows you to build the container in production mode by setting in the .env file. Necessary here b/c puma
+        # runs before the dotenv file is loaded so we build the value into the container. Defaults to development
+        RAILS_ENV: ${RAILS_ENV:-development}
     ports:
       # rails server (Guardfile, config/environments/development.rb)
       - "3020:3020"
@@ -15,11 +19,11 @@ services:
       # rspec server host port. The web server that rspec listens on when running tests. http://SPEC_HOST:SPEC_PORT
       - "49883:49883"
     volumes:
-      - .:/usr/src/app
-      - node-modules:/usr/src/app/node_modules
-      - /usr/src/app/tmp
-      - webpack-cache:/usr/src/app/tmp/cache/webpacker
-      - /usr/src/app/log
+      - .:/app
+      - /app/tmp
+      - /app/log
+      - node-modules:/app/node_modules
+      - webpack-cache:/app/tmp/cache/webpacker
     depends_on:
       - platform_chrome
       - platformdb
@@ -33,6 +37,7 @@ services:
       SALESFORCE_PLATFORM_USERNAME: ${SALESFORCE_PLATFORM_USERNAME}
       SALESFORCE_PLATFORM_PASSWORD: ${SALESFORCE_PLATFORM_PASSWORD}
       SALESFORCE_PLATFORM_SECURITY_TOKEN: ${SALESFORCE_PLATFORM_SECURITY_TOKEN}
+      
     # Need privileged mode to change the sysctl flags in docker-compose/scripts/docker_compose_run.sh
     privileged: true
     

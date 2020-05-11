@@ -10,3 +10,8 @@ tmp/*
 
 # Webpack-related
 node_modules
+
+# Compiled assets
+public/assets/
+public/packs/
+

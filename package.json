@@ -53,7 +53,7 @@
     "react-dom": "^16.13.1",
     "react-hot-loader": "4.12.21",
     "react-tabs": "^3.0.0",
-    "react_ujs": "^2.6.0",
+    "react_ujs": "^2.6.1",
     "style-loader": "1.2.1",
     "turbolinks": "^5.2.0",
     "webpack": "4.43.0",
