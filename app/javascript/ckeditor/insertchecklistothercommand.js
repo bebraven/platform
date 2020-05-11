@@ -24,6 +24,11 @@ export default class InsertChecklistOtherCommand extends Command {
             }
             writer.setSelection( checkboxDiv, 'after' );
             this.editor.model.insertContent( createChecklistOther( writer, placeholder ) );
+
+            // Checklists with "other" options always need the "dont-mix" class on the fieldset, so
+            // add that now.
+            const fieldset = getNamedAncestor( 'questionFieldset', position );
+            writer.setAttributes( {'class': 'dont-mix'}, fieldset );
         } );
     }
 

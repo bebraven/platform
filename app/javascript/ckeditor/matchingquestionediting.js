@@ -32,11 +32,6 @@ export default class MatchingQuestionEditing extends Plugin {
     _defineSchema() {
         const schema = this.editor.model.schema;
 
-        schema.register( 'matchingQuestion', {
-            isObject: true,
-            allowIn: 'section',
-        } );
-
         schema.register( 'matchingTable', {
             isObject: true,
             allowIn: 'question',
@@ -75,37 +70,6 @@ export default class MatchingQuestionEditing extends Plugin {
         const editor = this.editor;
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
-
-        // <matchingQuestion> converters
-        conversion.for( 'upcast' ).elementToElement( {
-            view: {
-                name: 'div',
-                classes: ['module-block', 'module-block-matching']
-            },
-            model: ( viewElement, modelWriter ) => {
-                return modelWriter.createElement( 'matchingQuestion' );
-            }
-        } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'matchingQuestion',
-            view: ( modelElement, viewWriter ) => {
-                return viewWriter.createEditableElement( 'div', {
-                    'class': 'module-block module-block-matching',
-                } );
-            }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'matchingQuestion',
-            view: ( modelElement, viewWriter ) => {
-                const id = modelElement.getAttribute( 'id' );
-
-                const matchingQuestion = viewWriter.createContainerElement( 'div', {
-                    'class': 'module-block module-block-matching',
-                } );
-
-                return toWidget( matchingQuestion, viewWriter, { label: 'matching-question widget' } );
-            }
-        } );
 
         // <matchingTable> converters
         conversion.for( 'upcast' ).elementToElement( {

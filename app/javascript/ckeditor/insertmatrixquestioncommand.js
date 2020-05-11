@@ -12,14 +12,14 @@ export default class InsertMatrixQuestionCommand extends Command {
     refresh() {
         const model = this.editor.model;
         const selection = model.document.selection;
-        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'matrixQuestion' );
+        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'moduleBlock' );
 
         this.isEnabled = allowedIn !== null;
     }
 }
 
 function createMatrixQuestion( writer, options ) {
-    const matrixQuestion = writer.createElement( 'matrixQuestion' );
+    const matrixQuestion = writer.createElement( 'moduleBlock' );
     const question = writer.createElement( 'question', {'data-grade-as': 'matrix'} );
     const questionTitle = writer.createElement( 'questionTitle' );
     const questionBody = writer.createElement( 'questionBody' );

@@ -5,4 +5,5 @@ const webpackerReactconfigureHotModuleReplacement = require('webpacker-react/con
 
 const config = environment.toWebpackConfig()
 
-module.exports = webpackerReactconfigureHotModuleReplacement(config)
+module.exports = webpackerReactconfigureHotModuleReplacement(config);
+module.exports.cache = true;

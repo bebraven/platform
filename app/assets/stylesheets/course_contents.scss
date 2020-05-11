@@ -42,6 +42,25 @@
 	}
 }
 
+/* --- Warnings for invalid content --- */
+.content-section > :not(.module-block):not([data-placeholder="[Empty section]"]):before,
+.content-section > .module-block:nth-of-type(2):before {
+        content: "INVALID CONTENT IN SECTION - Please remove or ask tech team for help\A";
+        white-space: pre;
+        color: black;
+        background-color: red;
+        border: 1px black solid;
+        padding: 0.2em;
+        font-weight: bold;
+        font-size: 12pt;
+        font-family: sans-serif;
+}
+
+.content-section > :not(.module-block):not([data-placeholder="[Empty section]"]),
+.content-section > .module-block:nth-of-type(2) {
+        background-color: khaki;
+}
+
 /* --- Editor / Content styles --- */
 .bz-module,
 .bz-view-box {
@@ -67,6 +86,19 @@
 .bz-module input[data-correctness="maybe"] + label,
 .bz-module input[data-correctness=""] + label {
     color: #a54c2a;
+}
+
+
+div.module-block div.module-icon-preview,
+.module-icon-preview {
+        width: 50px;
+        height: 50px;
+        background-position-y: 0;
+        padding: 0;
+        border: 0;
+        margin: 0;
+        margin-bottom: 0.5em;
+        background-repeat: no-repeat;
 }
 
 /* TYPOGRAPHY */
@@ -146,7 +178,7 @@ button.ck.ck-button.ck-heading_h5 .ck-button__label {
 }
 
 /* more overrides */
-.module-block-quote > div.content,
+.block-quote-bg > div.content,
 div.content > blockquote {
         width: 100%;
 }
@@ -156,7 +188,7 @@ div.content > blockquote:focus > small {
         color: black;
         background: none;
 }
-div.module-block:not(.module-block-quote) blockquote {
+div.module-block:not(.block-quote-bg) blockquote {
         padding: 0 1.5em;
         margin: 0;
         border-left: none;

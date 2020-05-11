@@ -462,7 +462,48 @@ class ContentEditor extends Component {
                         </div>
                         <div id="toolbar-contextual">
                             {this.state.modelPath.map( modelElement => {
-                                if ( ['textArea', 'textInput'].includes( modelElement ) ) {
+                                if ( ['moduleBlock'].includes( modelElement ) ) {
+                                    // Module-blocks have class settings.
+                                    let moduleBlock = getNamedAncestor( 'moduleBlock', this.state['selectedElement'] );
+                                    if ( this.state['selectedElement'].name === 'moduleBlock' ) {
+                                        moduleBlock = this.state['selectedElement'];
+                                    }
+
+                                    if (moduleBlock === undefined) {
+                                        // The selected element no longer has 'moduleBlock' as an ancestor - it was
+                                        // probably deleted. We can just return and let React re-render with the new
+                                        // selection.
+                                        return;
+                                    }
+                                    return (
+                                        <>
+                                            <h4>Module Block</h4>
+
+                                            <div className={"module-icon-wrapper module-block " + 
+                                                (moduleBlock.getAttribute('data-icon') || "module-block-question")}>
+                                                <div className="module-icon-preview question" />
+                                            </div>
+                                            <select
+                                                id='input-module-block-type'
+                                                onChange={( evt ) => {
+                                                    this.editor.execute( 'setAttributes', { 'data-icon': evt.target.value }, moduleBlock );
+                                                }}
+                                                value={moduleBlock.getAttribute('data-icon') || "module-block-question"}
+                                            >
+                                                <option value="module-block-question">Question</option>
+                                                <option value="module-block-action">Action</option>
+                                                <option value="module-block-alert">Alert</option>
+                                                <option value="module-block-key">Key</option>
+                                                <option value="module-block-pulse">Pulse</option>
+                                                <option value="module-block-read">Read</option>
+                                                <option value="module-block-reflection">Reflection</option>
+                                                <option value="module-block-values">Values</option>
+                                                <option value="module-block-video">Video</option>
+                                            </select>
+                                            <label htmlFor='input-module-block-type'>Block Icon</label>
+                                        </>
+                                    );
+                                } else if ( ['textArea', 'textInput'].includes( modelElement ) ) {
                                     // Text inputs and textareas have placeholder settings.
                                     return (
                                         <>
@@ -470,7 +511,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='text'
                                                 id='input-placeholder'
-                                                defaultValue={this.state['selectedElement'].getAttribute('placeholder')}
+                                                value={this.state['selectedElement'].getAttribute('placeholder')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'placeholder': evt.target.value } );
                                                 }}

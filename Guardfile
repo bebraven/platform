@@ -55,38 +55,6 @@ guard 'livereload' do
   watch(%r{config/locales/.+\.yml})
 end
 
-### Guard::Webpacker
-#  available options:
-#  - :bin (defaults to "webpack-dev-server") to run
-#  - :watch (defaults to "default") can be an array
-#  - :colors (defaults to 1)
-#  - :progress
-guard :webpacker do
-  watch('config/webpacker.yml')
-  watch(%r{^config/webpacker/(.+)$})
-end
-
-# Guard-Rails supports a lot options with default values:
-# daemon: false                        # runs the server as a daemon.
-# debugger: false                      # enable ruby-debug gem.
-# environment: 'development'           # changes server environment.
-# force_run: false                     # kills any process that's holding the listen port before attempting to (re)start Rails.
-# pid_file: 'tmp/pids/[RAILS_ENV].pid' # specify your pid_file.
-# host: 'localhost'                    # server hostname.
-# port: 3000                           # server port number.
-# root: '/spec/dummy'                  # Rails' root path.
-# server: thin                         # webserver engine.
-# start_on_start: true                 # will start the server when starting Guard.
-# timeout: 30                          # waits untill restarting the Rails server, in seconds.
-# zeus_plan: server                    # custom plan in zeus, only works with `zeus: true`.
-# zeus: false                          # enables zeus gem.
-# CLI: 'rails server'                  # customizes runner command. Omits all options except `pid_file`!
-
-guard 'rails', port: 3020, host: '0.0.0.0' do
-  watch('Gemfile.lock')
-  watch(%r{^(config|lib)/.*})
-end
-
 guard :bundler do
   require 'guard/bundler'
   require 'guard/bundler/verify'
@@ -99,11 +67,41 @@ guard :bundler do
   files.each { |file| watch(helper.real_path(file)) }
 end
 
-guard :yarn do
-  watch("package.json")
-end
+group :development do
+  guard :yarn do
+    watch("package.json")
+    watch("yarn.lock")
+  end
 
-guard 'migrate' do
-  watch(%r{^db/migrate/(\d+).+\.rb})
-  watch('db/seeds.rb')
+  ### Guard::Webpacker
+  #  available options:
+  #  - :bin (defaults to "webpack-dev-server") to run
+  #  - :watch (defaults to "default") can be an array
+  #  - :colors (defaults to 1)
+  #  - :progress
+  guard :webpacker do
+    watch('config/webpacker.yml')
+    watch(%r{^config/webpack/(.+)$})
+  end
+
+  # Guard-Rails supports a lot options with default values:
+  # daemon: false                        # runs the server as a daemon.
+  # debugger: false                      # enable ruby-debug gem.
+  # environment: 'development'           # changes server environment.
+  # force_run: false                     # kills any process that's holding the listen port before attempting to (re)start Rails.
+  # pid_file: 'tmp/pids/[RAILS_ENV].pid' # specify your pid_file.
+  # host: 'localhost'                    # server hostname.
+  # port: 3000                           # server port number.
+  # root: '/spec/dummy'                  # Rails' root path.
+  # server: thin                         # webserver engine.
+  # start_on_start: true                 # will start the server when starting Guard.
+  # timeout: 30                          # waits untill restarting the Rails server, in seconds.
+  # zeus_plan: server                    # custom plan in zeus, only works with `zeus: true`.
+  # zeus: false                          # enables zeus gem.
+  # CLI: 'rails server'                  # customizes runner command. Omits all options except `pid_file`!
+  
+  guard 'rails', port: 3020, host: '0.0.0.0' do
+    watch('Gemfile.lock')
+    watch(%r{^(config|lib)/.*})
+  end
 end

@@ -10,6 +10,7 @@ RUN apk add --update --no-cache \
     tzdata \
     libnotify \
     git \
+    python2 \
     vim
 
 COPY Gemfile* /usr/src/app/
@@ -20,7 +21,6 @@ WORKDIR /usr/src/app
 ENV BUNDLE_PATH /gems
 
 RUN bundle install && cp Gemfile.lock /tmp
-RUN yarn install --check-files
 
 COPY . /usr/src/app/
 

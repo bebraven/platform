@@ -18,11 +18,6 @@ export default class SliderQuestionEditing extends Plugin {
     _defineSchema() {
         const schema = this.editor.model.schema;
 
-        schema.register( 'sliderQuestion', {
-            isObject: true,
-            allowIn: 'section',
-        } );
-
         schema.register( 'displayValueDiv', {
             isObject: true,
             allowIn: 'questionFieldset',
@@ -41,14 +36,6 @@ export default class SliderQuestionEditing extends Plugin {
             allowContentOf: [ '$block' ],
         } );
 
-        schema.extend( 'question', {
-            allowIn: 'sliderQuestion'
-        } );
-
-        schema.extend( 'answer', {
-            allowIn: 'sliderQuestion'
-        } );
-
         schema.extend( 'slider', {
             allowIn: 'questionFieldset'
         } );
@@ -58,35 +45,6 @@ export default class SliderQuestionEditing extends Plugin {
         const editor = this.editor;
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
-
-        // <sliderQuestion> converters
-        conversion.for( 'upcast' ).elementToElement( {
-            view: {
-                name: 'div',
-                classes: ['module-block', 'module-block-range']
-            },
-            model: ( viewElement, modelWriter ) => {
-                return modelWriter.createElement( 'sliderQuestion', {} );
-            }
-        } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'sliderQuestion',
-            view: ( modelElement, viewWriter ) => {
-                return viewWriter.createContainerElement( 'div', {
-                    'class': 'module-block module-block-range',
-                } );
-            }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'sliderQuestion',
-            view: ( modelElement, viewWriter ) => {
-                const sliderQuestion = viewWriter.createContainerElement( 'div', {
-                    'class': 'module-block module-block-range',
-                } );
-
-                return toWidget( sliderQuestion, viewWriter, { label: 'range question widget' } );
-            }
-        } );
 
         // <displayValueDiv> converters
         conversion.for( 'upcast' ).elementToElement( {

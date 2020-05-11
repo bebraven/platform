@@ -1,2 +1,2 @@
 web: bin/rails server -p $PORT -e $RAILS_ENV
-release: ./release-tasks.sh
+release: ./scripts/release-tasks.sh

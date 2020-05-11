@@ -10,14 +10,14 @@ export default class InsertTextAreaQuestionCommand extends Command {
     refresh() {
         const model = this.editor.model;
         const selection = model.document.selection;
-        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'textAreaQuestion' );
+        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'moduleBlock' );
 
         this.isEnabled = allowedIn !== null;
     }
 }
 
 function createTextAreaQuestion( writer ) {
-    const textAreaQuestion = writer.createElement( 'textAreaQuestion' );
+    const textAreaQuestion = writer.createElement( 'moduleBlock' );
     const question = writer.createElement( 'question', { 'data-grade-as': 'textarea' } );
     const questionTitle = writer.createElement( 'questionTitle' );
     const questionBody = writer.createElement( 'questionBody' );
