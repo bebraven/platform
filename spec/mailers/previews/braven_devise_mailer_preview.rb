@@ -11,4 +11,7 @@ class BravenDeviseMailerPreview < ActionMailer::Preview
     BravenDeviseMailer.reset_password_instructions(User.first, "faketoken", {})
   end
 
+  def password_change
+    BravenDeviseMailer.password_change(User.first, {})
+  end
 end
