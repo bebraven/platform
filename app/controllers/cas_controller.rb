@@ -12,10 +12,13 @@ class CasController < ApplicationController
   before_action :set_request_client
   before_action :set_params
 
-  include RubyCAS::Server::Core::Util
+  # Note that the following helper classes in this controller come from this module
+  # TGT = Ticket Granting Ticket
+  # ST = Service Ticket
+  # LT = Login Ticket
+  # PGT = Proxy Granting Ticket
+  # PT = Proxy Ticket
   include RubyCAS::Server::Core::Tickets
-  include RubyCAS::Server::Core::Tickets::Validations
-  include RubyCAS::Server::Core::Tickets::Generations
 
   # Non-standard controller without normal CRUD methods. Disable the convenience module.
   def dry_crud_enabled?
@@ -30,9 +33,11 @@ class CasController < ApplicationController
 
     # optional params
     @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
+    @message = { :type => 'notice', :message => params[:notice] } if params[:notice]
+ 
 
     if tgc = request.cookies['tgt']
-      tgt, tgt_error = validate_ticket_granting_ticket(tgc)
+      tgt, tgt_error = TGT.validate(tgc)
     end
 
     if tgt && !tgt_error
@@ -59,10 +64,9 @@ class CasController < ApplicationController
           logger.info("Authentication renew explicitly requested. Proceeding with CAS login for service #{@service.inspect}.")
         elsif tgt && !tgt_error
           logger.debug("Valid ticket granting ticket detected.")
-          st = ST.generate_service_ticket(@service, tgt.username, tgt, @request_client)
-          service_with_ticket = service_uri_with_ticket(@service, st)
+          st = ST.create! @service, tgt.username, tgt, @request_client
           logger.info("User '#{tgt.username}' authenticated based on ticket granting cookie. Redirecting to service '#{@service}'.")
-          return redirect_to service_with_ticket, status: 303
+          redirect_to Utils.build_ticketed_url(@service, st) and return
         elsif @gateway
           logger.info("Redirecting unauthenticated gateway request to service '#{@service}'.")
           return redirect_to @service, status: 303
@@ -85,7 +89,7 @@ class CasController < ApplicationController
       }
     end
 
-    lt = LT.generate_login_ticket(@request_client)
+    lt = LT.create! @request_client
 
     logger.debug("Rendering login form with lt: #{lt}, service: #{@service}, renew: #{@renew}, gateway: #{@gateway}")
 
@@ -121,15 +125,15 @@ class CasController < ApplicationController
     @password = params['password']
     @lt = params['lt']
 
-    if !result = validate_login_ticket(@lt)
+    if !result = LT.validate(@lt)
       @message = {:type => 'mistake', :message => error}
       # generate another login ticket to allow for re-submitting the form
-      @lt = LT.generate_login_ticket(@request_client).ticket
+      @lt = LT.create!(@request_client).ticket
       return render :login, status: :unauthorized
     end
 
     # generate another login ticket to allow for re-submitting the form after a post
-    @lt = LT.generate_login_ticket(@request_client).ticket
+    @lt = LT.create!(@request_client).ticket
 
     logger.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{@settings.inspect}")
 
@@ -162,7 +166,7 @@ class CasController < ApplicationController
         logger.info("Credentials for username '#{@username}' successfully validated using #{successful_authenticator.class.name}.")
         logger.debug("Authenticator provided additional user attributes: #{extra_attributes.inspect}") unless extra_attributes.blank?
 
-        tgt = generate_ticket_granting_ticket(@username, extra_attributes)
+        tgt = TGT.create! @username, @request_client, false, extra_attributes
         response.set_cookie('tgt', tgt.to_s)
 
         logger.debug("Ticket granting cookie '#{tgt.inspect}' granted to #{@username.inspect}")
@@ -171,12 +175,11 @@ class CasController < ApplicationController
           logger.info("Successfully authenticated user '#{@username}' at '#{tgt.client_hostname}'. No service param was given, so we will not redirect.")
           @message = {:type => 'confirmation', :message => "You have successfully logged in."}
         else
-          @st = ST.generate_service_ticket(@service, @username, tgt, @request_client)
+          @st = ST.create! @service, @username, tgt, @request_client
 
           begin
-            service_with_ticket = service_uri_with_ticket(@service, @st)
             logger.info("Redirecting authenticated user '#{@username}' at '#{@st.client_hostname}' to service '#{@service}'")
-            return redirect_to service_with_ticket, status: 303
+            redirect_to Utils.build_ticketed_url(@service, @st) and return
           rescue URI::InvalidURIError
             logger.error("The service '#{@service}' is not a valid URI!")
             @message = {
@@ -195,7 +198,7 @@ class CasController < ApplicationController
     rescue RubyCAS::Server::Core::AuthenticatorError => e
       logger.error(e)
       # generate another login ticket to allow for re-submitting the form
-      @lt = LT.generate_login_ticket(@request_client).ticket
+      @lt = LT.create!(@request_client).ticket
       @message = {:type => 'mistake', :message => e.to_s}
       return render :login , status: :unauthorized
     end
@@ -223,7 +226,7 @@ class CasController < ApplicationController
       TicketGrantingTicket.transaction do
         logger.debug("Deleting Service/Proxy Tickets for '#{tgt}' for user '#{tgt.username}'")
         tgt.service_tickets.each do |st|
-          send_logout_notification_for_service_ticket(st) if @settings[:enable_single_sign_out]
+          ST.send_logout_notification_for_service_ticket(st) if @settings[:enable_single_sign_out]
           logger.debug "Deleting #{st.class.name.demodulize} #{st.ticket.inspect} for service #{st.service}."
           st.destroy
         end
@@ -253,9 +256,11 @@ class CasController < ApplicationController
 
     @log_out_of_services = true
 
-    @lt = generate_login_ticket(@request_client)
+    @lt = LT.create! @request_client
 
-    if @gateway && @service
+    if current_user
+      sign_out_and_redirect(current_user) and return
+    elsif @gateway && @service
       return render :login
     elsif @continue_url
       return render :logout
@@ -271,7 +276,7 @@ class CasController < ApplicationController
   # Renders a page with a login ticket (and only the login ticket)
   # in the response body.
   def loginTicketPost
-    lt = LT.generate_login_ticket(@request_client)
+    lt = LT.create! @request_client
 
     logger.debug("Dispensing login ticket #{lt} to host #{@request_client.inspect}")
 
@@ -279,7 +284,7 @@ class CasController < ApplicationController
   end
 
   def validate
-    st, @error = validate_service_ticket(@service, @ticket)
+    st, @error = ST.validate(@service, @ticket)
 
     return render json: {error: @error}, status: :unprocessable_entity if @error
 
@@ -292,13 +297,13 @@ class CasController < ApplicationController
   def serviceValidate
     @pgt_url = params['pgtUrl']
 
-    st, @error = validate_service_ticket(@service, @ticket)
+    st, @error = ST.validate(@service, @ticket)
     @success = !st.nil? && !@error
 
     if @success
       @username = st.username
       if @pgt_url
-        pgt = generate_proxy_granting_ticket(@pgt_url, st, @request_client)
+        pgt = PGT.create @pgt_url, st, @request_client
         @pgtiou = pgt.iou if pgt
       end
       tgt = TGT.find_by(id: st.ticket_granting_ticket_id)
@@ -311,7 +316,7 @@ class CasController < ApplicationController
   def proxyValidate
     @pgt_url = params['pgtUrl']
 
-    pt, @error = validate_proxy_ticket(@service, @ticket)
+    pt, @error = PT.validate(@service, @ticket)
 
     @success = !pt.nil? && !@error
     @proxies = []
@@ -326,7 +331,7 @@ class CasController < ApplicationController
       end
 
       if @pgt_url
-        pgt = generate_proxy_granting_ticket(@pgt_url, pt, @request_client)
+        pgt = PGT.create @pgt_url, pt, @request_client
         @pgtiou = pgt.iou if pgt
       end
     end
@@ -338,12 +343,16 @@ class CasController < ApplicationController
     @ticket = params['pgt']
     @target_service = params['targetService']
 
-    pgt, @error = validate_proxy_granting_ticket(@ticket)
+    pgt, @error = PGT.validate(@ticket)
 
     @success = !pgt.nil? && !@error
-    @pt = generate_proxy_ticket(@target_service, pgt, @request_client) if @success
+    @pt = PT.create! @target_service, pgt, @request_client if @success
 
     render :proxy, formats: [:xml]
+  end
+
+  class PGT
+    include RubyCAS::Server::Core::Tickets::Validations
   end
 
   private
@@ -362,4 +371,46 @@ class CasController < ApplicationController
     @renew = params['renew'] || nil
     @extra_attributes = {}
   end 
+end
+
+# TODO: move this to the rubycas-server-core gem here:
+# lib/rubycas-server-core/tickets.rb
+module RubyCAS
+  module Server
+    module Core
+      module Tickets
+        class PGT
+          extend ::RubyCAS::Server::Core::Tickets::Generations
+          extend ::RubyCAS::Server::Core::Tickets::Validations
+          def self.validate(pgt)
+            validate_proxy_granting_ticket(pgt)
+          end
+
+          def self.create(pgt_url, pt, client = "localhost")
+            generate_proxy_granting_ticket(pgt_url, pt, client)
+          end
+        end
+
+        class PT
+          extend ::RubyCAS::Server::Core::Tickets::Generations
+          extend ::RubyCAS::Server::Core::Tickets::Validations
+          def self.validate(service, ticket)
+            validate_proxy_ticket(service, ticket)
+          end
+
+          def self.create(target_service, pgt, client = "localhost")
+            generate_proxy_ticket(target_service, pgt, client)
+          end
+        end
+
+        class ST
+          extend ::RubyCAS::Server::Core::Tickets::Generations
+          extend ::RubyCAS::Server::Core::Tickets::Validations
+          def self.send_logout_notifications(st)
+            send_logout_notification_for_service_ticket(st)
+          end
+        end
+      end
+    end
+  end
 end

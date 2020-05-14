@@ -165,6 +165,7 @@ BalloonEditor.defaultConfig = {
         ]
     },
     image: {
+        resizeUnit: 'px',
         toolbar: [
             'imageStyle:full',
             'imageStyle:side',
