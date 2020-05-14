@@ -244,15 +244,26 @@ Or, for example you can inspect one such as the `@current_user` by writing `inst
 
 We also have the pry and rescue gems so that you can break and debug code. Here is an example for how to debug
 a spec that is throwing an exception.
+
     bundle exec rescue rspec spec/a_failing_spec.rb --format documentation   
+
+See [this FANTASTIC article](https://supergood.software/a-ruby-gem-debugging-strategy/) for some general advice around
+debugging and troubleshooting things if you're new to RoR development.
+
+Of specific note, if you need to debug the code inside a gem, our gems are installed
+at `vendor/bundle` inside the container. If you attach to the container you can dig down in there and add a 
+some logging inside the gem code. You have to restart the container for the change to be picked up and if you 
+make a mess of things and want to blow it away you need to remove the vendor-bundle volume using:
+
+    docker-compose down -v vendor-bundle
+
+**NOTE:** pry doesn't currently work with our setup. Need to figure that out.
 
 For troubleshooting ckeditor-specific issues in the content editor, append '?debug' to the URL:
 
     http://platformweb/course_contents/new?debug
 
 That will attach the [CKEditor Inspector](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/development-tools.html#ckeditor-5-inspector).
-
-**TODO:** talk about pry and other dev and troubleshooting techniques.
 
 ### Development environment setup
 

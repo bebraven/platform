@@ -1,4 +1,5 @@
-production: &default
+default: &default
+  enable_single_sign_out: true
   maximum_unused_login_ticket_lifetime: 300
   maximum_unused_service_ticket_lifetime: 300
   maximum_session_lifetime: 172800
@@ -32,7 +33,7 @@ production: &default
     source: cas_authenticator.rb
 <% end %>
 
-development:
+development: &development_config
   <<: *default
   log:
     output: 
@@ -58,34 +59,19 @@ development:
 <% end %>
 
 test:
-  <<: *default
+  <<: *development_config
   log:
     output: 
     level: ERROR
-  public_site_domain: joinweb
-  # this should be the *top* domain - so even for staging, it should be .join.bebraven.org stilldefault_service: http://canvasweb/login/cas
-  cookie_domain: .localhost 
   organization: "RSPEC-TEST"
   infoline: "This is an rspec test."  
-  theme: simple
   database:
     <<: *default_db
     database: platform_test
-<% if ENV['BZ_AUTH_SERVER'] %>
-  authenticator:
-    <<: *default_bz_auth
-    server: joinweb
-    ssl: false
-    port: 3001
-    allow_self_signed: true
-<% else %>
-  authenticator:
-    <<: *default_cas_auth
-<% end %>
   uri_path: /test
   disable_auto_migrations: true
   quiet: true
   default_locale: en
-  enable_single_sign_out: true
 
-  
+production:
+  <<: *default
