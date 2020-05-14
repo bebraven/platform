@@ -51,4 +51,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :canvas_url
 
+  # This is just the main login path that redirects to the proper place on success.
+  # e.g. https://platform.bebraven.org/cas/login?service=https%3A%2F%2Fportal.bebraven.org%2Flogin%2Fcas
+  def cas_login_url
+    ::Devise.cas_client.add_service_to_login_url(::Devise.cas_service_url(request.url, devise_mapping))
+  end
+  helper_method :cas_login_url
+
 end

@@ -69,11 +69,6 @@ export default class ChecklistQuestionEditing extends Plugin {
     _defineSchema() {
         const schema = this.editor.model.schema;
 
-        schema.register( 'checklistQuestion', {
-            isObject: true,
-            allowIn: 'section',
-        } );
-
         schema.register( 'checkboxDiv', {
             isObject: true,
             allowIn: [ 'questionFieldset' ],
@@ -112,35 +107,6 @@ export default class ChecklistQuestionEditing extends Plugin {
         const editor = this.editor;
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
-
-        // <checklistQuestion> converters
-        conversion.for( 'upcast' ).elementToElement( {
-            view: {
-                name: 'div',
-                classes: ['module-block', 'module-block-checkbox']
-            },
-            model: ( viewElement, modelWriter ) => {
-                return modelWriter.createElement( 'checklistQuestion' );
-            }
-        } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'checklistQuestion',
-            view: ( modelElement, viewWriter ) => {
-                return viewWriter.createEditableElement( 'div', {
-                    'class': 'module-block module-block-checkbox',
-                } );
-            }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'checklistQuestion',
-            view: ( modelElement, viewWriter ) => {
-                const checklistQuestion = viewWriter.createContainerElement( 'div', {
-                    'class': 'module-block module-block-checkbox',
-                } );
-
-                return toWidget( checklistQuestion, viewWriter, { label: 'checklist-question widget' } );
-            }
-        } );
 
         // <checkboxDiv> converters
         conversion.for( 'upcast' ).elementToElement( {

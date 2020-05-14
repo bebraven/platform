@@ -46,7 +46,6 @@ group :development do
   gem 'pry-rescue', require: false
   gem 'pry-stack_explorer', require: false
   gem 'rubocop', require: false
-  gem 'guard-bundler', require: false
   gem 'guard-livereload', require: false
   gem 'guard-rails', require: false
   gem 'guard-rspec', require: false
