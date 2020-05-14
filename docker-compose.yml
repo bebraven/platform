@@ -23,6 +23,7 @@ services:
       - /app/tmp
       - /app/log
       - node-modules:/app/node_modules
+      - vendor-bundle:/app/vendor/bundle
       - webpack-cache:/app/tmp/cache/webpacker
     depends_on:
       - platform_chrome
@@ -71,6 +72,7 @@ services:
 volumes:
   db-platform:
   node-modules:
+  vendor-bundle:
   webpack-cache:
 
 # Note all Braven web app docker dev envs use this same network so they can talk to each other.

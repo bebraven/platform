@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Turn off automatic visual mode using the mouse
+echo "set mouse-=a" >> ~/.vimrc
+
 echo "Checking if the SALESFORCE ENV vars are setup"
 if [ -z "$SALESFORCE_HOST" ] || \
    [ -z "$SALESFORCE_PLATFORM_CONSUMER_KEY" ] || \
