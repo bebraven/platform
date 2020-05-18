@@ -61,6 +61,7 @@ export default class ModuleBlockEditing extends Plugin {
                 // FIXME: Camelcase is broken with CKE built-in conversions, esp. on upcast
                 'blockClasses',
                 'data-icon',
+                'data-radio-group',
             ],
         } );
     }
@@ -94,26 +95,55 @@ export default class ModuleBlockEditing extends Plugin {
                 // Remove icon from class
                 const blockClasses = srcClasses.replace(icon, "").trim();
 
-                return modelWriter.createElement( 'moduleBlock', {
+                let attributes = {
                     'blockClasses': blockClasses,
                     'data-icon': icon,
-                });
+                }
+
+                // Special radio-question support.
+                // This attribute is set in insertradioquestioncommand.js.
+                const radioGroup = viewElement.getAttribute( 'data-radio-group' );
+                if ( radioGroup ) {
+                    attributes['data-radio-group'] = radioGroup;
+                }
+
+                return modelWriter.createElement( 'moduleBlock', attributes );
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
             model: 'moduleBlock',
             view: ( modelElement, viewWriter ) => {
-                return viewWriter.createContainerElement( 'div', {
+                let attributes = {
                     'class': modelElement.getAttribute('blockClasses') || 'module-block',
-                } );
+                    'data-icon': modelElement.getAttribute('data-icon') || 'module-block-question',
+                }
+
+                // Special radio-question support.
+                // This attribute is set in insertradioquestioncommand.js.
+                const radioGroup = modelElement.getAttribute( 'data-radio-group' );
+                if ( radioGroup ) {
+                    attributes['data-radio-group'] = radioGroup;
+                }
+
+                return viewWriter.createContainerElement( 'div', attributes );
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'moduleBlock',
             view: ( modelElement, viewWriter ) => {
-                const moduleBlock = viewWriter.createContainerElement( 'div', {
+                let attributes = {
                     'class': modelElement.getAttribute('blockClasses') || 'module-block',
-                } );
+                    'data-icon': modelElement.getAttribute('data-icon') || 'module-block-question',
+                }
+
+                // Special radio-question support.
+                // This attribute is set in insertradioquestioncommand.js.
+                const radioGroup = modelElement.getAttribute( 'data-radio-group' );
+                if ( radioGroup ) {
+                    attributes['data-radio-group'] = radioGroup;
+                }
+
+                const moduleBlock = viewWriter.createContainerElement( 'div', attributes );
 
                 return toWidget( moduleBlock, viewWriter, { label: 'module-block widget', hasSelectionHandle: true } );
             }

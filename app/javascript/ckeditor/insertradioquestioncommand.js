@@ -18,7 +18,13 @@ export default class InsertRadioQuestionCommand extends Command {
 }
 
 function createRadioQuestion( writer ) {
-    const radioQuestion = writer.createElement( 'moduleBlock', {'data-radio-group': uid()} );
+    const radioGroup = uid();
+    // Value must be unique within each group, but otherwise doesn't matter.
+    // No reason to tie in retained data or anything, we can just use "1".
+    const radioFirstValue = '1';
+    const radioFirstID = [radioGroup, radioFirstValue].join('_');
+
+    const radioQuestion = writer.createElement( 'moduleBlock', {'data-radio-group': radioGroup} );
     const question = writer.createElement( 'question', { 'data-grade-as': 'radio' } );
     const questionTitle = writer.createElement( 'questionTitle' );
     const questionBody = writer.createElement( 'questionBody' );
@@ -26,8 +32,12 @@ function createRadioQuestion( writer ) {
     const questionFieldset = writer.createElement( 'questionFieldset' );
     const doneButton = writer.createElement( 'doneButton' );
     const radioDiv = writer.createElement( 'radioDiv' );
-    const radioInput = writer.createElement( 'radioInput' );
-    const radioLabel = writer.createElement( 'radioLabel' );
+    const radioInput = writer.createElement( 'radioInput', {
+        name: radioGroup,
+        id: radioFirstID,
+        value: radioFirstValue,
+    } );
+    const radioLabel = writer.createElement( 'radioLabel', { 'for': radioFirstID } );
     const radioInlineFeedback = writer.createElement( 'radioInlineFeedback' );
     const answer = writer.createElement( 'answer' );
     const answerTitle = writer.createElement( 'answerTitle' );
