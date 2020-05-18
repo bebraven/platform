@@ -102,6 +102,7 @@ class User < ApplicationRecord
   def do_account_registration
     if sync_salesforce_info # They can't register for Canvas access if they aren't Enrolled in Salesforce
       setup_canvas_access
+      store_canvas_id_in_salesforce
     end
   end
 
@@ -128,4 +129,7 @@ class User < ApplicationRecord
     end
   end
 
+  def store_canvas_id_in_salesforce
+    SalesforceAPI.client.set_canvas_id(salesforce_id, canvas_id)
+  end
 end

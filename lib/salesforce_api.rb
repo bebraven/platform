@@ -65,6 +65,12 @@ class SalesforceAPI
     handle_rest_client_error(e)
   end
 
+  def patch(path, body, headers={})
+    RestClient.patch("#{@salesforce_url}#{path}", body, @global_headers.merge(headers))
+  rescue => e
+    handle_rest_client_error(e)
+  end
+
   def get_program_info(program_id)
     soql_query = 
       "SELECT Id, Name, Target_Course_ID_in_LMS__c, LMS_Coach_Course_Id__c, School__c, " \
@@ -110,6 +116,11 @@ class SalesforceAPI
       "IsEmailBounced,BZ_Geographical_Region__c,Current_Employer__c,Career__c,Title,Job_Function__c,Current_Major__c," \
       "High_School_Graduation_Date__c,Anticipated_Graduation__c,Graduate_Year__c")
     JSON.parse(response.body)
+  end
+
+  def set_canvas_id(contact_id, canvas_id)
+    body = { 'Canvas_User_ID__c' => canvas_id }
+    response = patch("/services/data/v48.0/sobjects/Contact/#{contact_id}", body.to_json, JSON_HEADERS)
   end
 
 # TODO: delete me if we don't need to use a POST for any reason. I figured out how to accept query params in the get after I had implement this.
