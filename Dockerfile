@@ -23,7 +23,7 @@ WORKDIR /app
 ENV BUNDLE_PATH=/app/vendor/bundle
 
 COPY Gemfile Gemfile.lock /app/
-RUN bundle install --path vendor/bundle --jobs 4 && cp Gemfile.lock /tmp
+RUN bundle install --path vendor/bundle --jobs 4 --frozen && cp Gemfile.lock /tmp
 
 COPY . /app/
 

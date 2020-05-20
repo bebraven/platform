@@ -34,7 +34,6 @@ function createSliderQuestion( writer ) {
         'min': DEFAULT_MIN,
         'max': DEFAULT_MAX,
         'step': DEFAULT_STEP,
-        'data-bz-answer': DEFAULT_ANSWER,
         'data-bz-range-answer': DEFAULT_ANSWER,
     } );
     const displayValueDiv = writer.createElement( 'displayValueDiv' );

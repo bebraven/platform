@@ -527,8 +527,7 @@ class ContentEditor extends Component {
                                         return;
                                     }
 
-                                    const answer = selectedElement.getAttribute('data-bz-answer');
-                                    const rangeAnswer = selectedElement.getAttribute('data-bz-range-answer');
+                                    const answer = selectedElement.getAttribute('data-bz-range-answer');
 
                                     return (
                                         <>
@@ -568,10 +567,9 @@ class ContentEditor extends Component {
                                                 type='number'
                                                 id='input-answer'
                                                 value={answer}
-                                                disabled={!(answer || rangeAnswer)}
+                                                disabled={answer === undefined}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', {
-                                                        'data-bz-answer': evt.target.value,
                                                         'data-bz-range-answer': evt.target.value,
                                                     } );
                                                 }}
