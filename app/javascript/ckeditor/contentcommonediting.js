@@ -3,33 +3,77 @@ import { enablePlaceholder } from '@ckeditor/ckeditor5-engine/src/view/placehold
 import { toWidget, toWidgetEditable } from '@ckeditor/ckeditor5-widget/src/utils';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
 import List from '@ckeditor/ckeditor5-list/src/list';
+import Table from '@ckeditor/ckeditor5-table/src/table';
 import RetainedData from './retaineddata';
 import InsertTextInputCommand from './inserttextinputcommand';
 import InsertDoneButtonCommand from './insertdonebuttoncommand';
 import InsertContentBlockCommand from './insertcontentblockcommand';
 import InsertFileUploadQuestionCommand from './insertfileuploadquestioncommand';
+import InsertTextAreaQuestionCommand from './inserttextareaquestioncommand';
+import InsertTextAreaCommand from './inserttextareacommand';
+import SetAttributesCommand from './setattributescommand';
+import InsertMatrixQuestionCommand from './insertmatrixquestioncommand';
+import InsertSliderCommand from './insertslidercommand';
+import InsertTableContentCommand from './inserttablecontentcommand';
 import { ALLOWED_ATTRIBUTES, filterAllowedAttributes } from './customelementattributepreservation';
 import * as Slider from '../constants/sliderquestionconstants';
 
 export default class ContentCommonEditing extends Plugin {
     static get requires() {
-        return [ Widget, RetainedData, List ];
+        return [ Widget, RetainedData, List, Table ];
     }
 
     init() {
         this._defineSchema();
         this._defineConverters();
 
+        // Individial elements.
         this.editor.commands.add( 'insertTextInput', new InsertTextInputCommand( this.editor ) );
         this.editor.commands.add( 'insertDoneButton', new InsertDoneButtonCommand( this.editor ) );
+        this.editor.commands.add( 'insertTextArea', new InsertTextAreaCommand( this.editor ) );
+        this.editor.commands.add( 'insertSlider', new InsertSliderCommand( this.editor ) );
+        // Blocks.
         this.editor.commands.add( 'insertContentBlock', new InsertContentBlockCommand( this.editor ) );
+        this.editor.commands.add( 'insertTableContent', new InsertTableContentCommand( this.editor ) );
         this.editor.commands.add( 'insertFileUploadQuestion', new InsertFileUploadQuestionCommand( this.editor ) );
+        this.editor.commands.add( 'insertTextAreaQuestion', new InsertTextAreaQuestionCommand( this.editor ) );
+        this.editor.commands.add( 'insertMatrixQuestion', new InsertMatrixQuestionCommand( this.editor ) );
+        // SetAttributes.
+        this.editor.commands.add( 'setAttributes', new SetAttributesCommand( this.editor ) );
 
         // Add a shortcut to the retained data ID function.
         this._nextRetainedDataId = this.editor.plugins.get('RetainedData').getNextId;
         this._nextId = this.editor.plugins.get('RetainedData').getNextCount;
     }
 
+    /**
+     * Example valid structures:
+     *
+     * <moduleBlock>
+     *   <content>
+     *     <contentTitle>$text</contentTitle>
+     *     <contentBody>$block</contentBody>
+     *     <doneButton/>
+     *   </content>
+     * </moduleBlock>
+     *
+     * <moduleBlock>
+     *   <question>
+     *     <questionTitle>$text</questionTitle>
+     *     <questionBody>$block</questionBody>
+     *     <questionForm>
+     *       <questionFieldset>
+     *         ...inputs...
+     *       </questionFieldset>
+     *       <doneButton/>
+     *     </questionForm>
+     *   </question>
+     *   <answer>
+     *     <answerTitle>$text</answerTitle>
+     *     <answerBody>$block</answerBody>
+     *   </answer>
+     * </moduleBlock>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 
@@ -77,15 +121,18 @@ export default class ContentCommonEditing extends Plugin {
         } );
 
         schema.register( 'questionForm', {
-            // Cannot be split or left by the caret.
             isLimit: true,
             allowIn: [ 'question', 'content' ]
         } );
 
         schema.register( 'questionFieldset', {
-            // Cannot be split or left by the caret.
             isLimit: true,
             allowIn: 'questionForm',
+        } );
+
+        // Matrix question table.
+        schema.extend( 'table', {
+            allowIn: 'questionFieldset',
         } );
 
         schema.extend( 'listItem', {
@@ -99,7 +146,6 @@ export default class ContentCommonEditing extends Plugin {
         } );
 
         schema.register( 'legend', {
-            // Cannot be split or left by the caret.
             isLimit: true,
             allowIn: 'questionFieldset',
             allowContentOf: '$block'
@@ -145,7 +191,7 @@ export default class ContentCommonEditing extends Plugin {
         schema.register( 'slider', {
             isObject: true,
             allowAttributes: [ 'type', 'max', 'min', 'step' ].concat(ALLOWED_ATTRIBUTES),
-            allowIn: [ '$root', 'questionFieldset' ],
+            allowIn: [ '$root', 'questionFieldset', 'tableCell' ],
         } );
 
         schema.register( 'select', {
@@ -195,7 +241,7 @@ export default class ContentCommonEditing extends Plugin {
                 name: 'h5'
             },
             model: ( viewElement, modelWriter ) => {
-                const id = viewElement.getAttribute( 'id' ) || this._nextId();
+                const id = viewElement.getAttribute( 'id' );
                 return modelWriter.createElement( 'contentTitle', {
                     'id': id,
                     'toc-link-href': '#' + id,
@@ -312,7 +358,7 @@ export default class ContentCommonEditing extends Plugin {
                 name: 'h5'
             },
             model: ( viewElement, modelWriter ) => {
-                const id = viewElement.getAttribute('id') || this._nextId();
+                const id = viewElement.getAttribute('id');
                 return modelWriter.createElement( 'questionTitle', {
                     'id': id,
                     'toc-link-href': '#' + id,
@@ -534,7 +580,7 @@ export default class ContentCommonEditing extends Plugin {
                 name: 'h5'
             },
             model: ( viewElement, modelWriter ) => {
-                const id = viewElement.getAttribute( 'id' ) || this._nextId();
+                const id = viewElement.getAttribute( 'id' );
                 return modelWriter.createElement( 'answerTitle', {
                     'id': id,
                     'toc-link-href': '#' + id,

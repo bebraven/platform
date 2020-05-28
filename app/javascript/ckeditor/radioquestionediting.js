@@ -56,6 +56,17 @@ export default class RadioQuestionEditing extends Plugin {
         } );
     }
 
+    /**
+     * Example valid structure:
+     *
+     * <questionFieldset>
+     *   <radioDiv>
+     *     <radioInput/>
+     *     <radioLabel>$text</radioLabel>
+     *     <radioInlineFeedback>$text</radioInlineFeedback>
+     *   </radioDiv>
+     * </questionFieldset>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 

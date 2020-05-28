@@ -189,10 +189,15 @@ class CasController < ApplicationController
           end
         end
       else
-        logger.warn("Invalid credentials given for user '#{@username}'")
-        @message = {
-          :type => 'mistake', :message => "Incorrect username or password."
-        }
+        user = User.find_by_email(@username)
+        unconfirmed_user = user && user.confirmed? == false
+        if unconfirmed_user
+          logger.warn("Unconfirmed user tried to login: '#{@username}'")
+          @message = { :type => 'mistake', :message => "Please confirm your account by clicking on the link in the email you received first." }
+        else
+          logger.warn("Invalid credentials given for user '#{@username}'")
+          @message = { :type => 'mistake', :message => "Incorrect username or password." }
+        end
         return render :login, status: :unauthorized
       end
     rescue RubyCAS::Server::Core::AuthenticatorError => e

@@ -2,6 +2,14 @@ import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 
 import { getViewImgFromWidget } from '@ckeditor/ckeditor5-image/src/image/utils';
 
+/**
+ * NOTE:
+ * This file is meant to help with the transition period while we have old,
+ * converted content that we need to still support. Old content has relative
+ * image links, all of which are hosted on portal.bebraven.org. We can remove
+ * this file once all relative image src attributes have been updated to point
+ * to absolute URLs.
+ */
 const PORTAL_URL = 'https://portal.bebraven.org'
 
 export default class PortalImageEditing extends Plugin {

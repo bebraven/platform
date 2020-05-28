@@ -51,6 +51,25 @@ export default class ModuleBlockEditing extends Plugin {
         });
     }
 
+    /**
+     * Example valid structures:
+     *
+     * <section>
+     *   <moduleBlock>
+     *     <content>
+     *     </content>
+     *   </moduleBlock>
+     * </section>
+     *
+     * <section>
+     *   <moduleBlock>
+     *     <question>
+     *     </question>
+     *     <answer>
+     *     </answer>
+     *   </moduleBlock>
+     * </section>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 

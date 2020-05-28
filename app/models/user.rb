@@ -55,7 +55,12 @@ class User < ApplicationRecord
   def full_name
     [first_name, last_name].join(' ')
   end
-  
+
+  # True if the user has confirmed their account and can login.  
+  def confirmed?
+    !!confirmed_at
+  end
+
   def start_membership(program_id, role_id)
     find_membership(program_id, role_id) ||
       program_memberships.create(program_id: program_id, role_id: role_id, start_date: Date.today)

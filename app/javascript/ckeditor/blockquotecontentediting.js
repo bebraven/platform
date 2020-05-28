@@ -16,6 +16,16 @@ export default class BlockquoteContentEditing extends Plugin {
         this.editor.commands.add( 'insertBlockquoteContent', new InsertBlockquoteContentCommand( this.editor ) );
     }
 
+    /**
+     * Example valid structure:
+     *
+     * <content>
+     *   <blockquoteQuote>
+     *     $block
+     *     <blockQuoteCitation>$text</blockQuoteCitation>
+     *   </blockquoteQuote>
+     * </content>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 

@@ -29,6 +29,25 @@ export default class MatchingQuestionEditing extends Plugin {
         });
     }
 
+    /**
+     * Example valid structure:
+     *
+     * <question>
+     *   <questionTitle>$text</questionTitle>
+     *   <questionBody>$block</questionBody>
+     *   <matchingTable>
+     *     <matchingTableHeader>
+     *       <matchingTableHeaderCell>$text</matchingTableHeaderCell>
+     *     </matchingTableHeader>
+     *     <matchingTableBody>
+     *       <matchingTableRow>
+     *         <matchingTableCell>$block</matchingTableCell>
+     *       </matchingTableRow>
+     *     </matchingTableBody>
+     *   </matchingTable>
+     *   <doneButton/>
+     * </question>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 

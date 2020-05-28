@@ -23,7 +23,11 @@ export default class InsertCheckboxCommand extends Command {
                 return;
             }
             writer.setSelection( checkboxDiv, 'after' );
-            this.editor.model.insertContent( createCheckbox( writer ) );
+
+            const { checkbox, checkboxPosition } = createCheckbox( writer );
+            this.editor.model.insertContent( checkbox );
+            writer.setSelection( checkboxPosition );
+
         } );
     }
 
@@ -51,6 +55,10 @@ function createCheckbox( writer ) {
 
     // Add text to empty editables where placeholders don't work.
     writer.insertText( 'Checkbox label', checkboxLabel );
+    const position = writer.createPositionAt( checkboxLabel, 0 );
 
-    return checkboxDiv;
+    return {
+        checkbox: checkboxDiv,
+        checkboxPosition: position,
+    };
 }

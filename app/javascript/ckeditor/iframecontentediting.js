@@ -15,6 +15,14 @@ export default class IFrameContentEditing extends Plugin {
         this.editor.commands.add( 'insertIFrameContent', new InsertIFrameContentCommand( this.editor ) );
     }
 
+
+    /**
+     * Example valid structure:
+     *
+     * <$root>
+     *   <iframe/>
+     * </$root>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 

@@ -15,6 +15,17 @@ export default class SliderQuestionEditing extends Plugin {
         this.editor.commands.add( 'insertSliderQuestion', new InsertSliderQuestionCommand( this.editor ) );
     }
 
+    /**
+     * Example valid structure:
+     *
+     * <questionFieldset>
+     *   <slider/>
+     *   <displayValueDiv>
+     *     <currentValueSpan/>
+     *     $text
+     *   </displayValueDiv>
+     * </questionFieldset>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 
@@ -29,15 +40,12 @@ export default class SliderQuestionEditing extends Plugin {
             allowIn: 'displayValueDiv',
         } );
 
+        // This is inlcuded for legacy support only; we do not want to allow new ones.
         schema.register( 'sliderFeedback', {
             isObject: true,
             allowIn: [ '$root', 'tableCell' ],
             allowAttributes: [ 'data-bz-range-flr', 'data-bz-range-clg' ],
             allowContentOf: [ '$block' ],
-        } );
-
-        schema.extend( 'slider', {
-            allowIn: 'questionFieldset'
         } );
     }
 

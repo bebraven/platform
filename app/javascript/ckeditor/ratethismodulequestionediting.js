@@ -2,7 +2,6 @@ import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import { toWidget } from '@ckeditor/ckeditor5-widget/src/utils';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
 import InsertRateThisModuleQuestionCommand from './insertratethismodulequestioncommand';
-import InsertSliderCommand from './insertslidercommand';
 
 export default class RateThisModuleQuestionEditing extends Plugin {
     static get requires() {
@@ -14,9 +13,33 @@ export default class RateThisModuleQuestionEditing extends Plugin {
         this._defineConverters();
 
         this.editor.commands.add( 'insertRateThisModuleQuestion', new InsertRateThisModuleQuestionCommand( this.editor ) );
-        this.editor.commands.add( 'insertSlider', new InsertSliderCommand( this.editor ) );
     }
 
+    /**
+     * Example valid structures:
+     *
+     * <section>
+     *   <rateThisModuleQuestion>
+     *     <question>
+     *       <questionTitle>$text</questionTitle>
+     *       <questionForm>
+     *         <questionFieldset>
+     *           <legend>$text</legend>
+     *           <rateThisModuleSliderContainer>
+     *             <rateThisModuleSliderLabelLeft>
+     *             </rateThisModuleSliderLabelLeft>
+     *             <sliderInput/>
+     *             <rateThisModuleSliderLabelRight>
+     *             </rateThisModuleSliderLabelRight>
+     *           </rateThisModuleSliderContainer>
+     *           <legend>$text</legend>
+     *           <textArea/>
+     *         </questionFieldset>
+     *       </questionForm>
+     *     </question>
+     *   </rateThisModuleQuestion>
+     * </section>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 

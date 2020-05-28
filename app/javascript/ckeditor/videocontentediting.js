@@ -16,6 +16,22 @@ export default class VideoContentEditing extends Plugin {
         this.editor.commands.add( 'insertVideoContent', new InsertVideoContentCommand( this.editor ) );
     }
 
+    /**
+     * Example valid structure:
+     *
+     * <content>
+     *   <contentTitle>$text</contentTitle>
+     *   <contentBody>$block</contentBody>
+     *   <videoFigure>
+     *     <videoIframe/>
+     *     <videoFigCaption>
+     *       <videoCaption>$text</videoCaption>
+     *       <videoDuration>$text</videoDuration>
+     *       <videoTranscript>$block</videoTranscript>
+     *     </videoFigCaption>
+     *   </videoFigure>
+     * </content>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 
@@ -58,33 +74,6 @@ export default class VideoContentEditing extends Plugin {
         const editor = this.editor;
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
-
-        // <videoContent> converters
-        conversion.for( 'upcast' ).elementToElement( {
-            view: {
-                name: 'div',
-                classes: ['module-block', 'module-block-video']
-            },
-            model: 'videoContent'
-        } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'videoContent',
-            view: ( modelElement, viewWriter ) => {
-                return viewWriter.createEditableElement( 'div', {
-                    'class': 'module-block module-block-video'
-                } );
-            }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'videoContent',
-            view: ( modelElement, viewWriter ) => {
-                const videoContent = viewWriter.createContainerElement( 'div', {
-                    'class': 'module-block module-block-video',
-                } );
-
-                return toWidget( videoContent, viewWriter, { label: 'video widget' } );
-            }
-        } );
 
         // <videoFigure> converters
         conversion.for( 'upcast' ).elementToElement( {

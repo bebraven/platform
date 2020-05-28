@@ -43,6 +43,16 @@ export default class SectionEditing extends Plugin {
         }, { priority: 'highest' } );
     }
 
+    /**
+     * Example valid structure:
+     *
+     * <$root>
+     *   <section>
+     *     <moduleBlock>
+     *     </moduleBlock>
+     *   </section>
+     * </$root>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 

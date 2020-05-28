@@ -47,11 +47,8 @@ import ModuleBlockEditing from '../ckeditor/moduleblockediting';
 import ChecklistQuestionEditing from '../ckeditor/checklistquestionediting';
 import SliderQuestionEditing from '../ckeditor/sliderquestionediting';
 import RadioQuestionEditing from '../ckeditor/radioquestionediting';
-import TextAreaQuestionEditing from '../ckeditor/textareaquestionediting';
 import RateThisModuleQuestionEditing from '../ckeditor/ratethismodulequestionediting';
 import MatchingQuestionEditing from '../ckeditor/matchingquestionediting';
-import MatrixQuestionEditing from '../ckeditor/matrixquestionediting';
-import TableContentEditing from '../ckeditor/tablecontentediting';
 import BlockquoteContentEditing from '../ckeditor/blockquotecontentediting';
 import IFrameContentEditing from '../ckeditor/iframecontentediting';
 import VideoContentEditing from '../ckeditor/videocontentediting';
@@ -110,11 +107,8 @@ BalloonEditor.builtinPlugins = [
     ChecklistQuestionEditing,
     RadioQuestionEditing,
     SliderQuestionEditing,
-    TextAreaQuestionEditing,
     RateThisModuleQuestionEditing,
     MatchingQuestionEditing,
-    MatrixQuestionEditing,
-    TableContentEditing,
     BlockquoteContentEditing,
     IFrameContentEditing,
     VideoContentEditing,
