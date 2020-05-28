@@ -56,14 +56,19 @@ export default class RadioQuestionEditing extends Plugin {
         } );
     }
 
+    /**
+     * Example valid structure:
+     *
+     * <questionFieldset>
+     *   <radioDiv>
+     *     <radioInput/>
+     *     <radioLabel>$text</radioLabel>
+     *     <radioInlineFeedback>$text</radioInlineFeedback>
+     *   </radioDiv>
+     * </questionFieldset>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
-
-        schema.register( 'radioQuestion', {
-            isObject: true,
-            allowIn: 'section',
-            allowAttributes: [ 'data-radio-group' ]
-        } );
 
         schema.register( 'radioDiv', {
             isObject: true,
@@ -90,52 +95,12 @@ export default class RadioQuestionEditing extends Plugin {
             allowIn: 'radioDiv',
             allowContentOf: '$block'
         } );
-
-        schema.addChildCheck( ( context, childDefinition ) => {
-            // Disallow adding questions inside answerText boxes.
-            if ( context.endsWith( 'answerText' ) && childDefinition.name == 'radioQuestion' ) {
-                return false;
-            }
-        } );
     }
 
     _defineConverters() {
         const editor = this.editor;
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
-
-        // <radioQuestion> converters
-        conversion.for( 'upcast' ).elementToElement( {
-            view: {
-                name: 'div',
-                classes: ['module-block', 'module-block-radio']
-            },
-            model: ( viewElement, modelWriter ) => {
-                return modelWriter.createElement( 'radioQuestion', {
-                    'data-radio-group': viewElement.getAttribute( 'data-radio-group' )
-                } );
-            }
-        } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'radioQuestion',
-            view: ( modelElement, viewWriter ) => {
-                return viewWriter.createEditableElement( 'div', {
-                    class: 'module-block module-block-radio',
-                    'data-radio-group': modelElement.getAttribute( 'data-radio-group' )
-                } );
-            }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'radioQuestion',
-            view: ( modelElement, viewWriter ) => {
-                const radioQuestion = viewWriter.createContainerElement( 'div', {
-                    class: 'module-block module-block-radio',
-                    'data-radio-group': modelElement.getAttribute( 'data-radio-group' )
-                } );
-
-                return toWidget( radioQuestion, viewWriter, { label: 'radio-question widget' } );
-            }
-        } );
 
         // <radioDiv> converters
         conversion.for( 'upcast' ).elementToElement( {
@@ -173,8 +138,6 @@ export default class RadioQuestionEditing extends Plugin {
                 }
             },
             model: ( viewElement, modelWriter ) => {
-                const id = viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId();
-
                 // All radio buttons in the same question must share the same 'name' attribute,
                 // so let's get a reference to the ancestor module block and use its group name
                 // attribute, if available.
@@ -186,29 +149,36 @@ export default class RadioQuestionEditing extends Plugin {
                 }
                 catch (e) {
                     if (e instanceof TypeError) {
-                        // We're not in a radio question; use something else for the group name.
+                        // We're not in a radio question (e.g. we're a radio button inside a table
+                        // as part of a matrix question). Use something else for the group name.
                         radioGroupName = viewElement.getAttribute('name');
                     } else {
                         throw e;
                     }
                 }
 
+                // Get the retained data ID, with radioGroupName as a fallback.
+                const retainedID = viewElement.getAttribute('data-bz-retained') || radioGroupName;
+
+                // Radio values don't have to be unique within the page, only within the group.
+                // But we already have the RetainedData plugin, so let's just use that as
+                // our fallback.
+                const radioValue = viewElement.getAttribute('value') || this._nextRetainedDataId();
+
                 return modelWriter.createElement( 'radioInput', new Map( [
                     ...filterAllowedAttributes(viewElement.getAttributes()),
-                    [ 'id', id ],
+                    [ 'id', [ radioGroupName, radioValue ].join( '_' ) ],
                     [ 'name', radioGroupName ],
-                    [ 'value', viewElement.getAttribute('value') ],
-                    [ 'data-bz-retained', id ],
+                    [ 'value', radioValue ],
+                    [ 'data-bz-retained', retainedID ],
                     [ 'data-correctness', viewElement.getAttribute('data-correctness') || '' ]
                 ] ) );
             }
 
         } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
+        conversion.for( 'downcast' ).elementToElement( {
             model: 'radioInput',
             view: ( modelElement, viewWriter ) => {
-                const id = modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId();
-
                 // All radio buttons in the same question must share the same 'name' attribute,
                 // so let's get a reference to the ancestor module block and use its group name
                 // attribute, if available.
@@ -220,57 +190,31 @@ export default class RadioQuestionEditing extends Plugin {
                 }
                 catch (e) {
                     if (e instanceof TypeError) {
-                        // We're not in a radio question; use something else for the group name.
+                        // We're not in a radio question (e.g. we're a radio button inside a table
+                        // as part of a matrix question). Use something else for the group name.
                         radioGroupName = modelElement.getAttribute('name');
                     } else {
                         throw e;
                     }
                 }
 
-                return viewWriter.createEmptyElement( 'input', new Map( [
-                    ...filterAllowedAttributes(modelElement.getAttributes()),
-                    [ 'type', 'radio' ],
-                    [ 'id', id ],
-                    [ 'name', radioGroupName ],
-                    [ 'value', modelElement.getAttribute('value') ],
-                    [ 'data-bz-retained', id ],
-                    [ 'data-correctness', modelElement.getAttribute('data-correctness') || '' ]
-                ] ) );
-            }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'radioInput',
-            view: ( modelElement, viewWriter ) => {
-                const id = modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId();
+                // Get the retained data ID, with radioGroupName as a fallback.
+                const retainedID = modelElement.getAttribute('data-bz-retained') || radioGroupName;
 
-                // All radio buttons in the same question must share the same 'name' attribute,
-                // so let's get a reference to the ancestor module block and use its group name
-                // attribute, if available.
-                let radioGroupName;
-                try {
-                    const moduleBlockRadioDiv = modelElement.parent.parent.parent.parent.parent;
-                    // Try to use the existing name first; fall back to question group attribute.
-                    radioGroupName = modelElement.getAttribute('name') || moduleBlockRadioDiv.getAttribute('data-radio-group');
-                }
-                catch (e) {
-                    if (e instanceof TypeError) {
-                        // We're not in a radio question; use something else for the group name.
-                        radioGroupName = modelElement.getAttribute('name');
-                    } else {
-                        throw e;
-                    }
-                }
+                // Radio values don't have to be unique within the page, only within the group.
+                // But we already have the RetainedData plugin, so let's just use that as
+                // our fallback.
+                const radioValue = modelElement.getAttribute('value') || this._nextRetainedDataId();
 
                 return viewWriter.createEmptyElement( 'input', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'radio' ],
-                    [ 'id', id ],
+                    [ 'id', [ radioGroupName, radioValue ].join( '_' ) ],
                     [ 'name', radioGroupName ],
-                    [ 'value', modelElement.getAttribute('value') ],
-                    [ 'data-bz-retained', id ],
+                    [ 'value', radioValue ],
+                    [ 'data-bz-retained', retainedID ],
                     [ 'data-correctness', modelElement.getAttribute('data-correctness') || '' ]
                 ] ) );
-                return toWidget( input, viewWriter );
             }
         } );
 

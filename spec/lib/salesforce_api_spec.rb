@@ -106,4 +106,18 @@ RSpec.describe SalesforceAPI do
     end
   end
 
+  describe '#set_canvas_id(contact_id, canvas_id)' do
+    let(:salesforce) { SalesforceAPI.client }
+    let(:contact_id) { '003170000125IpSAAU' }
+
+    it 'calls the correct endpoint' do
+      contact_json = FactoryBot.json(:salesforce_contact)
+      request_url_regex = /#{SALESFORCE_INSTANCE_URL}\/services\/data\/v48.0\/sobjects\/Contact\/#{contact_json['id']}.*/
+      stub_request(:patch, request_url_regex)
+
+      response = salesforce.set_canvas_id(contact_json['id'], '1234')
+
+      expect(WebMock).to have_requested(:patch, request_url_regex).once
+    end
+  end
 end

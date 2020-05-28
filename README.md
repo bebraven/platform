@@ -126,10 +126,9 @@ In rare cases, you may need to bypass docker-compose and use docker directly to 
 
     docker volume rm platform_db-platform
 
-If you change JavaScript dependencies, you may need to run `yarn` in the container:
+If you change JavaScript dependencies, you need to restart the container, so yarn runs:
 
     docker-compose down
-    docker-compose run platformweb yarn install --check-files
 
 In all cases, to bring the container back up after a rebuild, run:
 
@@ -213,6 +212,21 @@ that matches how the data-central project was structured. See [USAGE here](lib/g
 It is out of date and we're in the early stages of designing how the Braven Platform code will be structured
 and work together. Update it and add more generators that make it easy to add code properly to our codebase.
 
+### Email
+In all environments other than production, we need to be careful not to email actual users. The following
+environment variable ensures that
+
+    MAILER_DELIVERY_OVERRIDE_ADDRESS=someaddress@example.com
+
+When creating new outgoing emails, it's convenient to preview them as you work on them. See the following for
+how we've [enabled previews](http://platformwe/rails/mailers/braven_devise_mailer) for the account creation
+email flows:
+
+    spec/mailers/previews/braven_devise_mailer_preview.rb
+
+**TODO** talk about SMTP settings and what to do in the dev environment if you want real emails to go out so you
+can view them in your email client.
+
 ### Troubleshooting
 
 If something isn't working, you can watch the docker logs live with:
@@ -230,15 +244,26 @@ Or, for example you can inspect one such as the `@current_user` by writing `inst
 
 We also have the pry and rescue gems so that you can break and debug code. Here is an example for how to debug
 a spec that is throwing an exception.
+
     bundle exec rescue rspec spec/a_failing_spec.rb --format documentation   
+
+See [this FANTASTIC article](https://supergood.software/a-ruby-gem-debugging-strategy/) for some general advice around
+debugging and troubleshooting things if you're new to RoR development.
+
+Of specific note, if you need to debug the code inside a gem, our gems are installed
+at `vendor/bundle` inside the container. If you attach to the container you can dig down in there and add a 
+some logging inside the gem code. You have to restart the container for the change to be picked up and if you 
+make a mess of things and want to blow it away you need to remove the vendor-bundle volume using:
+
+    docker volume rm platform_vendor-bundle
+
+**NOTE:** pry doesn't currently work with our setup. Need to figure that out.
 
 For troubleshooting ckeditor-specific issues in the content editor, append '?debug' to the URL:
 
     http://platformweb/course_contents/new?debug
 
 That will attach the [CKEditor Inspector](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/development-tools.html#ckeditor-5-inspector).
-
-**TODO:** talk about pry and other dev and troubleshooting techniques.
 
 ### Development environment setup
 
@@ -271,7 +296,7 @@ CKEditor updates tend to have major breaking changes often, so be sure to test a
 
 Once the dependencies are updated, you will need to rebuild your container:
 
-    docker-compose build && docker-compose run platformweb yarn
+    docker-compose build
 
 ### Accessibility testing
 

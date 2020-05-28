@@ -1,5 +1,6 @@
 <h2>Check your email</h2>
-<div>
+<div class="no-pad">
 <p>Please check your email for a link to finish resetting your password.</p>
+<br/>
+<%= link_to "Log in", new_session_path(resource_name), class: 'button-primary' %>
 </div>
-<%= render "devise/shared/links" %>

@@ -1,6 +1,16 @@
 # Coverage reporter must be first.
-require 'codacy-coverage'
-Codacy::Reporter.start
+require 'simplecov'
+require 'simplecov-cobertura'
+
+SimpleCov.start 'rails' do
+  if ENV['CI']
+    # This is a format Codacy accepts
+    SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+  else
+    # If you want to open it in your browser locally.
+    SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
+  end
+end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
@@ -9,7 +19,7 @@ require 'platform_helper'
 
 Dir["./spec/support/**/*.rb"].sort.each{|f| require f}
 
-ENV['RAILS_ENV'] ||= 'test'
+ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../../config/environment', __FILE__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?

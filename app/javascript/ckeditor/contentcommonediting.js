@@ -3,45 +3,91 @@ import { enablePlaceholder } from '@ckeditor/ckeditor5-engine/src/view/placehold
 import { toWidget, toWidgetEditable } from '@ckeditor/ckeditor5-widget/src/utils';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
 import List from '@ckeditor/ckeditor5-list/src/list';
+import Table from '@ckeditor/ckeditor5-table/src/table';
 import RetainedData from './retaineddata';
 import InsertTextInputCommand from './inserttextinputcommand';
 import InsertDoneButtonCommand from './insertdonebuttoncommand';
 import InsertContentBlockCommand from './insertcontentblockcommand';
 import InsertFileUploadQuestionCommand from './insertfileuploadquestioncommand';
+import InsertTextAreaQuestionCommand from './inserttextareaquestioncommand';
+import InsertTextAreaCommand from './inserttextareacommand';
+import SetAttributesCommand from './setattributescommand';
+import InsertMatrixQuestionCommand from './insertmatrixquestioncommand';
+import InsertSliderCommand from './insertslidercommand';
+import InsertTableContentCommand from './inserttablecontentcommand';
 import { ALLOWED_ATTRIBUTES, filterAllowedAttributes } from './customelementattributepreservation';
+import * as Slider from '../constants/sliderquestionconstants';
 
 export default class ContentCommonEditing extends Plugin {
     static get requires() {
-        return [ Widget, RetainedData, List ];
+        return [ Widget, RetainedData, List, Table ];
     }
 
     init() {
         this._defineSchema();
         this._defineConverters();
 
+        // Individial elements.
         this.editor.commands.add( 'insertTextInput', new InsertTextInputCommand( this.editor ) );
         this.editor.commands.add( 'insertDoneButton', new InsertDoneButtonCommand( this.editor ) );
+        this.editor.commands.add( 'insertTextArea', new InsertTextAreaCommand( this.editor ) );
+        this.editor.commands.add( 'insertSlider', new InsertSliderCommand( this.editor ) );
+        // Blocks.
         this.editor.commands.add( 'insertContentBlock', new InsertContentBlockCommand( this.editor ) );
+        this.editor.commands.add( 'insertTableContent', new InsertTableContentCommand( this.editor ) );
         this.editor.commands.add( 'insertFileUploadQuestion', new InsertFileUploadQuestionCommand( this.editor ) );
+        this.editor.commands.add( 'insertTextAreaQuestion', new InsertTextAreaQuestionCommand( this.editor ) );
+        this.editor.commands.add( 'insertMatrixQuestion', new InsertMatrixQuestionCommand( this.editor ) );
+        // SetAttributes.
+        this.editor.commands.add( 'setAttributes', new SetAttributesCommand( this.editor ) );
 
         // Add a shortcut to the retained data ID function.
         this._nextRetainedDataId = this.editor.plugins.get('RetainedData').getNextId;
+        this._nextId = this.editor.plugins.get('RetainedData').getNextCount;
     }
 
+    /**
+     * Example valid structures:
+     *
+     * <moduleBlock>
+     *   <content>
+     *     <contentTitle>$text</contentTitle>
+     *     <contentBody>$block</contentBody>
+     *     <doneButton/>
+     *   </content>
+     * </moduleBlock>
+     *
+     * <moduleBlock>
+     *   <question>
+     *     <questionTitle>$text</questionTitle>
+     *     <questionBody>$block</questionBody>
+     *     <questionForm>
+     *       <questionFieldset>
+     *         ...inputs...
+     *       </questionFieldset>
+     *       <doneButton/>
+     *     </questionForm>
+     *   </question>
+     *   <answer>
+     *     <answerTitle>$text</answerTitle>
+     *     <answerBody>$block</answerBody>
+     *   </answer>
+     * </moduleBlock>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 
         // Shared elements.
         schema.register( 'content', {
             isObject: true,
-            allowIn: [ 'blockquoteContent', 'tableContent', 'iframeContent', 'videoContent' ],
+            allowIn: [ 'moduleBlock' ],
             allowContentOf: '$root'
         });
 
         schema.register( 'contentTitle', {
             isLimit: true,
             allowIn: 'content',
-            allowAttributes: [ 'id' ],
+            allowAttributes: [ 'id', 'toc-link-href' ],
             allowContentOf: '$block'
         } );
 
@@ -53,7 +99,7 @@ export default class ContentCommonEditing extends Plugin {
 
         schema.register( 'question', {
             isObject: true,
-            allowIn: [ 'checklistQuestion', 'radioQuestion', 'matchingQuestion', 'matrixQuestion' ],
+            allowIn: [ 'moduleBlock' ],
             allowAttributes: [ 'data-instant-feedback', 'data-mastery', 'data-grade-as' ]
         } );
 
@@ -64,7 +110,7 @@ export default class ContentCommonEditing extends Plugin {
         schema.register( 'questionTitle', {
             isLimit: true,
             allowIn: 'question',
-            allowAttributes: [ 'id' ],
+            allowAttributes: [ 'id', 'toc-link-href' ],
             allowContentOf: '$block'
         } );
 
@@ -75,15 +121,18 @@ export default class ContentCommonEditing extends Plugin {
         } );
 
         schema.register( 'questionForm', {
-            // Cannot be split or left by the caret.
             isLimit: true,
             allowIn: [ 'question', 'content' ]
         } );
 
         schema.register( 'questionFieldset', {
-            // Cannot be split or left by the caret.
             isLimit: true,
             allowIn: 'questionForm',
+        } );
+
+        // Matrix question table.
+        schema.extend( 'table', {
+            allowIn: 'questionFieldset',
         } );
 
         schema.extend( 'listItem', {
@@ -97,7 +146,6 @@ export default class ContentCommonEditing extends Plugin {
         } );
 
         schema.register( 'legend', {
-            // Cannot be split or left by the caret.
             isLimit: true,
             allowIn: 'questionFieldset',
             allowContentOf: '$block'
@@ -105,13 +153,13 @@ export default class ContentCommonEditing extends Plugin {
 
         schema.register( 'answer', {
             isObject: true,
-            allowIn: [ 'checklistQuestion', 'radioQuestion', 'matchingQuestion', 'matrixQuestion' ]
+            allowIn: [ 'moduleBlock' ]
         } );
 
         schema.register( 'answerTitle', {
             isLimit: true,
             allowIn: 'answer',
-            allowAttributes: [ 'id' ],
+            allowAttributes: [ 'id', 'toc-link-href' ],
             allowContentOf: '$block'
         } );
 
@@ -143,7 +191,7 @@ export default class ContentCommonEditing extends Plugin {
         schema.register( 'slider', {
             isObject: true,
             allowAttributes: [ 'type', 'max', 'min', 'step' ].concat(ALLOWED_ATTRIBUTES),
-            allowIn: [ '$root', 'questionFieldset' ],
+            allowIn: [ '$root', 'questionFieldset', 'tableCell' ],
         } );
 
         schema.register( 'select', {
@@ -193,8 +241,10 @@ export default class ContentCommonEditing extends Plugin {
                 name: 'h5'
             },
             model: ( viewElement, modelWriter ) => {
+                const id = viewElement.getAttribute( 'id' );
                 return modelWriter.createElement( 'contentTitle', {
-                    'id': viewElement.getAttribute('id'),
+                    'id': id,
+                    'toc-link-href': '#' + id,
                 } );
             },
             // Use high priority to overwrite heading converters defined in
@@ -205,7 +255,7 @@ export default class ContentCommonEditing extends Plugin {
             model: 'contentTitle',
             view: ( modelElement, viewWriter ) => {
                 return viewWriter.createEditableElement( 'h5', {
-                    'id': modelElement.getAttribute( 'id' ),
+                    'id': modelElement.getAttribute( 'id' ) || this._nextId(),
                 } );
             },
             // Use high priority to overwrite heading converters defined in
@@ -216,7 +266,7 @@ export default class ContentCommonEditing extends Plugin {
             model: 'contentTitle',
             view: ( modelElement, viewWriter ) => {
                 const h5 = viewWriter.createEditableElement( 'h5', {
-                    'id': modelElement.getAttribute( 'id' ),
+                    'id': modelElement.getAttribute( 'id' ) || this._nextId(),
                 } );
 
                 enablePlaceholder( {
@@ -308,30 +358,34 @@ export default class ContentCommonEditing extends Plugin {
                 name: 'h5'
             },
             model: ( viewElement, modelWriter ) => {
+                const id = viewElement.getAttribute('id');
                 return modelWriter.createElement( 'questionTitle', {
-                    'id': viewElement.getAttribute('id'),
+                    'id': id,
+                    'toc-link-href': '#' + id,
                 } );
             },
             // Use high priority to overwrite heading converters defined in
             // customelementattributepreservation.js.
             converterPriority: 'high'
         } );
+
         conversion.for( 'dataDowncast' ).elementToElement( {
             model: 'questionTitle',
             view: ( modelElement, viewWriter ) => {
                 return viewWriter.createEditableElement( 'h5', {
-                    'id': modelElement.getAttribute( 'id' ),
+                    'id': modelElement.getAttribute( 'id' ) || this._nextId(),
                 } );
             },
             // Use high priority to overwrite heading converters defined in
             // customelementattributepreservation.js.
             converterPriority: 'high'
         } );
+
         conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'questionTitle',
             view: ( modelElement, viewWriter ) => {
                 const h5 = viewWriter.createEditableElement( 'h5', {
-                    'id': modelElement.getAttribute( 'id' ),
+                    'id': modelElement.getAttribute( 'id' ) || this._nextId(),
                 } );
 
                 enablePlaceholder( {
@@ -526,8 +580,10 @@ export default class ContentCommonEditing extends Plugin {
                 name: 'h5'
             },
             model: ( viewElement, modelWriter ) => {
+                const id = viewElement.getAttribute( 'id' );
                 return modelWriter.createElement( 'answerTitle', {
-                    'id': viewElement.getAttribute('id'),
+                    'id': id,
+                    'toc-link-href': '#' + id,
                 } );
             },
             // Use high priority to overwrite heading converters defined in
@@ -538,7 +594,7 @@ export default class ContentCommonEditing extends Plugin {
             model: 'answerTitle',
             view: ( modelElement, viewWriter ) => {
                 return viewWriter.createEditableElement( 'h5', {
-                    'id': modelElement.getAttribute( 'id' ),
+                    'id': modelElement.getAttribute( 'id' ) || this._nextId(),
                 } );
             },
             // Use high priority to overwrite heading converters defined in
@@ -549,7 +605,7 @@ export default class ContentCommonEditing extends Plugin {
             model: 'answerTitle',
             view: ( modelElement, viewWriter ) => {
                 const h5 = viewWriter.createEditableElement( 'h5', {
-                    'id': modelElement.getAttribute( 'id' ),
+                    'id': modelElement.getAttribute( 'id' ) || this._nextId(),
                 } );
 
                 enablePlaceholder( {
@@ -714,9 +770,6 @@ export default class ContentCommonEditing extends Plugin {
         } );
 
         // <slider> converters
-        const sliderMin = 0;
-        const sliderMax = 10;
-        const sliderStep = 1;
         conversion.for( 'upcast' ).elementToElement( {
             view: {
                 name: 'input',
@@ -728,9 +781,9 @@ export default class ContentCommonEditing extends Plugin {
                 return modelWriter.createElement( 'slider', new Map( [
                     ...filterAllowedAttributes(viewElement.getAttributes()),
                     [ 'data-bz-retained', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
-                    [ 'min', viewElement.getAttribute('min') || sliderMin ],
-                    [ 'max', viewElement.getAttribute('max') || sliderMax ],
-                    [ 'step', viewElement.getAttribute('step') || sliderStep ],
+                    [ 'min', viewElement.getAttribute('min') || Slider.DEFAULT_MIN ],
+                    [ 'max', viewElement.getAttribute('max') || Slider.DEFAULT_MAX ],
+                    [ 'step', viewElement.getAttribute('step') || Slider.DEFAULT_STEP ],
                 ] ) );
             }
         } );
@@ -741,9 +794,9 @@ export default class ContentCommonEditing extends Plugin {
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'range' ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
-                    [ 'min', modelElement.getAttribute('min') || sliderMin ],
-                    [ 'max', modelElement.getAttribute('max') || sliderMax ],
-                    [ 'step', modelElement.getAttribute('step') || sliderStep ],
+                    [ 'min', modelElement.getAttribute('min') || Slider.DEFAULT_MIN ],
+                    [ 'max', modelElement.getAttribute('max') || Slider.DEFAULT_MAX ],
+                    [ 'step', modelElement.getAttribute('step') || Slider.DEFAULT_STEP ],
                 ] ) );
             }
         } );
@@ -754,9 +807,9 @@ export default class ContentCommonEditing extends Plugin {
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'range' ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
-                    [ 'min', modelElement.getAttribute('min') || sliderMin ],
-                    [ 'max', modelElement.getAttribute('max') || sliderMax ],
-                    [ 'step', modelElement.getAttribute('step') || sliderStep ],
+                    [ 'min', modelElement.getAttribute('min') || Slider.DEFAULT_MIN ],
+                    [ 'max', modelElement.getAttribute('max') || Slider.DEFAULT_MAX ],
+                    [ 'step', modelElement.getAttribute('step') || Slider.DEFAULT_STEP ],
                 ] ) );
                 return toWidget( input, viewWriter );
             }

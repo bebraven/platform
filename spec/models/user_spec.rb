@@ -54,6 +54,7 @@ RSpec.describe User, type: :model do
  
       it 'email and name are fetched from the salesforce_api and set' do
         allow(canvas_api_client).to receive(:find_user_in_canvas).and_return(canvas_user)
+        allow(sf_api_client).to receive(:set_canvas_id).and_return(nil)
         expect(sf_api_client).to receive(:get_contact_info).with(sf_contact['Id']).and_return(sf_contact).once
         user = create :user, password: 'somepassword', salesforce_id: sf_contact['Id']
         user = user.reload
@@ -78,6 +79,7 @@ RSpec.describe User, type: :model do
     context 'when canvas user exists' do
       it 'sets the canvas_id' do
         allow(sf_api_client).to receive(:get_contact_info).and_return(sf_contact)
+        allow(sf_api_client).to receive(:set_canvas_id).and_return(nil)
         expect(canvas_api_client).to receive(:find_user_in_canvas).with(sf_contact['Email']).and_return(canvas_user).once
         user = create :user, salesforce_id: sf_contact['Id'], password: 'somepassword'
         user = user.reload
@@ -92,12 +94,24 @@ RSpec.describe User, type: :model do
       let(:enrollment) { build(:canvas_enrollment_student) }
 
       it 'tries to create a canvas user' do
+        allow(sf_api_client).to receive(:set_canvas_id).and_return(nil)
         allow(sf_api_client).to receive(:get_contact_info).and_return(sf_contact)
         allow(sf_api_client).to receive(:get_program_info).and_return(sf_program)
         allow(sf_api_client).to receive(:get_participants).and_return(participants)
         allow(canvas_api_client).to receive(:create_section).and_return(section)
         expect(canvas_api_client).to receive(:create_user).with(anything, anything, anything, sf_contact['Email'], any_args).and_return(canvas_user).once
         expect(canvas_api_client).to receive(:enroll_user_in_course).with(canvas_user['id'], any_args).and_return(enrollment).once
+        create :user, salesforce_id: sf_contact['Id'], password: 'somepassword'
+      end
+
+      it 'sends created canvas_id to salesforce' do
+        allow(sf_api_client).to receive(:get_contact_info).and_return(sf_contact)
+        allow(sf_api_client).to receive(:get_program_info).and_return(sf_program)
+        allow(sf_api_client).to receive(:get_participants).and_return(participants)
+        allow(canvas_api_client).to receive(:create_section).and_return(section)
+        allow(canvas_api_client).to receive(:create_user).with(anything, anything, anything, sf_contact['Email'], any_args).and_return(canvas_user).once
+        allow(canvas_api_client).to receive(:enroll_user_in_course).with(canvas_user['id'], any_args).and_return(enrollment).once
+        expect(sf_api_client).to receive(:set_canvas_id).with(sf_contact['Id'], canvas_user['id']).and_return(nil)
         create :user, salesforce_id: sf_contact['Id'], password: 'somepassword'
       end
     end

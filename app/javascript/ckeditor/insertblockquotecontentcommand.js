@@ -12,14 +12,17 @@ export default class InsertBlockquoteContentCommand extends Command {
     refresh() {
         const model = this.editor.model;
         const selection = model.document.selection;
-        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'blockquoteContent' );
+        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'moduleBlock' );
 
         this.isEnabled = allowedIn !== null;
     }
 }
 
 function createBlockquoteContent( writer ) {
-    const blockquoteContent = writer.createElement( 'blockquoteContent' );
+    const blockquoteContent = writer.createElement(
+        'moduleBlock',
+        { 'blockClasses': 'module-block block-quote-bg' },
+    );
     const content = writer.createElement( 'content' );
     const quote = writer.createElement( 'blockquoteQuote' );
     const paragraph = writer.createElement( 'paragraph' );

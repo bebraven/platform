@@ -19,7 +19,7 @@
     "@ckeditor/ckeditor5-build-classic": "^19.0.0",
     "@ckeditor/ckeditor5-ckfinder": "^19.0.0",
     "@ckeditor/ckeditor5-core": "^19.0.0",
-    "@ckeditor/ckeditor5-dev-webpack-plugin": "^9.0.1",
+    "@ckeditor/ckeditor5-dev-webpack-plugin": "^9.0.2",
     "@ckeditor/ckeditor5-editor-balloon": "^19.0.0",
     "@ckeditor/ckeditor5-editor-classic": "^19.0.0",
     "@ckeditor/ckeditor5-essentials": "^19.0.0",
@@ -39,7 +39,7 @@
     "@ckeditor/ckeditor5-ui": "^19.0.0",
     "@ckeditor/ckeditor5-upload": "^19.0.0",
     "@ckeditor/ckeditor5-widget": "^19.0.0",
-    "@rails/ujs": "^6.0.1",
+    "@rails/ujs": "^6.0.3",
     "@rails/webpacker": "^5.1.1",
     "babel-loader": "^8.1.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
@@ -53,7 +53,7 @@
     "react-dom": "^16.13.1",
     "react-hot-loader": "4.12.21",
     "react-tabs": "^3.0.0",
-    "react_ujs": "^2.6.0",
+    "react_ujs": "^2.6.1",
     "style-loader": "1.2.1",
     "turbolinks": "^5.2.0",
     "webpack": "4.43.0",
@@ -64,10 +64,10 @@
   "devDependencies": {
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
-    "jest": "^25.5.3",
+    "jest": "^26.0.1",
     "jest-enzyme": "^7.1.2",
     "react-axe": "^3.3.0",
-    "webpack-dev-server": "^3.8.2"
+    "webpack-dev-server": "^3.11.0"
   },
   "scripts": {
     "test": "jest"

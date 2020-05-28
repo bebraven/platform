@@ -8,7 +8,7 @@
       "addons": ["heroku-postgresql:in-dyno"],
       "scripts": {
         "test-setup": "yarn install",
-        "test": "bundle exec rspec && yarn test"
+        "test": "bundle exec rspec && yarn test && ./scripts/post_ci_results.sh"
       }
     },
     "review": {

@@ -10,25 +10,34 @@
   <iframe style="visibility: hidden; width: 1px; height: 1px;" src="//<%= @settings[:public_site_domain] %>/users/clear_session_cookie"></iframe>
 <% end %>
 <form method="post" action="<%= @form_action || "login" %>" id="login-form"
-      onsubmit="submitbutton = document.getElementById('login-submit'); submitbutton.value='Please wait'; submitbutton.disabled=true; return true;">
-        <div><label id="username-label" for="username">
-          Email
-        </label><br />
-        <input class="form-control" autofocus="autofocus" type="text" id="username" name="username"
-               size="32" tabindex="1" accesskey="u" /></div>
-        <div><label id="password-label" for="password">
-          Password
-        </label><br />
-        <input class="form-control" type="password" id="password" name="password"
-               size="32" tabindex="2" accesskey="p" autocomplete="off" /></div>
+    onsubmit="submitbutton = document.getElementById('login-submit'); submitbutton.value='Please wait'; submitbutton.disabled=true; return true;">
+      <div class="field"><label id="username-label" for="username">
+        Email
+      </label><br />
+      <input class="form-control" autofocus="autofocus" type="text" id="username" name="username"
+             size="32" tabindex="1" /></div>
+      <div class="field"><label id="password-label" for="password">
+        Password
+      </label><br />
+      <input class="form-control" type="password" id="password" name="password"
+             size="32" tabindex="2" autocomplete="off" /></div>
 
-      <br />
-      <input type="hidden" id="lt" name="lt" value="<%= @lt %>" />
-      <input type="hidden" id="service" name="service" value="<%= @service %>" />
-      <div><input id="login-submit" class="button-primary" name="commit" type="submit" value="Log in" /></div>
-      <div id="infoline">
-        <%= @infoline %>
-      </div>
-      <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
+    <br />
+    <input type="hidden" id="lt" name="lt" value="<%= @lt %>" />
+    <input type="hidden" id="service" name="service" value="<%= @service %>" />
+    <div><input id="login-submit" class="button-primary" name="commit" type="submit" value="Log in" /></div>
+    <div id="infoline">
+      <%= @infoline %>
+    </div>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
+    <br />
+
+    <% if ENV['BZ_AUTH_SERVER'] %>
+      <a href="//<%= @settings[:public_site_domain] %>/signup/new">Sign up</a><br />
+      <a href="//<%= @settings[:public_site_domain] %>/users/password/new">Forgot your password?</a><br />
+      <a href="//<%= @settings[:public_site_domain] %>/users/confirmation/new">Didn&#39;t receive confirmation instructions?</a><br />
+    <% else %>
+      <%= render "devise/shared/links" %>
+    <% end %>
 
 </form>

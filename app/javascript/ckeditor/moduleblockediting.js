@@ -5,7 +5,6 @@ import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
 import { toWidget } from '@ckeditor/ckeditor5-widget/src/utils';
 
-
 export default class ModuleBlockEditing extends Plugin {
     static get requires() {
         return [ Widget, Clipboard ];
@@ -52,26 +51,37 @@ export default class ModuleBlockEditing extends Plugin {
         });
     }
 
+    /**
+     * Example valid structures:
+     *
+     * <section>
+     *   <moduleBlock>
+     *     <content>
+     *     </content>
+     *   </moduleBlock>
+     * </section>
+     *
+     * <section>
+     *   <moduleBlock>
+     *     <question>
+     *     </question>
+     *     <answer>
+     *     </answer>
+     *   </moduleBlock>
+     * </section>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
 
         schema.register( 'moduleBlock', {
             isObject: true,
             allowIn: 'section',
-            allowAttribute: [ 'blockClasses' ],
-        } );
-
-        // Allow question, answer, and content divs inside module-block divs.
-        schema.extend( 'question', {
-            allowIn: [ 'moduleBlock' ],
-        } );
-
-        schema.extend( 'answer', {
-            allowIn: [ 'moduleBlock' ],
-        } );
-
-        schema.extend( 'content', {
-            allowIn: [ 'moduleBlock' ],
+            allowAttributes: [
+                // FIXME: Camelcase is broken with CKE built-in conversions, esp. on upcast
+                'blockClasses',
+                'data-icon',
+                'data-radio-group',
+            ],
         } );
     }
 
@@ -87,28 +97,77 @@ export default class ModuleBlockEditing extends Plugin {
                 classes: ['module-block']
             },
             model: ( viewElement, modelWriter ) => {
-                return modelWriter.createElement( 'moduleBlock', {
-                    'blockClasses': viewElement.getAttribute('class') || 'module-block',
-                });
+                // Get existing classes on the element
+                const srcClasses = viewElement.getAttribute('class') || 'module-block';
+
+                // We need special handling for icon because it was originally set in 
+                // <div class=...> and we're now keeping track of it in <div data-icon=...>
+                const icon = (
+                    // The data-icon attribute was already set on the element
+                    viewElement.getAttribute('data-icon')
+                    // The icon was in the element's class list
+                    || srcClasses.split(" ").find( c => c.startsWith('module-block-') )
+                    // Nothing was specified, use a default
+                    || 'module-block-question'
+                );
+
+                // Remove icon from class
+                const blockClasses = srcClasses.replace(icon, "").trim();
+
+                let attributes = {
+                    'blockClasses': blockClasses,
+                    'data-icon': icon,
+                }
+
+                // Special radio-question support.
+                // This attribute is set in insertradioquestioncommand.js.
+                const radioGroup = viewElement.getAttribute( 'data-radio-group' );
+                if ( radioGroup ) {
+                    attributes['data-radio-group'] = radioGroup;
+                }
+
+                return modelWriter.createElement( 'moduleBlock', attributes );
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
             model: 'moduleBlock',
             view: ( modelElement, viewWriter ) => {
-                return viewWriter.createContainerElement( 'div', {
+                let attributes = {
                     'class': modelElement.getAttribute('blockClasses') || 'module-block',
-                } );
+                    'data-icon': modelElement.getAttribute('data-icon') || 'module-block-question',
+                }
+
+                // Special radio-question support.
+                // This attribute is set in insertradioquestioncommand.js.
+                const radioGroup = modelElement.getAttribute( 'data-radio-group' );
+                if ( radioGroup ) {
+                    attributes['data-radio-group'] = radioGroup;
+                }
+
+                return viewWriter.createContainerElement( 'div', attributes );
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'moduleBlock',
             view: ( modelElement, viewWriter ) => {
-                const moduleBlock = viewWriter.createContainerElement( 'div', {
+                let attributes = {
                     'class': modelElement.getAttribute('blockClasses') || 'module-block',
-                } );
+                    'data-icon': modelElement.getAttribute('data-icon') || 'module-block-question',
+                }
+
+                // Special radio-question support.
+                // This attribute is set in insertradioquestioncommand.js.
+                const radioGroup = modelElement.getAttribute( 'data-radio-group' );
+                if ( radioGroup ) {
+                    attributes['data-radio-group'] = radioGroup;
+                }
+
+                const moduleBlock = viewWriter.createContainerElement( 'div', attributes );
 
                 return toWidget( moduleBlock, viewWriter, { label: 'module-block widget', hasSelectionHandle: true } );
             }
         } );
+
+        conversion.attributeToAttribute( { model: 'data-icon', view: 'data-icon' } );
     }
 }

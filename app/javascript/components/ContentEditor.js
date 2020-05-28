@@ -47,11 +47,8 @@ import ModuleBlockEditing from '../ckeditor/moduleblockediting';
 import ChecklistQuestionEditing from '../ckeditor/checklistquestionediting';
 import SliderQuestionEditing from '../ckeditor/sliderquestionediting';
 import RadioQuestionEditing from '../ckeditor/radioquestionediting';
-import TextAreaQuestionEditing from '../ckeditor/textareaquestionediting';
 import RateThisModuleQuestionEditing from '../ckeditor/ratethismodulequestionediting';
 import MatchingQuestionEditing from '../ckeditor/matchingquestionediting';
-import MatrixQuestionEditing from '../ckeditor/matrixquestionediting';
-import TableContentEditing from '../ckeditor/tablecontentediting';
 import BlockquoteContentEditing from '../ckeditor/blockquotecontentediting';
 import IFrameContentEditing from '../ckeditor/iframecontentediting';
 import VideoContentEditing from '../ckeditor/videocontentediting';
@@ -110,11 +107,8 @@ BalloonEditor.builtinPlugins = [
     ChecklistQuestionEditing,
     RadioQuestionEditing,
     SliderQuestionEditing,
-    TextAreaQuestionEditing,
     RateThisModuleQuestionEditing,
     MatchingQuestionEditing,
-    MatrixQuestionEditing,
-    TableContentEditing,
     BlockquoteContentEditing,
     IFrameContentEditing,
     VideoContentEditing,
@@ -165,6 +159,7 @@ BalloonEditor.defaultConfig = {
         ]
     },
     image: {
+        resizeUnit: 'px',
         toolbar: [
             'imageStyle:full',
             'imageStyle:side',
@@ -462,7 +457,48 @@ class ContentEditor extends Component {
                         </div>
                         <div id="toolbar-contextual">
                             {this.state.modelPath.map( modelElement => {
-                                if ( ['textArea', 'textInput'].includes( modelElement ) ) {
+                                if ( ['moduleBlock'].includes( modelElement ) ) {
+                                    // Module-blocks have class settings.
+                                    let moduleBlock = getNamedAncestor( 'moduleBlock', this.state['selectedElement'] );
+                                    if ( this.state['selectedElement'].name === 'moduleBlock' ) {
+                                        moduleBlock = this.state['selectedElement'];
+                                    }
+
+                                    if (moduleBlock === undefined) {
+                                        // The selected element no longer has 'moduleBlock' as an ancestor - it was
+                                        // probably deleted. We can just return and let React re-render with the new
+                                        // selection.
+                                        return;
+                                    }
+                                    return (
+                                        <>
+                                            <h4>Module Block</h4>
+
+                                            <div className={"module-icon-wrapper module-block " + 
+                                                (moduleBlock.getAttribute('data-icon') || "module-block-question")}>
+                                                <div className="module-icon-preview question" />
+                                            </div>
+                                            <select
+                                                id='input-module-block-type'
+                                                onChange={( evt ) => {
+                                                    this.editor.execute( 'setAttributes', { 'data-icon': evt.target.value }, moduleBlock );
+                                                }}
+                                                value={moduleBlock.getAttribute('data-icon') || "module-block-question"}
+                                            >
+                                                <option value="module-block-question">Question</option>
+                                                <option value="module-block-action">Action</option>
+                                                <option value="module-block-alert">Alert</option>
+                                                <option value="module-block-key">Key</option>
+                                                <option value="module-block-pulse">Pulse</option>
+                                                <option value="module-block-read">Read</option>
+                                                <option value="module-block-reflection">Reflection</option>
+                                                <option value="module-block-values">Values</option>
+                                                <option value="module-block-video">Video</option>
+                                            </select>
+                                            <label htmlFor='input-module-block-type'>Block Icon</label>
+                                        </>
+                                    );
+                                } else if ( ['textArea', 'textInput'].includes( modelElement ) ) {
                                     // Text inputs and textareas have placeholder settings.
                                     return (
                                         <>
@@ -470,7 +506,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='text'
                                                 id='input-placeholder'
-                                                defaultValue={this.state['selectedElement'].getAttribute('placeholder')}
+                                                value={this.state['selectedElement'].getAttribute('placeholder')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'placeholder': evt.target.value } );
                                                 }}
@@ -480,12 +516,12 @@ class ContentEditor extends Component {
                                     );
                                 } else if ( 'slider' === modelElement ) {
                                     // Sliders have several different settings to change.
-                                    const min = this.state['selectedElement'].getAttribute('min');
-                                    const max = this.state['selectedElement'].getAttribute('max');
-                                    const step = this.state['selectedElement'].getAttribute('step');
+                                    const selectedElement = this.state['selectedElement'];
+                                    if (selectedElement === undefined) {
+                                        return;
+                                    }
 
-                                    const answer = this.state['selectedElement'].getAttribute('data-bz-answer');
-                                    const rangeAnswer = this.state['selectedElement'].getAttribute('data-bz-range-answer');
+                                    const answer = selectedElement.getAttribute('data-bz-range-answer');
 
                                     return (
                                         <>
@@ -494,7 +530,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='number'
                                                 id='input-min'
-                                                defaultValue={min}
+                                                value={selectedElement.getAttribute('min')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'min': evt.target.value } );
                                                 }}
@@ -504,7 +540,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='number'
                                                 id='input-max'
-                                                defaultValue={max}
+                                                value={selectedElement.getAttribute('max')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'max': evt.target.value } );
                                                 }}
@@ -514,7 +550,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='number'
                                                 id='input-step'
-                                                defaultValue={step}
+                                                value={selectedElement.getAttribute('step')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'step': evt.target.value } );
                                                 }}
@@ -524,11 +560,10 @@ class ContentEditor extends Component {
                                             <input
                                                 type='number'
                                                 id='input-answer'
-                                                defaultValue={answer}
-                                                disabled={!(answer || rangeAnswer)}
+                                                value={answer}
+                                                disabled={answer === undefined}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', {
-                                                        'data-bz-answer': evt.target.value,
                                                         'data-bz-range-answer': evt.target.value,
                                                     } );
                                                 }}
@@ -615,7 +650,7 @@ class ContentEditor extends Component {
                                             <input
                                                 type='text'
                                                 id='input-url'
-                                                defaultValue={this.state['selectedElement'].getAttribute('src')}
+                                                value={this.state['selectedElement'].getAttribute('src')}
                                                 onChange={( evt ) => {
                                                     this.editor.execute( 'setAttributes', { 'src': evt.target.value } );
                                                 }}

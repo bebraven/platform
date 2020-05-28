@@ -55,7 +55,12 @@ class User < ApplicationRecord
   def full_name
     [first_name, last_name].join(' ')
   end
-  
+
+  # True if the user has confirmed their account and can login.  
+  def confirmed?
+    !!confirmed_at
+  end
+
   def start_membership(program_id, role_id)
     find_membership(program_id, role_id) ||
       program_memberships.create(program_id: program_id, role_id: role_id, start_date: Date.today)
@@ -102,6 +107,7 @@ class User < ApplicationRecord
   def do_account_registration
     if sync_salesforce_info # They can't register for Canvas access if they aren't Enrolled in Salesforce
       setup_canvas_access
+      store_canvas_id_in_salesforce
     end
   end
 
@@ -128,4 +134,7 @@ class User < ApplicationRecord
     end
   end
 
+  def store_canvas_id_in_salesforce
+    SalesforceAPI.client.set_canvas_id(salesforce_id, canvas_id)
+  end
 end

@@ -6,7 +6,6 @@ import RetainedData from './retaineddata';
 import InsertChecklistQuestionCommand from './insertchecklistquestioncommand';
 import InsertCheckboxCommand from './insertcheckboxcommand';
 import InsertChecklistOtherCommand from './insertchecklistothercommand';
-import SetAttributesCommand from './setattributescommand';
 import { ALLOWED_ATTRIBUTES, filterAllowedAttributes } from './customelementattributepreservation';
 
 export default class ChecklistQuestionEditing extends Plugin {
@@ -21,7 +20,6 @@ export default class ChecklistQuestionEditing extends Plugin {
         this.editor.commands.add( 'insertChecklistQuestion', new InsertChecklistQuestionCommand( this.editor ) );
         this.editor.commands.add( 'insertCheckbox', new InsertCheckboxCommand( this.editor ) );
         this.editor.commands.add( 'insertChecklistOther', new InsertChecklistOtherCommand( this.editor ) );
-        this.editor.commands.add( 'setAttributes', new SetAttributesCommand( this.editor ) );
 
         // Add a shortcut to the retained data ID function.
         this._nextRetainedDataId = this.editor.plugins.get('RetainedData').getNextId;
@@ -32,47 +30,46 @@ export default class ChecklistQuestionEditing extends Plugin {
             evt.stop();
         } );
 
-        // Because 'enter' events are consumed by Widget._onKeydown when the current selection is a non-inline
-        // block widget, we have to re-fire them explicitly for checkboxDivs.
+        // Pressing 'Enter' with a checkbox  selected or with the cursor in the label will insert a new one below it.
+        // Because Widget._onKeydown consumes 'Enter' events for non-inline block widgets, we intercept the
+        // 'keydown' event and run the insertion code immediately in our handler.
         // https://github.com/ckeditor/ckeditor5-widget/blob/bdeec63534d11a4fa682bb34990c698435bc13e3/src/widget.js#L174
         // https://github.com/ckeditor/ckeditor5-widget/blob/bdeec63534d11a4fa682bb34990c698435bc13e3/src/widget.js#L408
         this.listenTo( this.editor.editing.view.document, 'keydown', ( evt, data ) => {
+            if ( data.domEvent.key !== 'Enter' ) {
+                return; // Ignore non-'Enter' keys
+            }
+
             const selection = this.editor.model.document.selection;
             const selectedElement = selection.getSelectedElement();
+            const positionParent = selection.getLastPosition().parent;
 
-            if ( selectedElement && selectedElement.name == 'checkboxDiv' ) {
-                if ( data.domEvent.key === 'Enter' ) {
-                    // This will end up calling our enter listener below.
-                    this.editor.editing.view.document.fire( 'enter', { evt, data } );
-                    data.preventDefault();
-                    evt.stop();
-                }
+            if ( ( selectedElement && selectedElement.name === 'checkboxDiv' )
+                || ( positionParent && positionParent.name === 'checkboxLabel' ) ) {
+                // We execute the insertion code directly rather than firing another 'Enter' event
+                // to prevent CKE handlers that also listen to the event from running
+                this.editor.execute( 'insertCheckbox' );
+                data.preventDefault();
+                evt.stop();
             }
         // Use 'highest' priority, because Widget._onKeydown listens at 'high'.
         // https://github.com/ckeditor/ckeditor5-widget/blob/bdeec63534d11a4fa682bb34990c698435bc13e3/src/widget.js#L92
         }, { priority: 'highest' } );
-
-        // Override the default 'enter' key behavior to allow inserting new checklist options.
-        this.listenTo( this.editor.editing.view.document, 'enter', ( evt, data ) => {
-            const selection = this.editor.model.document.selection;
-            const positionParent = selection.getLastPosition().parent;
-            const selectedElement = selection.getSelectedElement();
-
-            if ( positionParent.name == 'checkboxLabel' || ( selectedElement && selectedElement.name == 'checkboxDiv' ) ) {
-                this.editor.execute( 'insertCheckbox' )
-                data.preventDefault();
-                evt.stop();
-            }
-        } );
     }
 
+    /**
+     * Example valid structure:
+     *
+     * <questionFieldset>
+     *   <checkboxDiv>
+     *     <checkboxInput/>
+     *     <checkboxLabel>$text</checkboxLabel>
+     *     <checkboxInlineFeedback>$text</checkboxInlineFeedback>
+     *   </checkboxDiv>
+     * </questionFieldset>
+     */
     _defineSchema() {
         const schema = this.editor.model.schema;
-
-        schema.register( 'checklistQuestion', {
-            isObject: true,
-            allowIn: 'section',
-        } );
 
         schema.register( 'checkboxDiv', {
             isObject: true,
@@ -99,48 +96,12 @@ export default class ChecklistQuestionEditing extends Plugin {
             allowIn: 'checkboxDiv',
             allowContentOf: '$block'
         } );
-
-        schema.addChildCheck( ( context, childDefinition ) => {
-            // Disallow adding questions inside answerText boxes.
-            if ( context.endsWith( 'answerText' ) && childDefinition.name == 'checklistQuestion' ) {
-                return false;
-            }
-        } );
     }
 
     _defineConverters() {
         const editor = this.editor;
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
-
-        // <checklistQuestion> converters
-        conversion.for( 'upcast' ).elementToElement( {
-            view: {
-                name: 'div',
-                classes: ['module-block', 'module-block-checkbox']
-            },
-            model: ( viewElement, modelWriter ) => {
-                return modelWriter.createElement( 'checklistQuestion' );
-            }
-        } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'checklistQuestion',
-            view: ( modelElement, viewWriter ) => {
-                return viewWriter.createEditableElement( 'div', {
-                    'class': 'module-block module-block-checkbox',
-                } );
-            }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'checklistQuestion',
-            view: ( modelElement, viewWriter ) => {
-                const checklistQuestion = viewWriter.createContainerElement( 'div', {
-                    'class': 'module-block module-block-checkbox',
-                } );
-
-                return toWidget( checklistQuestion, viewWriter, { label: 'checklist-question widget' } );
-            }
-        } );
 
         // <checkboxDiv> converters
         conversion.for( 'upcast' ).elementToElement( {

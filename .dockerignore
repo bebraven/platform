@@ -10,3 +10,14 @@ tmp/*
 
 # Webpack-related
 node_modules
+
+# Compiled assets
+public/assets/
+public/packs/
+
+# Specs/tests stuff
+coverage/
+
+# Bundler / gems stuff
+.bundle/config
+vendor/bundle/

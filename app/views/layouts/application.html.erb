@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Braven Platform</title>
+    <title><%= content_for?(:title) ? yield(:title) : 'Braven Platform' %></title>
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <link rel="shortcut icon" href="https://bebraven.org/wp-content/themes/bebraven/favicon.ico">
 
-    <%= braven_stylesheet_link_tag %>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'platform' %>
+    <%= javascript_pack_tag 'application' %>
+
+    <%= yield :head %>
   </head>
 
   <body>
-    <%= yield %>
+    <%= content_for?(:content) ? yield(:content) : yield %>
   </body>
 </html>

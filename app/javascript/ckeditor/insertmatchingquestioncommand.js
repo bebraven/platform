@@ -13,7 +13,7 @@ export default class InsertMatchingQuestionCommand extends Command {
         //const insertPosition = findOptimalInsertionPosition( selection, model );
 
         this.editor.model.change( writer => {
-            const matchingQuestion = writer.createElement( 'matchingQuestion' );
+            const matchingQuestion = writer.createElement( 'moduleBlock' );
             const question = writer.createElement( 'question', {'data-grade-as': 'matching'} );
             const questionTitle = writer.createElement( 'questionTitle' );
             const questionBody = writer.createElement( 'questionBody' );
@@ -67,7 +67,7 @@ export default class InsertMatchingQuestionCommand extends Command {
     refresh() {
         const model = this.editor.model;
         const selection = model.document.selection;
-        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'matchingQuestion' );
+        const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'moduleBlock' );
 
         this.isEnabled = allowedIn !== null;
     }

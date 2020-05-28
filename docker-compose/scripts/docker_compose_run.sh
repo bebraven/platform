@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Turn off automatic visual mode using the mouse
+echo "set mouse-=a" >> ~/.vimrc
+
 echo "Checking if the SALESFORCE ENV vars are setup"
 if [ -z "$SALESFORCE_HOST" ] || \
    [ -z "$SALESFORCE_PLATFORM_CONSUMER_KEY" ] || \
@@ -27,7 +30,8 @@ function cp_built_lock_file() {
 }
 
 if [ -f "${current_lock_file}" ]; then
-    diff="$(diff "${built_lock_file}" "${current_lock_file}")"
+    diffcmd="diff $built_lock_file $current_lock_file"
+    diff=$diffcmd
     if [ "${diff}" != "" 2>/dev/null ]; then
         cp_built_lock_file
     fi
@@ -35,13 +39,36 @@ else
     cp_built_lock_file
 fi
 
-# Note: there are some issues with the listen gem and certain editors
-# where gaurd won't detect changes made from the host machine on a Mac
-# inside the container when the volume is mounted. For VIM, you need to add
-#   set backupcopy=yes 
-# in your .vimrc
-# See: https://github.com/guard/listen/issues/434
-# Also, if you force polling it will absolutely destroy your CPU.
-echo "Starting the rails app using guard"
-bundle exec guard -di
+# Run yarn. Must be BEFORE any rake/rails calls.
+yarn install --check-files
 
+# Migrate the db, if needed.
+bundle exec rake db:migrate
+
+# Fix "inotify event queue has overflowed."
+# https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers
+sysctl fs.inotify.max_user_watches=524288
+sysctl fs.inotify.max_queued_events=524288
+sysctl fs.inotify.max_user_instances=524288
+
+if [[ "${RAILS_ENV:-'development'}" == 'development' ]]; then
+  # Note: there are some issues with the listen gem and certain editors
+  # where gaurd won't detect changes made from the host machine on a Mac
+  # inside the container when the volume is mounted. For VIM, you need to add
+  #   set backupcopy=yes 
+  # in your .vimrc
+  # See: https://github.com/guard/listen/issues/434
+  # Also, if you force polling it will absolutely destroy your CPU.
+  echo "Starting the rails app using guard"
+  bundle exec guard -di
+else
+
+  echo "Precompiling assets in production mode"
+  bundle exec rake assets:precompile
+
+  # Puma expect this folder to already exist and don't create 
+  mkdir -p /app/tmp/pids/
+
+  echo "Starting the rails app using puma"
+  bundle exec puma -C config/puma.rb
+fi

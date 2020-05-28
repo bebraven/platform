@@ -38,19 +38,19 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 
-  gem 'guard-rails', require: false
-  gem 'guard-rspec', require: false
-  gem 'guard-livereload', require: false
+  # Require rack-livereload in development bc we use it in config/environments/development.rb.
+  gem 'rack-livereload', require: true
+
   gem 'libnotify', require: false
-  gem 'rack-livereload'
-  gem 'guard-webpacker'
   gem 'webpacker-react', "~> 1.0.0.beta.1"
-  gem 'guard-bundler', require: false
-  gem 'guard-yarn', require: false
-  gem 'guard-migrate', require: false
   gem 'pry-rescue', require: false
   gem 'pry-stack_explorer', require: false
   gem 'rubocop', require: false
+  gem 'guard-livereload', require: false
+  gem 'guard-rails', require: false
+  gem 'guard-rspec', require: false
+  gem 'guard-webpacker', require: false
+  gem 'guard-yarn', require: false
 end
 
 group :test do
@@ -63,7 +63,8 @@ group :test do
   gem 'webmock', require: false
 
   # Report test coverage
-  gem 'codacy-coverage'
+  gem 'simplecov', require: false
+  gem 'simplecov-cobertura', require: false
 
   # Clean database after tests
   gem 'database_cleaner', require: false
