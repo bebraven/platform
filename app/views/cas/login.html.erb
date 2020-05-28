@@ -17,3 +17,10 @@
   <%= render "login_form" %>
 </div>
 
+<% if ENV['APPLICATION_HOST'].exclude? 'booster'  %>
+<div class="col-md-6 col-md-offset-4" id="booster-login">
+  For the Braven Career Booster: <a href="//<%= @settings[:booster_portal_domain] %>">Login here</a>
+</div>
+<% end %>
+
+
