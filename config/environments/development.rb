@@ -74,6 +74,7 @@ Rails.application.configure do
   # communicate across containers. This line allows connection via the
   # specified name.
   config.hosts << "platformweb"
+  config.hosts << "boosterplatformweb"
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.

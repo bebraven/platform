@@ -8,6 +8,7 @@ default: &default
   log:
     output:
     level: INFO
+  booster_portal_domain: <%= ENV['BOOSTER_PORTAL_DOMAIN'] %>
   public_site_domain: <%= ENV['PUBLIC_SITE_DOMAIN'] %>
   database: &default_db
     database: platform
@@ -38,6 +39,7 @@ development: &development_config
   log:
     output: 
     level: DEBUG
+  booster_portal_domain: boosterweb
   public_site_domain: joinweb
   # this should be the *top* domain - so even for staging, it should be .join.bebraven.org stilldefault_service: http://canvasweb/login/cas
   cookie_domain: .localhost 
