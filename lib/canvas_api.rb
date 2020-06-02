@@ -9,8 +9,8 @@ class CanvasAPI
   # We also wrap the entire contents in a "bz-module" div, so the CSS selectors
   # work as expected.
   PrependHTML = %q(
-    <!-- BRAVEN_NEW_HTML -->
     <div class="bz-module">
+    <!-- BRAVEN_NEW_HTML -->
   )
 
   # Custom HTML to append to each body.
