@@ -101,3 +101,9 @@ gem 'honeycomb-beeline', require: false
 # in the middle of the night to avoid downtime when users are on the platform
 # See: https://github.com/heroku/platform-api
 gem 'platform-api', require: false
+
+# To develop locally, you can mount your local rowan_bot code as a volume in docker-compose.yml
+# and then change the following to this:
+# gem 'rowan_bot', path: '/app/rowan_bot'
+gem 'rowan_bot', github: 'bebraven/rowan_bot', branch: 'master'
+
