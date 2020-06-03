@@ -7,7 +7,7 @@
 <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post}) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 
-  <p><small>Didn't receive email instructions and it's been a few minutes?<small></p>
+  <p><small>Didn't receive email instructions and it's been a few minutes? Check your spam folder and search for an email from <strong><%= ENV['MAILER_FROM_EMAIL'] %></strong>. Still can't find it? </small></p>
 
   <div class="field">
     <%= f.hidden_field :salesforce_id, value: params[:u] %>
