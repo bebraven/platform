@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/bebraven/rowan_bot.git
-  revision: 339bc0d0927fcfa5a2d59bf20192601edc6a7f7d
+  revision: 77b8f6ea558bce4ccc743eb5e3fac6277f8792e9
   branch: master
   specs:
     rowan_bot (0.1.0)
