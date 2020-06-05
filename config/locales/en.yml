@@ -31,3 +31,19 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              taken: "Looks like you've already signed up. Please log-in instead."
+            password:
+              blank: "Please enter a password"
+              confirmation: "Passwords don't match"
+              too_short: "Password is too short"
+            password_confirmation:
+              blank: "Please enter a password confirmation"
+              confirmation: "Passwords don't match"
+              too_short: "Password is too short"
+

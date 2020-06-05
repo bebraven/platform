@@ -593,6 +593,14 @@ label {
   margin: 0 0 10px;
 }
 
+// Uncomment to have activerecord validation failures add a red border around the field.
+// Right now, we only have the password creation form which we would want to turn this off
+// for since it's only two fields there and they don't need to be highlighted.
+// See: app/views/devise/registrations/new.html.erb 
+//.field_with_errors input {
+//  border: 2px solid red;
+//}
+
 .form-control {
 	display: block;
 	width: 100%;
@@ -1037,6 +1045,14 @@ form {
 	vertical-align: baseline;
 }
 
+#error_explanation li {
+	color: red;
+}
+
+#error_explanation h3 {
+	margin-top: 0px;
+}
+
 #topheader {
 	background-color: #ffffff;
 	height: 60px;
@@ -1290,4 +1306,3 @@ li > ul {
 	text-decoration: underline;
 	font-weight: bold;
 }
-
