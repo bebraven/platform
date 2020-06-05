@@ -1,15 +1,11 @@
 <% if resource.errors.any? %>
   <div id="error_explanation">
-    <h2>
-      <%= I18n.t("errors.messages.not_saved",
-                 count: resource.errors.count,
-                 resource: resource.class.model_name.human.downcase)
-       %>
-    </h2>
+    <h3>
+      Please try again
+    </h3>
     <ul>
-      <% resource.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
+      <%# Only show the first error and let them work through them one at a time %>
+      <li><%= resource.errors.first[1] %></li>
     </ul>
   </div>
 <% end %>
