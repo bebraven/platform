@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   resources :course_contents do
     post :publish
     resources :course_content_histories, path: 'versions', only: [:index, :show]
@@ -54,6 +55,9 @@ Rails.application.routes.draw do
 
   resources :access_tokens, except: [:show]
 
+  # Helps with implementing any JWK authentication or encryption flows.
+  resources :keypairs, only: :index, format: :j
+
   resources :validations, only: [:index] do
     collection do
       get :report
@@ -66,6 +70,24 @@ Rails.application.routes.draw do
   get 'salesforce/sync_to_lms'
   post 'salesforce/sync_to_lms'
 
+  # Canvas LTI extension routes
+
+# TODO: whatever "placements" we decide to implement, create controllers and views for each.
+#  resources :lti_editor_button, only: [:index, :create]         # https://canvas.instructure.com/doc/api/file.editor_button_placement.html
+#  resources :lti_link_selection, only: [:index, :create]        # https://canvas.instructure.com/doc/api/file.link_selection_placement.html
+#  resources :lti_homework_submission, only: [:index, :create]   # https://canvas.instructure.com/doc/api/file.homework_submission_tools.html
+#  resources :lti_course_navigation, only: [:index, :create]     # https://canvas.instructure.com/doc/api/file.navigation_tools.html
+#  resources :lti_account_navigation, only: [:index, :create]    # https://canvas.instructure.com/doc/api/file.navigation_tools.html
+#  resources :lti_user_navigation, only: [:index, :create]        # https://canvas.instructure.com/doc/api/file.navigation_tools.html
+#  resources :lti_assignment_selection, only: [:index, :create]     # https://canvas.instructure.com/doc/api/file.assignment_selection_placement.html
+#  resources :lti_resource_selection, only: [:index, :create]     # Steps 3 and 4 of this flow: https://canvas.instructure.com/doc/api/file.assignment_selection_placement.html
+
+  # LTI proof of concept routes. Clean these up.
+  resources :lti_poc, only: [:index, :create]
+  post '/lti/login', to: 'lti_launch#login'
+  get '/lti/launch', to: 'lti_launch#launch'
+  post '/lti/launch', to: 'lti_launch#launch'
+  post '/lti/deep_link', to: 'lti_launch#deep_link_response'
 
   # RubyCAS Routes
   resources :cas, except: [:show]
@@ -79,6 +101,4 @@ Rails.application.routes.draw do
   get '/cas/proxyValidate', to: 'cas#proxyValidate'
   get '/cas/proxy', to: 'cas#proxy'
 
-  # LTI Extension routes
-  resources :keypairs, only: :index, format: :j
 end

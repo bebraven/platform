@@ -1,0 +1,26 @@
+<div>
+  <%= render "shared/lti_poc" %>
+
+  <h3>Example metadata about the context (aka custom variables) that were passed into the LTI Launch</h3>
+  <ul>
+    <li>user_id = <%= @canvas_user_id %></li>
+    <li>email = <%= @canvas_email %></li>
+    <li>name = <%= @canvas_fullname %></li>
+    <li>course = <%= @canvas_course_name %></li>
+  </ul>
+  <h4>Deep Linking data (if it's there)</h4>
+  <ul>
+    <li>deep_link_return_url = <%= @deep_link_return_url %></li>
+    <li>deep_link_response = <%= @jwt_response %></li>
+  </ul>
+
+  <!-- deep_link_response -->
+  <!-- TODO: setup a handle to do the post back to Canvas -->
+  <% if false %> <!-- Commented out for now-->
+  <form action="<%= @deep_link_return_url %>" method="post" id="deep-link-form">
+    <input id="JWT" name='JWT' type='hidden' value="<%= @jwt_response %>" />
+    <input type='submit' value='Submit' />
+  </form>
+  <% end %>
+
+</div>
