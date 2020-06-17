@@ -107,3 +107,8 @@ gem 'platform-api', require: false
 # gem 'rowan_bot', path: '/app/rowan_bot'
 gem 'rowan_bot', github: 'bebraven/rowan_bot', branch: 'master'
 
+# Implementation of JSON Web Token (JWT) standard: https://github.com/jwt/ruby-jwt
+gem 'jwt'
+
+# Generates attr_accessors that encrypt and decrypt attributes transparently in the database
+gem 'attr_encrypted'

@@ -87,6 +87,16 @@ ActiveRecord::Schema.define(version: 2020_04_23_163149) do
     t.index ["name"], name: "index_interests_on_name"
   end
 
+  create_table "keypairs", force: :cascade do |t|
+    t.string "jwk_kid", null: false
+    t.string "encrypted__keypair", null: false
+    t.string "encrypted__keypair_iv", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_keypairs_on_created_at"
+    t.index ["jwk_kid"], name: "index_keypairs_on_jwk_kid"
+  end
+
   create_table "lesson_submissions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "lesson_id", null: false

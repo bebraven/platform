@@ -79,4 +79,6 @@ Rails.application.routes.draw do
   get '/cas/proxyValidate', to: 'cas#proxyValidate'
   get '/cas/proxy', to: 'cas#proxy'
 
+  # LTI Extension routes
+  resources :keypairs, only: :index, format: :j
 end
