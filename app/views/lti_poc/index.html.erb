@@ -15,12 +15,9 @@
   </ul>
 
   <!-- deep_link_response -->
-  <!-- TODO: setup a handle to do the post back to Canvas -->
-  <% if false %> <!-- Commented out for now-->
   <form action="<%= @deep_link_return_url %>" method="post" id="deep-link-form">
     <input id="JWT" name='JWT' type='hidden' value="<%= @jwt_response %>" />
     <input type='submit' value='Submit' />
   </form>
-  <% end %>
 
 </div>
