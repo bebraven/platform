@@ -1,0 +1,112 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="https://stagingportal.bebraven.org/dist/brandable_css/legacy_normal_contrast/bundles/common-42a1537303.css" media="all" rel="stylesheet">
+    <link href="https://s3.amazonaws.com/canvas-prod-assets/braven_newui.css" media="all" rel="stylesheet">
+    <script src="tincan.js"></script>
+    <script>
+var lrs;
+
+try {
+    lrs = new TinCan.LRS(
+        {
+            endpoint: "https://8f50b70bdf7c.ngrok.io/data/xAPI",
+            username: "21b1a1087849f7278bbddd2619d5a15dd7924dc9",
+            password: "8f3237baff64253c5dd4a249a5c37143d6e32fd0",
+            allowFail: false
+        }
+    );
+}
+catch (ex) {
+    console.log("Failed to setup LRS object: ", ex);
+    // TODO: do something with error, can't communicate with LRS
+}
+
+    </script>
+</head>
+<body>
+
+<div class="bz-module">
+<section class="content-section">
+    <div class="module-block has-preshowing-box bz-has-toggle-btn" data-icon="module-block-reflection">
+        <div class="question" data-instant-feedback="false" data-mastery="false" data-grade-as="textarea">
+            <h5 id="what-do-you-think"><a class="stealth-link" href="#what-do-you-think">what do you think?</a></h5>
+            <div class="question-body"><p>When you see the employment statistics for first generation, low income and Black and Latinx graduates, how does this make you feel?</p></div>
+            <form>
+                <fieldset>
+                    <textarea id="dbc0a66f-3a82-415f-9cea-deba2d1c7f80" placeholder=""></textarea>
+                </fieldset>
+                <input class="done-button" type="button" value="Done" id="ec9b62f7-ce3e-47de-96fa-34bbb6dbdf7f" >
+            </form>
+        </div>
+    </div>
+</section>
+</div>
+
+    <script>
+    document.getElementById("ec9b62f7-ce3e-47de-96fa-34bbb6dbdf7f").onclick = () => {
+        const text = document.getElementById("dbc0a66f-3a82-415f-9cea-deba2d1c7f80").value;
+
+var statement = new TinCan.Statement(
+    {
+        actor: {
+            name: "ryantest",
+            mbox: "mailto:ryan.test@bebraven.org"
+        },
+        verb: {
+            id: "http://adlnet.gov/expapi/verbs/experienced"
+        },
+        target: {
+            id: "http://platformweb/test.html#/mytextarea"
+        },
+        result: {
+            success: false,
+            response: text
+        },
+        "object": {
+            "id": "http://platformweb/test.html#/mytextarea",
+            "objectType": "Activity",
+            "definition": {
+                "type": "http://adlnet.gov/expapi/activities/cmi.interaction",
+                "name": {
+                    "und": "What do you think?"
+                },
+                "description": {
+                    "und": "What do you think?"
+                },
+                "interactionType": "fill-in",
+                "correctResponsesPattern": [
+                    ""
+                ]
+            }
+        }
+    }
+);
+        
+lrs.saveStatement(
+    statement,
+    {
+        callback: function (err, xhr) {
+            if (err !== null) {
+                if (xhr !== null) {
+                    alert("Failed to save statement: " + xhr.responseText + " (" + xhr.status + ")");
+                    // TODO: do something with error, didn't save statement
+                    return;
+                }
+
+                alert("Failed to save statement: " + err);
+                // TODO: do something with error, didn't save statement
+                return;
+            }
+
+            alert("Statement saved");
+            // TOOO: do something with success (possibly ignore)
+        }
+    }
+);
+
+
+    };
+    </script>
+</body>
+</html>
