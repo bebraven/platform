@@ -146,6 +146,10 @@ class SyncToLMS
     end
     section_id = section['id']
 
+    if existing_enrollment.is_a? Array
+      existing_enrollment = existing_enrollment.last
+    end
+
     if existing_enrollment && existing_enrollment['course_section_id'] != section_id
       Rails.logger.debug("Moving canvas_user_id = #{canvas_user_id} in course_id = #{course_id} from section_id = #{existing_enrollment['course_section_id']} to a new one")
       @canvas_api.cancel_enrollment(existing_enrollment)
