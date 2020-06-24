@@ -31,15 +31,16 @@ up. It will also install all the necessary Ruby gems and JavaScript libraries th
 
 Now create the needed databases:
 
-    docker-compose exec platformweb bundle exec rake db:create db:schema:load db:migrate db:seed
+    docker-compose run platformweb bundle exec rake db:create db:schema:load db:dummies
 
 We've configured Docker to run our Rails app on port 3020, so go to http://localhost:3020 in your favorite browser. If
 everything's working correctly, you should be brought to the app's homepage.
 
 Add a `127.0.0.1   platformweb` to your `/etc/hosts` file to access the Platform app via http://platformweb:3020.
 
-You can also use [nginx-dev
-container](https://github.com/beyond-z/nginx-dev) to access the app without specifying the port number.
+### SSL support
+We have an [nginx-dev
+container](https://github.com/beyond-z/nginx-dev) that will allow you to access the app over SSL and without specifying the port number.
 
 ### Join server
 
@@ -95,6 +96,41 @@ first ask someone to create a Salesforce account for you (or get the admin accou
 
 **Important Note**: whenever you change the password for the account that created the connected app, a new security token
 will be emailed to that user in an email titled "Your new Salesforce security token".
+
+### LTI Extension
+We add functionality to our [online Portal](https://braven.instructure.com) (aka Canvas) by implementing an LTI Extension. Details of what an LTI Extension is can be [found here](https://docs.google.com/document/d/1sLFnqo8-lr556EwyIUHy_jLWOwzGEkub6nFKDWPO58Y/edit?usp=sharing). In order to work on things are added to the Portal through LTI, you'll need to do the following:
+
+#### Create A Portal Course
+Create a course on the Portal as your Sandbox/Dev Env. Call it `Playground - <insert your name>`
+
+#### Make Sure Your Dev Env Is Setup For SSL Support
+Make sure you setup the nginx-dev container for [SSL Support](https://github.com/beyond-z/nginx-dev#ssl-support) and that https://platformweb works.
+
+#### Make Your Dev Env Accessible From The Internet
+Setup [ngrok.io](https://dashboard.ngrok.com/) in order to expose your local dev env to the public internet as follows:
+1. Ask the team for an invite to [ngrok.io](https://dashboard.ngrok.com/). Create your account, download the tool, and configure it.
+1. Reserve an ngrok subdomain [here](https://dashboard.ngrok.com/endpoints/domains) - call it `<insertyourname>platform` (e.g. `brianplatform`)
+1. Start an ngrok tunnel with the command: `ngrok http https://platformweb -subdomain=<insertyourname>platform`
+1. Check that you can hit your local dev env from the public internet at: `https://<insertyourname>platform.ngrok.io`
+
+#### Configure and Deploy Your Personal LTI Extension
+[Configure and deploy an LTI extension](https://docs.google.com/document/d/1sLFnqo8-lr556EwyIUHy_jLWOwzGEkub6nFKDWPO58Y/edit#heading=h.pce3b8uoohrj) that will only work on your computer and hit your local development environment as follows (screenshots in the link):
+1. Navigate to [Admin -> Developer Keys](https://braven.instructure.com/accounts/1/developer_keys) in the Portal.
+1. Click `+ Developer Key -> + LTI Key` 
+1. Open one of the other developer's keys in a new tab and copy all the setting's from theirs, except adjust the names to your own and in the `Public JWK URL` field, enter your own ngrok URL. E.g. `https://<insertyourname>platform.ngrok.io/keypairs`
+1. Grab the Client ID, e.g. `160050000000000012`
+1. Deploy the LTI extension only to your Playground course by navigating to `Playground Course -> Settings -> Apps -> View App Configurations` OR just use the URL: `https://braven.instructure.com/courses/[YOUR_COURSE_ID]/settings/configurations
+1. Click `+ App`, change the `Configuration Type` dropdown to `By Client Id`, enter yours and submit.
+
+#### Configure The LRS
+An Learner Record Store is where data about lesson engagement and quiz answers is stored using [xApi](https://xapi.com/overview/)
+
+**TODO: We haven't discussed how we'll setup and configure and LRS in the dev env. Update me once we decide. For now, we have a production LRS. Talk to the team for credentials.**
+
+#### Does It Work?
+1. Check that it's working by adding a new Module to your course and adding an item to your module by selecting `External Tool` as the thing to add and choosing your LTI extension in the list.
+1. It should successfully launch a page where you can upload and/or choose a module item to add!
+1. When a module is added and launched as a student, data should start flowing to the LRS.
 
 ### Dummy Data
 
@@ -229,6 +265,7 @@ can view them in your email client.
 
 ### Troubleshooting
 
+#### General
 If something isn't working, you can watch the docker logs live with:
 
     docker-compose logs -f
@@ -259,13 +296,14 @@ make a mess of things and want to blow it away you need to remove the vendor-bun
 
 **NOTE:** pry doesn't currently work with our setup. Need to figure that out.
 
+#### CKEditor
 For troubleshooting ckeditor-specific issues in the content editor, append '?debug' to the URL:
 
     http://platformweb/course_contents/new?debug
 
 That will attach the [CKEditor Inspector](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/development-tools.html#ckeditor-5-inspector).
 
-### Development environment setup
+#### Development environment
 
 If when you're running `docker-compose up -d` and running into "file not found"/"no such file/directory" errors, it could be a `LF/CRLF` issue that will cause the scripts to execute, for example, `/bin/bash^M`.
 
