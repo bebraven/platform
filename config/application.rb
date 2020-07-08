@@ -8,8 +8,13 @@ Bundler.require(*Rails.groups)
 
 module Platform
   class Application < Rails::Application
+
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.2
+    config.load_defaults 6.0
+
+    # Determines whether forgery protection is added on ActionController:Base. This is false by default to
+    # be backwards compatible with v5.2 and below who may have removed it from ApplicationController
+    config.action_controller.default_protect_from_forgery = true
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
