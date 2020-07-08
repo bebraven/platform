@@ -75,7 +75,12 @@ class SyncToLMS
       # The DocuSign template could have changed after we first created the user with it. So update it for existing users.
       # update_user_in_canvas(user, :docusign_template_id => docusign_template_id)
     elsif participant_status == 'Enrolled'
-      new_canvas_user = @canvas_api.create_user(first_name, last_name, username, email, contact_id, student_id, program.timezone, program.docusign_template_id)
+      docusign_template_id = if role == :'Leadership Coach'
+                               program.lc_docusign_template_id
+                             else
+                               program.docusign_template_id
+                             end
+      new_canvas_user = @canvas_api.create_user(first_name, last_name, username, email, contact_id, student_id, program.timezone, docusign_template_id)
       canvas_user_id = new_canvas_user['id']
       Rails.logger.debug("Created new canvas_user_id = #{canvas_user_id}")
     end
@@ -146,6 +151,10 @@ class SyncToLMS
     end
     section_id = section['id']
 
+    if existing_enrollment.is_a? Array
+      existing_enrollment = existing_enrollment.last
+    end
+
     if existing_enrollment && existing_enrollment['course_section_id'] != section_id
       Rails.logger.debug("Moving canvas_user_id = #{canvas_user_id} in course_id = #{course_id} from section_id = #{existing_enrollment['course_section_id']} to a new one")
       @canvas_api.cancel_enrollment(existing_enrollment)
@@ -184,7 +193,9 @@ class SyncToLMS
       end
       @all_existing_course_enrollments[course_id].find { |enrollment| enrollment['user_id'] == canvas_user_id }
     elsif @sync_mode == :contact_sync
-      @canvas_api.get_user_enrollments(canvas_user_id, course_id)
+      enrolments = @canvas_api.get_user_enrollments(canvas_user_id, course_id)
+      # Filter by course_id
+      enrolments&.filter { |enrolment| enrolment['course_id']&.to_i.eql?(course_id&.to_i) }
     else
       raise "Unrecognized @sync_mode = #{@sync_mode}"
     end
@@ -215,7 +226,8 @@ class SyncToLMS
         :timezone                             => program_info['Default_Timezone__c'].to_sym,
         :docusign_template_id                 => program_info['Docusign_Template_ID__c'],
         :pre_accelerator_qualtrics_survey_id  => program_info['Preaccelerator_Qualtrics_Survey_ID__c'],
-        :post_accelerator_qualtrics_survey_id => program_info['Postaccelerator_Qualtrics_Survey_ID__c']
+        :post_accelerator_qualtrics_survey_id => program_info['Postaccelerator_Qualtrics_Survey_ID__c'],
+        :lc_docusign_template_id              => program_info['LC_DocuSign_Template_ID__c']
       }
       @programs[program_id] = p
     end

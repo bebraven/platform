@@ -54,6 +54,10 @@ Rails.application.routes.draw do
 
   resources :access_tokens, except: [:show]
 
+  # Exposes the public JWK so that external services can encode payloads using it and we
+  # can decode them using our private key. E.g. JWK authentication flows.
+  resources :keypairs, only: :index, format: :j, path: 'public_jwk'
+
   resources :validations, only: [:index] do
     collection do
       get :report
