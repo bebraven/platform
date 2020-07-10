@@ -83,4 +83,8 @@ Rails.application.routes.draw do
   get '/cas/proxyValidate', to: 'cas#proxyValidate'
   get '/cas/proxy', to: 'cas#proxy'
 
+  # LTI Extension Routes
+  post '/lti/login', to: 'lti_launch#login'
+  post '/lti/launch', to: 'lti_launch#launch'
+
 end
