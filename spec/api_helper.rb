@@ -6,7 +6,12 @@ class JsonStrategy
   delegate :association, to: :@strategy
 
   def result(evaluation)
-    @strategy.result(evaluation).to_json
+    result = @strategy.result(evaluation)
+    evaluation.notify(:before_json, result)
+
+    result.to_json.tap do |json|
+      evaluation.notify(:after_json, json)
+    end
   end
 end
 
