@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_25_120447) do
+ActiveRecord::Schema.define(version: 2020_07_10_110534) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,12 +157,12 @@ ActiveRecord::Schema.define(version: 2020_06_25_120447) do
     t.string "login_hint", null: false
     t.text "lti_message_hint"
     t.string "target_link_uri", null: false
-    t.string "nonce", null: false
+    t.string "nonce"
     t.string "state", null: false
     t.text "id_token_payload"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["state"], name: "index_lti_launches_on_state"
+    t.index ["state"], name: "index_lti_launches_on_state", unique: true
   end
 
   create_table "majors", force: :cascade do |t|

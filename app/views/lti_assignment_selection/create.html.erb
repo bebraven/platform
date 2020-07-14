@@ -1,0 +1,8 @@
+<div id="assignment-create">
+  <form action="<%= @deep_link_return_url %>" method="post" id="deep-link-form">
+    <input id="JWT" name='JWT' type='hidden' value="<%= @jwt_response %>" />
+    <input type='submit' value='Confirm' />
+  </form>
+
+  <iframe src="<%= course_content_path(id: params[:assignment_id]) %>"></iframe>
+</div>

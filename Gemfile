@@ -94,7 +94,7 @@ gem 'rubycas-server-core', github: 'bebraven/rubycas-server-core', branch: 'plat
 gem 'rubycas-server-activerecord'
 
 # Honeycomb
-gem 'honeycomb-beeline', require: false
+gem 'honeycomb-beeline'
 
 # Allows us to write rake tasks that can programatticaly run Heroku commands
 # using their API. E.g. create a task to restart a dyno so it can be run

@@ -47,7 +47,6 @@ class SyncToLMS
   # Assumptions: there are no duplicate Participant objects and if they opt out or drop as a Candidate, the ParticipantStatus is
   # updated accordingly.
   def sync_participant(participant)
-
     # Parse the Salesforce Participant object
     first_name = participant['FirstName']
     last_name = participant['LastName']
@@ -83,6 +82,8 @@ class SyncToLMS
       new_canvas_user = @canvas_api.create_user(first_name, last_name, username, email, contact_id, student_id, program.timezone, docusign_template_id)
       canvas_user_id = new_canvas_user['id']
       Rails.logger.debug("Created new canvas_user_id = #{canvas_user_id}")
+    else
+      Rails.logger.warn("Salesforce user with contact: #{contact_id} is not enrolled")
     end
 
     case participant_status
@@ -141,6 +142,7 @@ class SyncToLMS
   #
   # Note: canvas_role = [:StudentEnrollment, :TaEnrollment, :DesignerEnrollment, :TeacherEnrollment]
   def sync_course_enrollment(canvas_user_id, course_id, canvas_role, section_name)
+    section_name ||= 'Default Section'
     existing_enrollment = get_enrollment(canvas_user_id, course_id)
     section = get_section(course_id, section_name)
     unless section

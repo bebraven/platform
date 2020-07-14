@@ -87,4 +87,6 @@ Rails.application.routes.draw do
   post '/lti/login', to: 'lti_launch#login'
   post '/lti/launch', to: 'lti_launch#launch'
 
+  get '/lti/assignment_selection/new', to: 'lti_assignment_selection#new'     # https://canvas.instructure.com/doc/api/file.assignment_selection_placement.html
+  post '/lti/assignment_selection', to: 'lti_assignment_selection#create'     # https://canvas.instructure.com/doc/api/file.assignment_selection_placement.html
 end

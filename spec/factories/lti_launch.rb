@@ -14,10 +14,14 @@ FactoryBot.define do
 
     factory :lti_launch_model do
       nonce { SecureRandom.hex(10) }
-      state { SecureRandom.hex(10) }
+      state { SecureRandom.uuid }
   
-      factory :lti_launch_resource do
-        id_token_payload { FactoryBot.json(:lti_link_launch_request) }
+      factory :lti_launch_resource_link do
+        id_token_payload { JSON.parse FactoryBot.json(:lti_resource_link_launch_request) }
+      end 
+
+      factory :lti_launch_deep_link do
+        id_token_payload { JSON.parse FactoryBot.json(:lti_deep_link_launch_request) }
       end 
     end
   end

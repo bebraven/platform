@@ -84,7 +84,8 @@ class CanvasAPI
         'communication_channel[confirmation_url]' => true,
          # Note: the old code used the Join user.id and not the SF id. But now the user account may not
          # be created yet when we're running Sync To LMS.
-        'pseudonym[sis_user_id]' => "BVSFID#{salesforce_id}-SISID#{student_id}" 
+        'pseudonym[sis_user_id]' => "BVSFID#{salesforce_id}-SISID#{student_id}",
+        'enable_sis_reactivation' => true
     }
     response = post('/accounts/1/users', body)
     JSON.parse(response.body)
