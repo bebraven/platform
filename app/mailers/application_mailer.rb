@@ -2,6 +2,6 @@
 
 # Base mailer class
 class ApplicationMailer < ActionMailer::Base
-  default from: 'noreply@braven.org'
+  default from: Rails.application.secrets.mailer_from_email
   layout 'mailer'
 end
