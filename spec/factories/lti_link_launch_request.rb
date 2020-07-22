@@ -15,23 +15,59 @@ FactoryBot.define do
     azp { '160040000000000055' }
     exp { Time.now.to_i + 50000 }
     iat { Time.now.to_i }
-    nonce { 'f16e8f1b581ec93fadb1' }
+    nonce { SecureRandom.hex(10) }
     sub { 'lti_user_id' }
     locale { 'en' }
 
+    transient do
+      target_link_uri { 'https://platformweb/some/target/uri/to/launch' }
+      message_type { 'LtiFakeMessageType' }
+    end
+
+    factory :lti_resource_link_launch_request, class: Hash do
+      transient do
+        message_type { 'LtiResourceLinkRequest' }
+      end
+      before(:json) do |request_msg, evaluator|
+        request_msg.merge!({
+          'https://purl.imsglobal.org/spec/lti/claim/resource_link' => {
+            'id' => 'id_of_the_resource_being_launched',
+            'description' => nil,
+             'title' => nil
+          }
+        })
+      end
+    end
+
+    factory :lti_deep_link_launch_request, class: Hash do
+      transient do
+        message_type { 'LtiDeepLinkRequest' }
+      end
+      before(:json) do |request_msg, evaluator|
+        request_msg.merge!({
+          'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings' => {
+            "accept_types": ["link", "file", "html", "ltiResourceLink", "image"],
+            "accept_media_types": "image/:::asterisk:::,text/html",
+            "accept_presentation_document_targets": ["iframe", "window", "embed"],
+            "accept_multiple": true,
+            "auto_create": true,
+            "title": "This is the default title",
+            "text": "This is the default text",
+            "data": "Some random opaque data that MUST be sent back",
+            "deep_link_return_url": "https://platformweb/deep_links"
+          }
+        })
+      end
+    end
+
     # These are not valid attributes so they have to be added manually to the hash. Only works when this
     # factory is built using: FactoryBot.json(...) 
-    before(:json) do |request_msg| 
+    before(:json) do |request_msg, evaluator| 
       request_msg.merge!({
-        'https://purl.imsglobal.org/spec/lti/claim/message_type' => 'LtiResourceLinkRequest',
+        'https://purl.imsglobal.org/spec/lti/claim/message_type' => evaluator.message_type,
         'https://purl.imsglobal.org/spec/lti/claim/version' => '1.3.0',
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id' => '59:id_of_lti_deployment',
-        'https://purl.imsglobal.org/spec/lti/claim/target_link_uri' => 'https://platformweb/some/target/uri/to/launch',
-        'https://purl.imsglobal.org/spec/lti/claim/resource_link' => {
-          'id' => 'id_of_the_resource_being_launched',
-          'description' => nil,
-           'title' => nil
-        },
+        'https://purl.imsglobal.org/spec/lti/claim/target_link_uri' => evaluator.target_link_uri,
         'https://purl.imsglobal.org/spec/lti/claim/roles' => [
           'http://purl.imsglobal.org/vocab/lis/v2/institution/person#Administrator',
           'http://purl.imsglobal.org/vocab/lis/v2/institution/person#Instructor',

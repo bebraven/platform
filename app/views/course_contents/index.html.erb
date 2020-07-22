@@ -4,7 +4,7 @@
 
 <ul>
   <% @course_contents.each do |course_content| %>
-    <li><%= course_content.title %> (<%= link_to 'Show', course_content %> | <%= link_to 'Edit', edit_course_content_path(course_content) %> | <%= link_to 'Destroy', course_content, method: :delete, data: { confirm: 'Are you sure?' } %>)</li>
+    <li><%= course_content.title %> (<%= link_to 'Edit', edit_course_content_path(course_content) %> | <%= link_to 'Destroy', course_content, method: :delete, data: { confirm: 'Are you sure?' } %>)</li>
   <% end %>
 </ul>
 

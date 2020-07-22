@@ -47,3 +47,7 @@ yarn-debug.log*
 
 # Ignore coverage files.
 /coverage
+
+# Mac stuf
+.DS_Store
+**/.DS_Store

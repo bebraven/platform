@@ -44,7 +44,15 @@ Devise.setup do |config|
       manager.failure_app = DeviseCasAuthenticatable::SingleSignOut::WardenFailureApp
     end
   end
-  config.cas_base_url = Rails.application.secrets.sso_url
+
+  # If we're running in the test env, we always want the SSO URL to be the server that Capybara
+  # spins up for Selenium tests. We set that server from env variables, so we can use those
+  # here too.
+  if Rails.env.test?
+    config.cas_base_url = "http://#{ENV['SPEC_HOST']}:#{ENV['SPEC_PORT']}/cas"
+  else
+    config.cas_base_url = Rails.application.secrets.sso_url
+  end
   config.cas_enable_single_sign_out = true
   config.cas_username_column = 'email'
 

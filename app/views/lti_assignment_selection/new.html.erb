@@ -1,0 +1,13 @@
+<div>
+  <p>Select an existing assignment</p>
+
+  <%= form_tag(lti_assignment_selection_path) do -%>
+    <select name="assignment_id" id="assignment_id">
+      <% @assignments.each do |assignment| %>
+        <option value="<%= assignment.id %>"><%= assignment.title %></option>
+      <% end %>
+    </select>
+    <input id="state" name='state' type='hidden' value="<%= params[:state] %>" />
+    <input type='submit' value='Preview' />
+  <% end -%>
+</div>

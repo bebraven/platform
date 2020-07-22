@@ -1,5 +1,28 @@
 # frozen_string_literal: true
 
+# https://github.com/Drieam/LtiLauncher
+# MIT License
+# 
+# Copyright (c) 2019 Drieam
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 ##
 # This class contains functionality needed for signing messages
 # and publishing JWK[s].
@@ -24,7 +47,8 @@
 # Borrowed from: https://github.com/Drieam/LtiLauncher
 class Keypair < ApplicationRecord
   ALGORITHM = 'RS256'
-  attr_encrypted :_keypair, key: Rails.application.secret_key_base.first(32)
+  # Note: we directly use the ENV var b/c Rails.application.secret_key_base gets regenerated in dev and breaks our ability to decrypt existing keys.
+  attr_encrypted :_keypair, key: ENV['SECRET_KEY_BASE'].first(32) 
   after_initialize :set_keypair
 
   validates :_keypair, presence: true

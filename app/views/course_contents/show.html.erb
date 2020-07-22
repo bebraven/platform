@@ -1,7 +1,5 @@
-<p class="show-module-notice"><strong>Note</strong>: This is not how this page will look on Canvas.
-To view this page on Canvas, you must publish it from the
-<%= link_to 'editor', edit_course_content_path(@course_content) %>.
-
 <div class="<%= @course_content.content_type == 'wiki_page' ? 'bz-module' : 'bz-assignment' %>">
   <%== @course_content.body %>
 </div>
+
+<%= javascript_pack_tag 'xapi_assignment' %>

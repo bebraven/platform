@@ -14,8 +14,14 @@ First, we need to copy a couple of environment files in the app directory:
     cp .env.example .env
     cp .env.database.example .env.database
 
-**Note: At the time of writing, the SSO login requires the Join server to be running locally at http://joinweb.** Look at the `server` config value in `config/rubycas.yml` for where that comes from. You can login with any user that
-exists in the Join server's database and admins are anyone with an `@bebraven.org` email. See the section below on setting up the join server.
+
+Then you'll need to add your AWS credentials and the file upload bucket to your shell enviromnment (e.g. in `~/.bash_profile`):
+
+    export AWS_ACCESS_KEY_ID=<your_key>
+    export AWS_SECRET_ACCESS_KEY=<your_secret>
+    export AWS_PLATFORM_FILES_BUCKET=<the_dev_file_uploads_bucket>
+
+*Tip: make sure you `source` the file or restart your shell*
 
 You don't really need to change the database passwords in these files, so we're doing this mainly to conform to "best
 practices" for Rails apps in general. But if you do want to pick a different database password, make sure it matches in
@@ -31,7 +37,7 @@ up. It will also install all the necessary Ruby gems and JavaScript libraries th
 
 Now create the needed databases:
 
-    docker-compose run platformweb bundle exec rake db:create db:schema:load db:dummies
+    docker-compose run platformweb bundle run rake db:create db:schema:load db:dummies
 
 We've configured Docker to run our Rails app on port 3020, so go to http://localhost:3020 in your favorite browser. If
 everything's working correctly, you should be brought to the app's homepage.
@@ -43,13 +49,15 @@ We have an [nginx-dev
 container](https://github.com/beyond-z/nginx-dev) that will allow you to access the app over SSL and without specifying the port number.
 
 ### Join server
+There are current two modes we can run in for how we can authenticate. By default, we authenticate against the local database. But
+you can toggle this and authenticate against the Join server by uncommenting `BZ_AUTH_SERVER` in your `.env`. If you do, you'll need
+the Join server to be running locally at http://joinweb. Look at the `server` config value in `config/rubycas.yml` for where that comes from.
+If you do this, you can login with any user that exists in the Join server's database and admins are anyone with an `@bebraven.org` email.
+See the section below on setting up the join server.
 
-First, you'll need AWS credentials and to add them to your `~/.bash_profile`:
+**TODO: get rid of the fork flow. Just clone...**
 
-    export AWS_ACCESS_KEY_ID=<your_key>
-    export AWS_SECRET_ACCESS_KEY=<your_secret>
-
-Then, fork the [development](https://github.com/beyond-z/development) and [beyondz-platform](https://github.com/beyond-z/beyondz-platform) repositories from the [beyondz project](https://github.com/beyond-z).
+Fork the [development](https://github.com/beyond-z/development) and [beyondz-platform](https://github.com/beyond-z/beyondz-platform) repositories from the [beyondz project](https://github.com/beyond-z).
 
 Clone the repositories, with `beyondz-platform` under `development`:
 
@@ -64,7 +72,7 @@ Now build the Docker environment:
 
 And set up the database in your Join server's dev environment:
 
-    docker-compose exec joinweb bundle exec rake db:create && ./docker-compose/scripts/dbrefresh.sh
+    docker-compose exec joinweb bundle run rake db:create && ./docker-compose/scripts/dbrefresh.sh
 
 (These commands are from `development/setup.sh`. Search for `$join_src_path` to see what it's doing.)
 
@@ -189,6 +197,17 @@ Or only tests in a particular directory, like our feature tests which use Seleni
     docker-compose exec platformweb bundle exec rspec spec/feature
 
 You can also run a single spec ofc.
+
+### Static Code Analysis (aka linter)
+We use Codacy to run static code analysis. Everytime you push a branch to the repo it runs. 
+
+**You can see [status here](https://app.codacy.com/manual/bebraven/platform/dashboard)**
+
+Make sure you get invited to the project so that you'll get emails about your code quality when you push.
+
+*Note: you can also run it locally using the `codacy-analysis-cli` but I HIGHLY recommend against it. It's really hard
+to get it working properly and the branch has to be completely clean and fully committed. Just push your branch and open a
+pull request. Go fix any issues as well as get a peer code review before merging the pull request.*
 
 ### Project structure
 

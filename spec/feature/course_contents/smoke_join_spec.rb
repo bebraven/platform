@@ -31,7 +31,7 @@ RSpec.describe CourseContentsController, type: :routing do
         
         it "loads the editor view and renders react components" do
           expect(current_url).to include(return_service)
-          expect(page).to have_title("Braven Platform")
+          expect(page).to have_title("Content Editor")
           expect(page).to have_selector("h1", text: "BRAVEN CONTENT EDITOR")
           expect(page).to have_content("Checklist Question")
         end

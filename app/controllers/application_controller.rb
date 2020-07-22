@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!
   before_action :ensure_admin!
+  after_action :remove_x_frame_options
 
   private
   
@@ -58,4 +59,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :cas_login_url
 
+  # Remove the default X-Frame-Options header Rails adds. We use CSP instead.
+  # See config/initializers/content_security_policy.rb
+  # Technically, CSP should take precedence anyway, but this is down to browser implementation, so
+  # better to not take chances.
+  def remove_x_frame_options
+    response.headers.delete "X-Frame-Options"
+  end
 end

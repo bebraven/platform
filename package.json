@@ -55,6 +55,7 @@
     "react-tabs": "^3.0.0",
     "react_ujs": "^2.6.1",
     "style-loader": "1.2.1",
+    "tincanjs": "^0.50.0",
     "turbolinks": "^5.2.0",
     "webpack": "4.43.0",
     "webpack-cli": "3",

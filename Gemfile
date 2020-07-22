@@ -94,7 +94,7 @@ gem 'rubycas-server-core', github: 'bebraven/rubycas-server-core', branch: 'plat
 gem 'rubycas-server-activerecord'
 
 # Honeycomb
-gem 'honeycomb-beeline', require: false
+gem 'honeycomb-beeline'
 
 # Allows us to write rake tasks that can programatticaly run Heroku commands
 # using their API. E.g. create a task to restart a dyno so it can be run
@@ -112,3 +112,6 @@ gem 'jwt'
 
 # Generates attr_accessors that encrypt and decrypt attributes transparently in the database
 gem 'attr_encrypted'
+
+gem 'aws-sdk-s3'
+gem 'rubyzip'

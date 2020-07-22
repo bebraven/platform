@@ -9,7 +9,7 @@ class CreateLtiLaunches < ActiveRecord::Migration[6.0]
       t.string :target_link_uri, null: false
       t.string :nonce, null: false
       t.string :state, null: false
-      t.index :state                           # This is what we use to identify the session and look up the launch info
+      t.index :state                           # This is what we use to identify the launch session and look up the launch info
       t.text :id_token_payload
       
       t.timestamps
