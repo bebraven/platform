@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request: !ruby/struct:VCR::Request 
+    method: get
+    uri: <%= lrs_url %>/statements?attachments=false&format=exact&statementId=00241fbf-e921-4aa0-865d-a1c2214df321
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - rest-client/2.1.0 (linux-musl x86_64) ruby/2.6.5p114
+      Authorization:
+      - Basic REMOVED 
+      X-Experience-Api-Version:
+      - 1.0.3
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 20 Jul 2020 17:32:08 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '753'
+      Connection:
+      - keep-alive
+      Server:
+      - nginx
+      Vary:
+      - Origin
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Expose-Headers:
+      - ETag
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Strict-Transport-Security:
+      - max-age=15552000; includeSubDomains
+      X-Download-Options:
+      - noopen
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Experience-Api-Consistent-Through:
+      - '2020-07-20T17:32:08.780Z'
+      X-Experience-Api-Version:
+      - 1.0.3
+      Last-Modified:
+      - '2020-07-20T17:32:08.124Z'
+      Etag:
+      - W/"2f1-6I6YMMxdw09ZfbZhQBWOPvZFyYQ"
+    body:
+      encoding: UTF-8
+      string: "{\"id\":\"<%= id %>\",\"timestamp\":\"2020-07-20T17:32:07.512Z\",\"actor\":{\"name\":\"first
+        last\",\"mbox\":\"mailto:admin@beyondz.org\",\"objectType\":\"Agent\"},\"verb\":{\"id\":\"http://adlnet.gov/expapi/verbs/answered\",\"display\":{\"und\":\"answered\"}},\"result\":{\"response\":\"<%= response %>\"},\"object\":{\"id\":\"http://platformweb:49883/course_contents/169#/h2c2-0600-next-steps\",\"objectType\":\"Activity\",\"definition\":{\"type\":\"http://adlnet.gov/expapi/activities/cmi.interaction\",\"name\":{\"und\":\"h2c2-0600-next-steps\"},\"description\":{\"und\":\"h2c2-0600-next-steps\"},\"interactionType\":\"fill-in\"}},\"stored\":\"2020-07-20T17:32:08.124Z\",\"authority\":{\"objectType\":\"Agent\",\"name\":\"LTI
+        PoC\",\"mbox\":\"mailto:ltipoc@bebraven.org\"},\"version\":\"1.0.0\"}"
+  recorded_at: Mon, 20 Jul 2020 17:32:08 GMT
+recorded_with: VCR 6.0.0

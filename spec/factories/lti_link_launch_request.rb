@@ -21,12 +21,21 @@ FactoryBot.define do
 
     transient do
       target_link_uri { 'https://platformweb/some/target/uri/to/launch' }
-      message_type { 'LtiResourceLinkRequest' }
+      message_type { 'LtiFakeMessageType' }
     end
 
     factory :lti_resource_link_launch_request, class: Hash do
       transient do
         message_type { 'LtiResourceLinkRequest' }
+      end
+      before(:json) do |request_msg, evaluator|
+        request_msg.merge!({
+          'https://purl.imsglobal.org/spec/lti/claim/resource_link' => {
+            'id' => 'id_of_the_resource_being_launched',
+            'description' => nil,
+             'title' => nil
+          }
+        })
       end
     end
 
@@ -59,11 +68,6 @@ FactoryBot.define do
         'https://purl.imsglobal.org/spec/lti/claim/version' => '1.3.0',
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id' => '59:id_of_lti_deployment',
         'https://purl.imsglobal.org/spec/lti/claim/target_link_uri' => evaluator.target_link_uri,
-        'https://purl.imsglobal.org/spec/lti/claim/resource_link' => {
-          'id' => 'id_of_the_resource_being_launched',
-          'description' => nil,
-           'title' => nil
-        },
         'https://purl.imsglobal.org/spec/lti/claim/roles' => [
           'http://purl.imsglobal.org/vocab/lis/v2/institution/person#Administrator',
           'http://purl.imsglobal.org/vocab/lis/v2/institution/person#Instructor',

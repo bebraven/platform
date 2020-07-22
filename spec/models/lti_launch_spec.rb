@@ -29,7 +29,7 @@ RSpec.describe LtiLaunch, type: :model do
       let!(:unauthenticated_launch) { create(:lti_launch_model) }
       let(:state) { unauthenticated_launch.state }
       let(:payload_target_link_uri) { 'https://some/target/link/uri/inside/payload' }
-      let(:id_token_payload) { JSON.parse(FactoryBot.json(:lti_link_launch_request, target_link_uri: payload_target_link_uri)) }
+      let(:id_token_payload) { JSON.parse(FactoryBot.json(:lti_resource_link_launch_request, target_link_uri: payload_target_link_uri)) }
 
       context 'when valid' do
 

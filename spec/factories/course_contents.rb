@@ -7,6 +7,10 @@ FactoryBot.define do
 
     factory :course_content_assignment do
       content_type { "assignment" }
+      body {
+        "<p>Based on these responses, what are your next steps?</p>"\
+        "<textarea data-bz-retained=\"h2c2-0600-next-steps\" placeholder=\"\"></textarea>"
+      }
     end
 
     factory :course_content_module do

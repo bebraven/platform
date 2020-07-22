@@ -47,7 +47,8 @@
 # Borrowed from: https://github.com/Drieam/LtiLauncher
 class Keypair < ApplicationRecord
   ALGORITHM = 'RS256'
-  attr_encrypted :_keypair, key: Rails.application.secret_key_base.first(32)
+  # Note: we directly use the ENV var b/c Rails.application.secret_key_base gets regenerated in dev and breaks our ability to decrypt existing keys.
+  attr_encrypted :_keypair, key: ENV['SECRET_KEY_BASE'].first(32) 
   after_initialize :set_keypair
 
   validates :_keypair, presence: true

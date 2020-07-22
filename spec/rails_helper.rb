@@ -89,7 +89,6 @@ RSpec.configure do |config|
     # Mimic the router behavior of setting the Devise scope through the env.
     @request.env['devise.mapping'] = Devise.mappings[:user]
   end
- 
 end
 
 Shoulda::Matchers.configure do |config|

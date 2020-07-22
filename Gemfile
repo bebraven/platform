@@ -112,3 +112,6 @@ gem 'jwt'
 
 # Generates attr_accessors that encrypt and decrypt attributes transparently in the database
 gem 'attr_encrypted'
+
+gem 'aws-sdk-s3'
+gem 'rubyzip'

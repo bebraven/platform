@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   resources :course_contents do
     post :publish
     resources :course_content_histories, path: 'versions', only: [:index, :show]
@@ -38,10 +39,13 @@ Rails.application.routes.draw do
   resources :projects, only: [:index, :show] do
     resources :project_submissions, only: [:index, :show], :path => 'submissions'
   end
+
   resources :lessons, only: [:index, :show] do
     resources :lesson_submissions, only: [:index, :show], :path => 'submissions'
+    resources :lesson_contents, only: [:new, :show, :create], :path => 'contents'
   end
 
+  resources :lesson_contents, only: [:new, :show, :create]
   resources :roles, except: [:show]
   resources :users, only: [:index, :show]
 
@@ -70,7 +74,6 @@ Rails.application.routes.draw do
   get 'salesforce/sync_to_lms'
   post 'salesforce/sync_to_lms'
 
-
   # RubyCAS Routes
   resources :cas, except: [:show]
   get '/cas/login', to: 'cas#login'
@@ -89,4 +92,10 @@ Rails.application.routes.draw do
 
   get '/lti/assignment_selection/new', to: 'lti_assignment_selection#new'     # https://canvas.instructure.com/doc/api/file.assignment_selection_placement.html
   post '/lti/assignment_selection', to: 'lti_assignment_selection#create'     # https://canvas.instructure.com/doc/api/file.assignment_selection_placement.html
+
+  get '/lti/link_selection/new', to: 'lesson_contents#new' # https://canvas.instructure.com/doc/api/file.link_selection_placement.html
+  post '/lti/link_selection', to: 'lesson_contents#create' # https://canvas.instructure.com/doc/api/file.link_selection_placement.html
+
+  # Proxy xAPI messages to the LRS.
+  match '/data/xAPI/*endpoint', to: 'lrs_xapi_proxy#xAPI', via: [:get, :put]
 end

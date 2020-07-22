@@ -21,7 +21,7 @@ RSpec.describe CasController, type: :routing do
         let(:username) { valid_user_creds[:email] }
         let(:password) { valid_user_creds[:password] }
         
-        it "logs in successfully" do
+        xit "logs in successfully" do
           # Ensure that the login was successful
           expect(page).to have_content("You have successfully logged in")
         end
@@ -30,7 +30,7 @@ RSpec.describe CasController, type: :routing do
         let(:username) { invalid_user_creds[:email] }
         let(:password) { invalid_user_creds[:password] }
 
-        it "fails to log in" do
+        xit "fails to log in" do
           # Ensure that the login was failed
           expect(page).to have_content("Incorrect username or password")
         end
@@ -48,18 +48,18 @@ RSpec.describe CasController, type: :routing do
         let(:username) { valid_user_creds[:email] }
         let(:password) { valid_user_creds[:password] }
         
-        it "logs in successfully" do
+        xit "logs in successfully" do
           # Ensure that the login was successful
           expect(current_url).to include(return_service)
           expect(current_url).to include("ticket")
         end
 
-        it "validates existing tickets" do
+        xit "validates existing tickets" do
           @params = parse_query(current_url, "&?,")
           expect(@params).to include("ticket")
         end
 
-        it "generates new ticket when revisiting login page" do
+        xit "generates new ticket when revisiting login page" do
           # Get current ticket to check against next generated ticket
           @params = parse_query(current_url, "&?,")
           visit "/cas/login?service=#{url_encode(return_service)}"
@@ -79,7 +79,7 @@ RSpec.describe CasController, type: :routing do
         let(:username) { valid_user_creds[:email] }
         let(:password) { valid_user_creds[:password] }
 
-        it "logs in successfully" do
+        xit "logs in successfully" do
           # Ensure that the login was successful
           expect(page).to have_content("You have successfully logged in")
         end

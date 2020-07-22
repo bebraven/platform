@@ -22,7 +22,7 @@ RSpec.describe CasController, type: :routing do
           visit "/cas/login?service=#{url_encode(return_service)}"
           fill_and_submit_login(username, password)
         end
-        it "contains a ticket" do
+        xit "contains a ticket" do
           expect(current_url).to include("ticket")
         end 
         context "with valid proxy ticket" do
@@ -30,7 +30,7 @@ RSpec.describe CasController, type: :routing do
             @params = parse_query(current_url, "&?,")
             visit "/cas/proxyValidate?ticket=#{@params["ticket"]}&service=#{return_service}"      
           end
-          it "validates proxy ticket" do
+          xit "validates proxy ticket" do
             # Capybara can't handle XMLs properly, use the result string 
             expect(page.body).to include("authenticationSuccess")
             expect(page.body).to include(valid_user_creds[:email])
@@ -39,7 +39,7 @@ RSpec.describe CasController, type: :routing do
       end
 
       context "without specifying a proxy ticket" do
-        it "fails validate proxy ticket" do
+        xit "fails validate proxy ticket" do
           # Attempt to validate the ticket
           visit "/cas/proxyValidate"
 
