@@ -1,0 +1,71 @@
+<%= render 'layouts/admin_navbar' %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item ml-3"><%= link_to "Users", admin_users_path %></li>
+    <li class="breadcrumb-item active" aria-current="page">Add User</li>
+  </ol>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <%= form_for(@user, url: admin_users_path) do |f| %>
+        <legend>Add a user to platform</legend>
+
+        <div class="row">
+          <div class="form-group col">
+            <%= f.label :first_name %><br />
+            <%= f.text_field :first_name, autofocus: true, autocomplete: "first-name", class: "form-control", required: true, placeholder: "Jane" %>
+          </div>
+
+          <div class="form-group col">
+            <%= f.label :last_name %><br />
+            <%= f.text_field :last_name, autocomplete: "last-name", class: "form-control", required: true, placeholder: "Doe" %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :email %><br />
+          <%= f.email_field :email, autocomplete: "email", class: "form-control", required: true, placeholder: "jane.doe@example.com" %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :password %><br />
+          <%= f.password_field :password, autofocus: true, autocomplete: "password", class: "form-control", required: true %>
+        </div>
+
+        <div class="row">
+          <div class="form-group col">
+            <%= f.label :salesforce_id, "Salesforce Contact ID" %><br />
+            <%= f.text_field :salesforce_id, autocomplete: "salesforce-id", class: "form-control", placeholder: "0012A00001ulxrKMAQ" %>
+          </div>
+
+          <div class="form-group col">
+            <%= f.label :canvas_id, "Canvas User ID" %><br />
+            <%= f.text_field :canvas_id, autocomplete: "canvas-id", class: "form-control", placeholder: "1234" %>
+          </div>
+        </div>
+
+        <div class="form-group ml-4">
+          <%= f.check_box :admin, class: "form-check-input" %>
+          <%= f.label :admin, "Make Admin", class: "form-check-label" %>
+        </div>
+        <div class="actions mb-5">
+          <%= f.submit "Add User", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-sm text-danger mt-5">
+      <% if @user.errors.any? %>
+        <p>The user was not saved!</p>
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+</div>
+

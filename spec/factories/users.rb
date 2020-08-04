@@ -25,6 +25,11 @@ FactoryBot.define do
       factory :admin_user do
         admin { true }
       end
+
+      factory :with_canvas_id_user do
+        # Match custom.user_id in :lti_link_launch_request factory
+        canvas_id { 55555 }
+      end
     end
 
   end

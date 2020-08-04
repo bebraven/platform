@@ -1,0 +1,37 @@
+<%= render 'layouts/admin_navbar' %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Users</li>
+  </ol>
+</nav>
+
+<div class="container">
+  <div class="d-flex justify-content-end">
+    <%= link_to "Add User", new_admin_user_path, class: "btn btn-primary", role: "button" %>
+    <%= form_tag(admin_users_path, method: "get") do |f| %>
+      <%= text_field_tag :search, params[:search], placeholder: "Search", class: "form-control ml-4" %>
+    <% end %>
+  </div>
+    <% if @users.empty? %>
+      [No users found]
+    <% else %>
+      <table class="table mt-2">
+        <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td>
+              <%= link_to admin_user_path user do %>
+                <%= user.full_name %>
+              <% end %>
+              <% if user.admin? %>
+                <span class="badge badge-primary">Admin</span>
+              <% end %>
+              &lt;<%=user.email%>&gt;
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
+<%= will_paginate @users %>
+</div>

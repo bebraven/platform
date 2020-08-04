@@ -14,7 +14,6 @@ class LtiIdToken
   # verify it was actually Canvas sending the payload and not an attacker.
   PUBLIC_JWKS_URL = "#{Rails.application.secrets.lti_oidc_base_uri}/api/lti/security/jwks".freeze
 
-  MESSAGE_TYPE_CLAIM = 'https://purl.imsglobal.org/spec/lti/claim/message_type'.freeze
   MESSAGE_TYPE_TO_CLASS = { 
     'LtiResourceLinkRequest' => LtiResourceLinkRequestMessage,
     'LtiDeepLinkingRequest' => LtiDeepLinkingRequestMessage 
@@ -26,12 +25,17 @@ class LtiIdToken
   # Returns an instance of the class that handles the type of message in the payload.
   def self.parse_and_verify(signed_jwt_id_token)
     payload, header = JWT.decode(signed_jwt_id_token, nil, true, { algorithms: ['RS256'], jwks: public_jwks } )
-    message_type = payload[MESSAGE_TYPE_CLAIM]
-    MESSAGE_TYPE_TO_CLASS[message_type].new(payload)
+    parse(payload)
   rescue => e
     Rails.logger.error("{\"Error\":\"#{e.message}\"}")
     Rails.logger.error(e.response.body) if e.is_a?(RestClient::Exception)
     raise
+  end
+
+  # Parses the payload into the appropriate LtiRequestMessage
+  def self.parse(payload)
+    message_type = payload[LtiLaunchRequestMessage::MESSAGE_TYPE_CLAIM]
+    MESSAGE_TYPE_TO_CLASS[message_type].new(payload)
   end
 
   def self.public_jwks

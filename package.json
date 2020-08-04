@@ -43,6 +43,8 @@
     "@rails/webpacker": "^5.1.1",
     "babel-loader": "^8.1.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "bootstrap": "4.5",
+    "bootswatch": "4.5",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
     "postcss-loader": "3",
@@ -60,7 +62,9 @@
     "webpack": "4.43.0",
     "webpack-cli": "3",
     "webpack-merge": "^4.2.2",
-    "webpacker-react": "^1.0.0-beta.1"
+    "webpacker-react": "^1.0.0-beta.1",
+    "sass-loader": "^9.0.2",
+    "node-sass": "^4.14.1"
   },
   "devDependencies": {
     "enzyme": "^3.10.0",

@@ -41,7 +41,7 @@ FactoryBot.define do
 
     factory :lti_deep_link_launch_request, class: Hash do
       transient do
-        message_type { 'LtiDeepLinkRequest' }
+        message_type { 'LtiDeepLinkingRequest' }
       end
       before(:json) do |request_msg, evaluator|
         request_msg.merge!({
@@ -93,6 +93,8 @@ FactoryBot.define do
           'return_url' => 'https://some/path/on/the/platform/to/go/back/to/when/done',
           'locale' => 'en',
         },
+# TODO: make the values transiet variabes and set them in the appropriate launch message.
+# e.g. a LinkSelection launch won't have an assignment_id. It would be set to "$Canvas.assignment.id"
         'https://purl.imsglobal.org/spec/lti/claim/custom' => {
           'role' => 'DesignerEnrollment,Account Admin',
           'title' =>'CourseTitle',
@@ -108,7 +110,7 @@ FactoryBot.define do
           'section_ids' => '55',
           'account_name' => 'Manually-Created Courses',
           'browser_info' => 'iframe',
-          'assignment_id' => '$Canvas.assignment.id',
+          'assignment_id' => '55',
           'attachment_id' => '$Canvas.file.media.id',
           'submission_id' => '$com.instructure.Submission.id',
           'user_fullname' => 'Brian Nairb',
@@ -138,7 +140,8 @@ FactoryBot.define do
             'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly',
             'https://purl.imsglobal.org/spec/lti-ags/scope/score'
           ],
-          'lineitems' => 'https://platformdomain/api/lti/courses/55/line_items'
+          'lineitems' => 'https://platformdomain/api/lti/courses/55/line_items',
+          'lineitem' => 'https://platformdomain/api/lti/courses/55/line_items/15'
         },
         'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice' => {
           'context_memberships_url' => 'https://braven.instructure.com/api/lti/courses/40/names_and_roles',

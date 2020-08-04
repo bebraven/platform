@@ -10,4 +10,10 @@
     <input id="state" name='state' type='hidden' value="<%= params[:state] %>" />
     <input type='submit' value='Preview' />
   <% end -%>
+
+  <p><strong>OR</strong></p>
+
+  <p>Upload a Rise 360 lesson</p>
+
+  <%= render partial: "lesson_contents/upload" %>
 </div>

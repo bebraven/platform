@@ -15,7 +15,9 @@ class LessonContentsController < ApplicationController
   end
 
   def show
-    redirect_to @lesson_content.launch_url
+    url = Addressable::URI.parse(@lesson_content.launch_url)
+    url.query_values = helpers.launch_query
+    redirect_to url.to_s
   end
 
   private

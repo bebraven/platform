@@ -16,10 +16,12 @@ RSpec.describe CourseContentsController, type: :routing do
     describe "/course_contents/new loads ckeditor", :js do
       let(:return_service) { '/course_contents/new' }
       before(:each) do 
-        visit "/cas/login?service=#{url_encode(return_service)}"
         VCR.configure do |c|
           c.ignore_localhost = true
+          # Must ignore the Capybara host IFF we are running tests that have browser AJAX requests to that host.
+          c.ignore_hosts Capybara.server_host
         end
+        visit "/cas/login?service=#{url_encode(return_service)}"
         fill_and_submit_login(username, password)
       end
 

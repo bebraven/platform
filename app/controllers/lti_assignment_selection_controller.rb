@@ -12,6 +12,10 @@ class LtiAssignmentSelectionController < ApplicationController
   def create
     params.require([:state, :assignment_id])
     lti_launch = LtiLaunch.current(params[:state])
+
+    cc = CourseContent.find(params[:assignment_id])
+    cc.save_version!(current_user)
+
     assignment_url = course_content_url(params[:assignment_id])
     @deep_link_return_url, @jwt_response = helpers.lti_deep_link_response_message(lti_launch, assignment_url)
   end

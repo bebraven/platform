@@ -21,7 +21,7 @@ RSpec.describe CasController, type: :routing do
         let(:username) { valid_user_creds[:email] }
         let(:password) { valid_user_creds[:password] }
         
-        xit "logs in successfully" do
+        it "logs in successfully" do
           # Ensure that the login was successful
           expect(page).to have_content("You have successfully logged in")
         end
@@ -30,7 +30,7 @@ RSpec.describe CasController, type: :routing do
         let(:username) { invalid_user_creds[:email] }
         let(:password) { invalid_user_creds[:password] }
 
-        xit "fails to log in" do
+        it "fails to log in" do
           # Ensure that the login was failed
           expect(page).to have_content("Incorrect username or password")
         end
@@ -40,32 +40,36 @@ RSpec.describe CasController, type: :routing do
     describe "/cas/login with service url" do
       let(:return_service) { 'http://braven/' }
       before(:each) do 
-        visit "/cas/login?service=#{url_encode(return_service)}"
-        fill_and_submit_login(username, password)
+        VCR.use_cassette("sso_ticket_invalid", :match_requests_on => [:path]) do
+          visit "/cas/login?service=#{url_encode(return_service)}"
+          fill_and_submit_login(username, password)
+        end
       end
 
       context "when username and password are valid" do
         let(:username) { valid_user_creds[:email] }
         let(:password) { valid_user_creds[:password] }
         
-        xit "logs in successfully" do
+        it "logs in successfully" do
           # Ensure that the login was successful
           expect(current_url).to include(return_service)
           expect(current_url).to include("ticket")
         end
 
-        xit "validates existing tickets" do
+        it "validates existing tickets" do
           @params = parse_query(current_url, "&?,")
           expect(@params).to include("ticket")
         end
 
-        xit "generates new ticket when revisiting login page" do
-          # Get current ticket to check against next generated ticket
-          @params = parse_query(current_url, "&?,")
-          visit "/cas/login?service=#{url_encode(return_service)}"
+        it "generates new ticket when revisiting login page" do
+          VCR.use_cassette("sso_ticket_invalid", :match_requests_on => [:path]) do
+            # Get current ticket to check against next generated ticket
+            @params = parse_query(current_url, "&?,")
+            visit "/cas/login?service=#{url_encode(return_service)}"
 
-          # New ticket should be generated
-          expect(current_url).not_to include(@params["ticket"])
+            # New ticket should be generated
+            expect(current_url).not_to include(@params["ticket"])
+          end
         end
       end
     end
@@ -79,7 +83,7 @@ RSpec.describe CasController, type: :routing do
         let(:username) { valid_user_creds[:email] }
         let(:password) { valid_user_creds[:password] }
 
-        xit "logs in successfully" do
+        it "logs in successfully" do
           # Ensure that the login was successful
           expect(page).to have_content("You have successfully logged in")
         end

@@ -1,8 +1,11 @@
+# Needed to use the url_helpers outside of views and controller
+Rails.application.routes.default_url_options[:host] = Rails.application.secrets.application_host 
+
 Rails.application.routes.draw do
 
   resources :course_contents do
     post :publish
-    resources :course_content_histories, path: 'versions', only: [:index, :show]
+    resources :course_content_histories, path: 'versions', only: [:index, :show, :create]
   end
   resources :file_upload, only: [:create]
 
@@ -74,6 +77,15 @@ Rails.application.routes.draw do
   get 'salesforce/sync_to_lms'
   post 'salesforce/sync_to_lms'
 
+  # Admin stuff
+  namespace :admin do
+    resources :users do
+      member do
+        post 'confirm' => 'users#confirm'
+      end
+    end
+  end
+
   # RubyCAS Routes
   resources :cas, except: [:show]
   get '/cas/login', to: 'cas#login'
@@ -98,4 +110,7 @@ Rails.application.routes.draw do
 
   # Proxy xAPI messages to the LRS.
   match '/data/xAPI/*endpoint', to: 'lrs_xapi_proxy#xAPI', via: [:get, :put]
+
+  # There is a route similar to the commented out one below that doesn't show up here. See 'lib/lti_lesson_contents_proxy.rb' and 'config/application.rb'
+  # match '/lesson_contents_proxy/*endpoint', to: AWS_S3
 end
