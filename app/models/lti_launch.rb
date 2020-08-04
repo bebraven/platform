@@ -9,6 +9,7 @@ class LtiLaunch < ApplicationRecord
   # This is the Redirect URI that must be configured in the Developer Key for the LTI
   # and must match EXACTLY.
   LTI_LAUNCH_REDIRECT_URI="https://#{Rails.application.secrets.application_host}/lti/launch".freeze
+  BRAVEN_ISS="https://#{Rails.application.secrets.application_host}".freeze
 
   scope :authenticated, -> { where.not id_token_payload: nil }
   scope :unauthenticated, -> { where id_token_payload: nil }
@@ -34,6 +35,28 @@ class LtiLaunch < ApplicationRecord
 
     launch.save!
     launch
+  end
+
+  # Returns the parse request message payload of the launch
+  def request_message
+    @request_message ||= LtiIdToken.parse(id_token_payload)
+  end
+
+  # Each lesson or project has a single activity ID that ties together all the xAPI statements
+  # for it. This returns that ID.
+  def activity_id
+    raise ArgumentError.new, 'Wrong LTI launch message type. Must be a launch of a ResourceLink.' unless request_message.is_a?(LtiResourceLinkRequestMessage) 
+
+    # Note:  request_message.resource_link['id'] is an LTI ID tied to this resource, but activity_id 
+    # can't be a GUID, it has to be a URI per the xAPI specs. That's the point of this.
+    aid = Integer(request_message.custom['assignment_id']) # raises ArgumentError if not an int
+    cid = Integer(request_message.custom['course_id'])    # ditto
+    "#{Rails.application.secrets.canvas_cloud_url}/courses/#{cid}/assignments/#{aid}"
+  end
+
+  # Returns a unique identifier for us when issuing and JWT
+  def braven_iss
+    BRAVEN_ISS
   end
 
   # Returns the parameters needed in Step 2 of the LTI Launch flow in order

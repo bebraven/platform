@@ -33,7 +33,7 @@ RSpec.describe CourseContentHistoriesController, type: :controller do
   let(:valid_attributes) { attributes_for(:course_content_history).merge(course_content_id: course_content.id) }
 
   let(:valid_session) { {} }
-
+  let(:state) { SecureRandom.uuid }
   before do
     sign_in user
   end
@@ -46,8 +46,21 @@ RSpec.describe CourseContentHistoriesController, type: :controller do
   end
 
   describe "GET #show" do
+    let(:lti_launch) { create(:lti_launch_model) }
     it "returns a success response" do
-      get :show, params: {course_content_id: course_content.id, id: course_content_history.id}, session: valid_session
+      allow(LtiLaunch).to receive(:current).and_return(lti_launch)
+      allow(lti_launch).to receive(:activity_id).and_return('some_activity_id')
+      allow(Xapi).to receive(:get_statements_by_query).and_return({response: {}})
+      get(
+        :show, 
+        params: {
+          course_content_id: course_content.id, 
+          id: course_content_history.id, 
+          student_id: user.id,
+          state: lti_launch.state,
+        },
+        session: valid_session,
+      )
       expect(response).to be_successful
     end
   end

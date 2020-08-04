@@ -115,3 +115,10 @@ gem 'attr_encrypted'
 
 gem 'aws-sdk-s3'
 gem 'rubyzip'
+
+gem 'rails_same_site_cookie'
+
+# Helps with making requests against an LRS using xAPI statements. 
+# Note that there is another xapi gem out there so you can't just do 
+# gem 'xapi' and let bundler take care of it for you... weird.
+gem 'xapi', github: 'bebraven/Xapi', ref: '1f2224b'

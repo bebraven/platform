@@ -1,0 +1,61 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://example.com/cas/proxyValidate?service=http://braven/users/service&ticket=ST-cFUxfkB8aZLbyaQQsxdaRsBWBR96v
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Cowboy
+      Date:
+      - Thu, 23 Jul 2020 17:41:45 GMT
+      Connection:
+      - keep-alive
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Content-Type:
+      - application/xml; charset=utf-8
+      Etag:
+      - W/"9a1c52c33e7a367d7ee8e4f46b66593c"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 32a289cf-01ef-47e9-a7e1-51c9c9f4588e
+      X-Runtime:
+      - '0.032328'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 vegur
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+          <cas:authenticationFailure code="INVALID_TICKET">Ticket 'ST-cFUxfkB8aZLbyaQQsxdaRsBWBR96v' not recognized.</cas:authenticationFailure>
+        </cas:serviceResponse>
+  recorded_at: Thu, 23 Jul 2020 17:41:46 GMT
+recorded_with: VCR 6.0.0

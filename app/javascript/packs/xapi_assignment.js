@@ -20,8 +20,11 @@ try {
 function sendStatement(e) {
     const input = e.target;
     const text = input.value;
-    const name = input.attributes['data-bz-retained'].value;
-    const object_id = `${window.location.origin}${window.location.pathname}#/${name}`;
+    const project_lti_id = document.getElementById('javascript_variables').attributes['data-project-lti-id'].value;
+    const activity_id = project_lti_id; // e.g. https://braven.instructure.com/courses/48/assignments/158
+    const current_url = `${window.location.origin}${window.location.pathname}`
+    const data_input_id = input.attributes['data-bz-retained'].value;
+    const data_input_url = `${current_url}#/${data_input_id}`;
 
     // If the input is empty, return early.
     if (!text) {
@@ -39,21 +42,21 @@ function sendStatement(e) {
             id: "http://adlnet.gov/expapi/verbs/answered"
         },
         target: {
-            id: object_id,
+            id: activity_id,
         },
         result: {
             response: text
         },
         "object": {
-            "id": object_id,
+            "id": activity_id,
             "objectType": "Activity",
             "definition": {
                 "type": "http://adlnet.gov/expapi/activities/cmi.interaction",
                 "name": {
-                    "und": name
+                    "und": data_input_id
                 },
                 "description": {
-                    "und": name
+                    "und": data_input_url
                 },
                 "interactionType": "fill-in",
             }

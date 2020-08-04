@@ -104,6 +104,12 @@ body {
   padding-top: 48px; /* Space for fixed navbar */
 }
 
+// A place to store data attributes in a hidden div so we can pass
+// information from the controller to the JS.
+#javascript_variables {
+  display: none;
+}
+
 /*
  * Navbar
  */

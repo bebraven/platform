@@ -1,4 +1,3 @@
-
 # Implement the LTI 1.3 Launch Flow. Here is a nice summary of that flow by Canvas, our LMS:
 # https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html#launch-overview
 #
@@ -41,11 +40,12 @@ class LtiLaunchController < ApplicationController
   def launch
     params.require([:id_token, :state])
 
-    # TODO: also grab the user email out of the payload and tell devise that they are authenticated for this session
-
     # This also verifies the request is coming from Canvas using the public JWK 
     # as described in Step 3 here: https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html
     ll = LtiLaunch.authenticate(params[:state], params[:id_token])
+
+    # Sign in the user on Platform.
+    sign_in_from_lti(ll)
 
     # Step 4 in the flow, show the target resource now that we've saved the id_token payload that contains
     # user identifiers, course contextual data, custom data, etc.
@@ -55,6 +55,21 @@ class LtiLaunchController < ApplicationController
     else
       target_uri_with_params.query = "state=#{params[:state]}"
     end
+
     redirect_to target_uri_with_params.to_s
+  end
+
+  private
+
+  # Grab the user ID out of the payload and tell devise that they are authenticated for this session.
+  def sign_in_from_lti(ll)
+    # NOTE: Crash with KeyError if no user supplied.
+    canvas_id = ll.request_message.custom.fetch('user_id')
+    if user = User.find_by(canvas_id: canvas_id)
+      sign_in user
+      Rails.logger.debug("Done signing in LTI-authenticated user #{user.email}")
+    else
+      Rails.logger.debug("Invalid user came through LTI launch: Canvas ID #{canvas_id}")
+    end
   end
 end

@@ -22,13 +22,13 @@ RSpec.describe LessonContentPublisher do
     end
   end
 
-  describe '#launch_url' do
+  describe '#launch_path' do
     context 'when valid Rise360 zipfile' do
 
       it 'returns launch URL' do
         allow(LessonContentPublisher).to receive(:publish).and_return("https://S3-bucket-path/lessons/somekey/index.html")
-        expect(aws_object).to receive(:public_url)
-        LessonContentPublisher.launch_url(lesson_content.lesson_content_zipfile.key)
+        expect(aws_object).to receive(:public_url).and_return("https://S3-bucket-path/lessons/somekey/index.html")
+        expect(LessonContentPublisher.launch_path(lesson_content.lesson_content_zipfile.key)).to eq('/lessons/somekey/index.html')
       end
 
     end

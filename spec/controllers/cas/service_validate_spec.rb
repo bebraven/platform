@@ -19,7 +19,7 @@ RSpec.describe CasController, type: :routing do
       let(:password) { valid_user_creds[:password] }
 
       context "without a login ticket" do 
-        xit "fails validate a service" do
+        it "fails validate a service" do
           visit "/cas/serviceValidate"
 
           expect(page.body).to include("cas:authenticationFailure")
@@ -30,15 +30,17 @@ RSpec.describe CasController, type: :routing do
 
       context "with valid user" do
         before(:each) do
-          visit "/cas/login?service=#{url_encode(return_service)}"
-          fill_and_submit_login(username, password)
+          VCR.use_cassette('sso_ticket_invalid', :match_requests_on => [:path]) do
+            visit "/cas/login?service=#{url_encode(return_service)}"
+            fill_and_submit_login(username, password)
+          end
         end
 
         context "with a valid login ticket" do 
           before(:each) do
             @params = parse_query(current_url, "&?,")
           end
-          xit "logs in successfully and validates service" do
+          it "logs in successfully and validates service" do
             visit "/cas/serviceValidate?ticket=#{@params['ticket']}&service=#{url_encode(return_service)}"
             expect(page.body).to include("cas:authenticationSuccess>")
             expect(page.body).to include(valid_user.email)
@@ -52,7 +54,7 @@ RSpec.describe CasController, type: :routing do
           #  expect(page.body).to include('platform_usr')
           #end
 
-          xit "fails validate a service because no service specified" do
+          it "fails validate a service because no service specified" do
             # Attempt to validate the service
             visit "/cas/serviceValidate?ticket=#{@params['ticket']}"
             expect(page.body).to include("cas:authenticationFailure")
@@ -60,7 +62,7 @@ RSpec.describe CasController, type: :routing do
             expect(page.body).to include("Ticket or service parameter was missing in the request.")
           end
 
-          xit "fails validate a service because ticket is consumed" do
+          it "fails validate a service because ticket is consumed" do
             # Validate service ticket
             visit "/cas/serviceValidate?ticket=#{@params["ticket"]}&service=#{return_service}"
 

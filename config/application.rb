@@ -2,6 +2,8 @@ require_relative 'boot'
 
 require 'rails/all'
 
+require_relative '../lib/lti_lesson_contents_proxy'
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -15,6 +17,9 @@ module Platform
     # Determines whether forgery protection is added on ActionController:Base. This is false by default to
     # be backwards compatible with v5.2 and below who may have removed it from ApplicationController
     config.action_controller.default_protect_from_forgery = true
+
+    # Allows us to serve Rise360 static files hosted on AWS S3 through our server avoiding browser cross-origin issues.
+    config.middleware.use LtiLessonContentsProxy, backend: "https://#{Rails.application.secrets.aws_files_bucket}.s3.amazonaws.com"
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

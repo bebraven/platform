@@ -42,7 +42,6 @@ RSpec.describe CourseContentsController, type: :controller do
     skip("We don't do validation yet.")
   }
 
-
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # CourseContentsController. Be sure to keep this updated too.
@@ -57,9 +56,14 @@ RSpec.describe CourseContentsController, type: :controller do
   end
 
   describe "GET #show" do
+    let(:lti_launch) { create(:lti_launch_model) }
+
     it "returns a success response" do
+      allow(LtiLaunch).to receive(:current).and_return(lti_launch)
+      allow(lti_launch).to receive(:activity_id).and_return('some_activity_id')
+
       course_content = CourseContent.create! valid_attributes
-      get :show, params: {id: course_content.to_param}, session: valid_session
+      get :show, params: {id: course_content.to_param, state: lti_launch.state}, session: valid_session
       expect(response).to be_successful
     end
   end

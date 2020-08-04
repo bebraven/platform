@@ -11,6 +11,13 @@ class CourseContentsController < ApplicationController
   # GET /course_contents/1
   # GET /course_contents/1.json
   def show
+    # TODO: we can either launch a course contents to actually do the project or we can launch it in preview mode when inserting
+    # the params[:state] will be there if it actually needs to talk to the LRS. Clean this up and make sure it's not trying to
+    # talk to the LRS in preview mode. See the iframe here for preview mode: app/views/lti_assignment_selection/create.html.erb 
+    # Task: https://app.asana.com/0/1174274412967132/1187445581799823
+    if params[:state]
+      @project_lti_id = LtiLaunch.current(params[:state]).activity_id
+    end
   end
 
   # GET /course_contents/new
@@ -71,19 +78,8 @@ class CourseContentsController < ApplicationController
       if @course_content.publish(course_content_params)
 
         # update publish time, save a version
-        @course_content.published_at = DateTime.now
-        new_version = CourseContentHistory.new({
-          course_content_id: @course_content.id,
-          title: @course_content.title,
-          body: @course_content.body,
-          user: @current_user,
-        })
-        @course_content.transaction do
-          new_version.save!
-          @course_content.save!
-        end
+        @course_content.save_version!(@current_user)
 
-        # return
         format.html { redirect_to @course_content, notice: 'CourseContent was successfully published.' }
         format.json { render :show, status: :ok }
       else

@@ -21,6 +21,8 @@ class User < ApplicationRecord
     #devise :cas_authenticatable, :rememberable, :registerable, :confirmable, :validatable, :recoverable, :trackable
     devise :cas_authenticatable, :rememberable, :registerable, :confirmable, :validatable, :recoverable
   end
+
+  self.per_page = 100
   
   has_many :project_submissions
   has_many :projects, :through => :project_submissions
@@ -91,6 +93,23 @@ class User < ApplicationRecord
 
   def total_grade(program)
     ::GradeCalculator.total_grade(self, program)
+  end
+
+  def self.search(query)
+    search_str = query.strip
+    search_str.downcase!
+    to_sql_pattern = ->(str) { "%#{str.gsub('*', '%')}%" } # 'ian*test@bebrave' would turn into '%ian%test@bebrave%' and SQL would return the email: 'brian+testblah@bebraven.org'
+    if search_str.include? '@'
+      where('lower(email) like ?', to_sql_pattern[search_str] )
+    else 
+      search_terms = search_str.split("\s")
+      if search_terms.size <= 1
+        pattern = to_sql_pattern[search_str]
+        where('lower(first_name) like ? OR lower(last_name) like ? OR lower(email) like ?', pattern, pattern, pattern)
+      else
+        where('lower(first_name) like ? AND lower(last_name) like ?', to_sql_pattern[search_terms.first], to_sql_pattern[search_terms.last])
+      end
+    end
   end
 
   private

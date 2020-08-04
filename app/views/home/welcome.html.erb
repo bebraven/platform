@@ -1,23 +1,12 @@
+<%= render 'layouts/admin_navbar' %>
+
 <% content_for :headline do %>
   Dashboard
 <% end %>
-<br/>
-<div>
-<%= link_to 'Content Editor', new_course_content_path %>
-</div>
-<br/>
-<div>
-<%= link_to 'Course Models', programs_path %>
-</div>
-<br/>
-<div>
-<%= link_to 'Sync To LMS', salesforce_sync_to_lms_path %>
-</div>
-<br/>
-<div>
-<%= link_to 'Portal', canvas_url, target: :_blank %>
-</div>
-<br/>
-<div>
-<%= link_to 'Log Out', destroy_user_session_path,  method: :delete %>
+<div class="list-group w-25 mt-5 ml-4">
+  <%= link_to 'Content Editor', new_course_content_path, type: "button", class: "list-group-item list-group-item-action active" %>
+  <%= link_to 'Portal', canvas_url, target: :_blank, type: "button", class: "list-group-item list-group-item-action" %>
+  <%= link_to 'Course Models', programs_path, type: "button", class: "list-group-item list-group-item-action" %>
+  <%= link_to 'Sync To LMS', salesforce_sync_to_lms_path, type: "button", class: "list-group-item list-group-item-action" %>
+  <%= link_to 'Users', admin_users_path, type: "button", class: "list-group-item list-group-item-action" %>
 </div>

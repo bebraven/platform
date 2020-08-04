@@ -12,7 +12,7 @@ RSpec.describe CasController, type: :routing do
     let(:valid_user_creds) {{ email: valid_user.email, password: valid_user.password }}
     let(:return_service) { 'http://braven/' }
 
-    xit "fails validate a service ticket because no ticket specified" do
+    it "fails validate a service ticket because no ticket specified" do
       # Attempt to validate the ticket
       visit "/cas/validate"
       result = JSON.parse(page.body)
@@ -25,15 +25,17 @@ RSpec.describe CasController, type: :routing do
 
     describe "/cas/validate" do
       before(:each) do 
-        visit "/cas/login?service=#{url_encode(return_service)}"
-        fill_and_submit_login(username, password)
+        VCR.use_cassette('sso_ticket_invalid', :match_requests_on => [:path]) do
+          visit "/cas/login?service=#{url_encode(return_service)}"
+          fill_and_submit_login(username, password)
+        end
       end
 
       context "when username and password are valid" do
         let(:username) { valid_user_creds[:email] }
         let(:password) { valid_user_creds[:password] }
 
-        xit "contain a ticket" do
+        it "contain a ticket" do
           expect(current_url).to include("ticket")
         end
 
@@ -41,7 +43,7 @@ RSpec.describe CasController, type: :routing do
           before(:each) do
             @params = parse_query(current_url, "&?,")
           end
-          xit "validate a service ticket" do
+          it "validate a service ticket" do
             # Validate the ticket
             visit "/cas/validate?ticket=#{@params["ticket"]}&service=#{return_service}"
             result = JSON.parse(page.body)
@@ -51,7 +53,7 @@ RSpec.describe CasController, type: :routing do
             expect(result["user"]).to eq(username)
           end
 
-          xit "fails validate a service ticket because no service specified" do
+          it "fails validate a service ticket because no service specified" do
             # Attempt to validate the ticket
             visit "/cas/validate?ticket=#{@params["ticket"]}"
             result = JSON.parse(page.body)
@@ -62,7 +64,7 @@ RSpec.describe CasController, type: :routing do
             expect(result["error"]["message"]).to include("Ticket or service parameter was missing in the request.")
           end
 
-          xit "fails validate a service ticket because xit is consumed" do
+          it "fails validate a service ticket because it is consumed" do
             # Validate service ticket
             visit "/cas/validate?ticket=#{@params["ticket"]}&service=#{return_service}"
   
