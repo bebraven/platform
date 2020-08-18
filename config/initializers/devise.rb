@@ -297,7 +297,7 @@ Devise.setup do |config|
     # call sign_in user which stores the authentication in session and bypasses the need
     # to check authentication.
     manager.strategies.add(:lti_auth, LtiAuthentication::WardenStrategy)
-    manager.default_strategies(scope: :user).unshift :lti_auth
+    manager.default_strategies(scope: :user) << :lti_auth
     manager.failure_app = DeviseCasAuthenticatable::SingleSignOut::WardenFailureApp
   end
 
