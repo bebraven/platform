@@ -1,12 +1,3 @@
 <div class="<%= @course_content.content_type == 'wiki_page' ? 'bz-module' : 'bz-assignment' %>">
   <%== @course_content.body %>
-  <!-- TODO: https://app.asana.com/0/1174274412967132/1186960110311121 -->
-  <%= form_with url: course_content_course_content_histories_path(@course_content) do |f| %>
-    <input id="state" name='state' type='hidden' value="<%= params[:state] %>" />
-    <!-- TODO: https://app.asana.com/0/1174274412967132/1187342807279865 -->
-  	<input type="submit" value="Submit" />
-  <% end %>
 </div>
-
-<%= content_tag :div, '', id: "javascript_variables", data: {project_lti_id: @project_lti_id} %>
-<%= javascript_pack_tag 'xapi_assignment' %>

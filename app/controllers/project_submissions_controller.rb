@@ -1,16 +1,48 @@
+require 'lti_advantage_api'
+require 'lti_score'
+require 'uri'
+
+# Viewing and submitting a project is handled by CourseContentHistory
+# TODO: Migrate when we can create the project model dependencies
+# TODO: https://app.asana.com/0/1174274412967132/1186960110311121
 class ProjectSubmissionsController < ApplicationController
   include DryCrud::Controllers::Nestable
 
   nested_resource_of Project
 
-  # GET /project_submissions
-  # GET /project_submissions.json
-  def index
+  before_action :set_project_version, only: [:create]
+
+  # Project submissions aren't recorded in our DB yet (e.g, we don't use the
+  # ProjectSubmission table or model).
+  # TODO: https://app.asana.com/0/1174274412967132/1186960110311121
+  # The fact that a student has submitted a project (e.g., clicked the "Submit"
+  # button) is recorded in Canvas as an LTIScore.
+  # The project responses entered by the student are recorded in the LRS and 
+  # retrieved when we view the submission by xapi_assignment.js.
+  def create
+    params.require([:state])
+    lti_launch = LtiLaunch.current(params[:state])
+
+    # We're using CourseContentHistoriesController to view and work on projects
+    submission_url = Addressable::URI.parse(course_content_course_content_history_url(
+        @project_version.course_content,
+        @project_version.id,
+      ),
+    )
+    submission_url.query = { user_override_id: current_user.id }.to_query
+
+    # Save project submission to Canvas.
+    # The actual project responses are stored in the LRS.
+    lti_score = LtiScore.new_project_submission(
+      current_user.canvas_id,
+      submission_url.to_s,
+    )
+    LtiAdvantageAPI.new(lti_launch).create_score(lti_score)
   end
 
-  # GET /project_submissions/1
-  # GET /project_submissions/1.json
-  def show
+  private
+  def set_project_version
+    params.require([:version])
+    @project_version = CourseContentHistory.find(params[:version])
   end
-
 end

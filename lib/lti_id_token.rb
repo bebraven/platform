@@ -39,11 +39,8 @@ class LtiIdToken
   end
 
   def self.public_jwks
-    Honeycomb.start_span(name: 'LtiIdToken.public_jwks') do |span|
-      span.add_field('url', PUBLIC_JWKS_URL)
-      response = RestClient.get(PUBLIC_JWKS_URL)
-      JSON.parse(response.body, symbolize_names: true)
-    end
+    response = RestClient.get(PUBLIC_JWKS_URL)
+    JSON.parse(response.body, symbolize_names: true)
   end
   private_class_method :public_jwks
 

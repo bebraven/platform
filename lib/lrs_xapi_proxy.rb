@@ -7,6 +7,9 @@
 class LrsXapiProxy
 
   XAPI_VERSION = '1.0.2'
+  XAPI_STATE_API_ENDPOINT = 'activities/state'
+  JSON_MIME_TYPE = 'application/json'
+  OCTET_STREAM_MIME_TYPE = 'application/octet-stream'
 
   @lrs_path = nil
 
@@ -14,76 +17,76 @@ class LrsXapiProxy
     @lrs_path ||= URI(Rails.application.secrets.lrs_url).path
   end
 
-  def self.request(request, path, user)
+  def self.request(request, endpoint, user)
     Honeycomb.start_span(name: 'LrsXapiProxy.request') do |span|
-      span.add_field('path', path)
+      span.add_field('path', "#{lrs_path}/#{endpoint}")
       span.add_field('user.id', user.id)
       span.add_field('user.email', user.email)
       span.add_field('method', request.method)
 
       return unless request.method == 'GET' || request.method == 'PUT'
 
+      # Rise360 sends and receives payloads to the /activities/state xAPI endpoint that are things like
+      # like the following, both JSON and just plain content, but for both it expects the Content-Type to
+      # be 'application/octet-stream' (or perhaps something equivalent, but this is what the browser shows).
+      #   stateId=cumulative_time:    123456 or NaN 
+      #   stateId=bookmark:           #/lessons/xQvXXBKjohmGHnPUlyck9VqMlQ0hgcgy
+      #   stateId=suspend_data:       {"v":1,"d":[123,34]]}
+      content_type = (endpoint == XAPI_STATE_API_ENDPOINT ? OCTET_STREAM_MIME_TYPE : JSON_MIME_TYPE )
+
       # Rewrite query string
-      params = request.query_parameters
-      if params['agent']
-        params['agent'] = {
-            name: user.full_name,
-            mbox: "mailto:#{user.email}",
-            objectType: 'Agent',
-          }.to_json
-      end
+      #
+      # Note: the user_override param is used by the controller to decide the
+      # the effective user to query the LRS on behalf of. It's not meant to be passed through
+      # in the xAPI request.
+      params = request.query_parameters.except(:user_override_id)
+      params['agent'] = build_agent_hash(user).to_json if params['agent']
 
       # Rewrite body.
-      # request_parameters is supposed to be formed from the POST body, but for some reason we're
-      # getting duplicate params here. Every param is passed through as expected at the root level,
-      # but then there's an additional key, 'lrs_xapi_proxy', that contains an exact copy of all
-      # those params. Since I have no idea why this happens, and the LRS complains if you pass in
-      # params it doesn't recognize, we're just passing in the contents of the duplicate key here.
-      # If anyone ever figures out what's going on here and how to get rid of that extra key, this
-      # should be updated to pass in just request_parameters.
-      data = request.request_parameters
-      if request.request_parameters['lrs_xapi_proxy'] 
-        data = request.request_parameters['lrs_xapi_proxy']
-      end
-
-      if data['actor']
-        data['actor'] = {
-          name: user.full_name,
-          mbox: "mailto:#{user.email}",
-        }
-      end
-
-      # TODO: https://app.asana.com/0/1174274412967132/1185956506654833
-      # LRS rejects NaN values for duration. This is an issue with Rise's xAPI activities with 
-      # timing associated with them, e.g. "progressed".
-      if data['result']
-        if data['result']['duration'] == "PTNaNS"
-          data['result']['duration'] = "PT0.0S"
+      data = nil
+      if request.method == 'PUT'
+        data = request.raw_post
+        if content_type == JSON_MIME_TYPE 
+          data = JSON.parse(request.raw_post)
+          data['actor'] = build_agent_hash(user) if data['actor']
+          data = data.to_json
         end
       end
 
       begin
         response = RestClient::Request.execute(
           method: request.method,
-          url: "#{Rails.application.secrets.lrs_url}/#{path}",
-          payload: request.method == 'PUT' ? data.to_json : {},
+          url: "#{Rails.application.secrets.lrs_url}/#{endpoint}",
+          payload: request.method == 'PUT' ? data : {},
           headers: {
             authorization: authentication_header,
+            # Note: this version of Tincan.js uses 1.0.2. However Rise360 sends 1.0.1. This means we're
+            # fibbing and telling the LRS it's 1.0.2 when it may be a different version. There doesn't seem
+            # to be much of a difference though so if we run into an issue with version mismatches, we'll deal then.
             x_experience_api_version: XAPI_VERSION,
             params: params,
-            content_type: ('application/json' if request.method == 'PUT' ),
+            content_type: (content_type if request.method == 'PUT' ),
           }.compact
         )
+
+        # Note: I tried to just pass the content_type returned from the LRS right on through but couldn't get it to work
+        # so we're just using the content_type associated with the particular path / route that we're dealing with
+        response.headers[:content_type] = content_type
         response
-      rescue RestClient::NotFound => e
+      rescue RestClient::NotFound => e # We expect Not Found at times and just want to return that. E.g. first launch of Rise360 lesson with no stateId
         e.response
-      rescue RestClient::Exception => e
-        span.add_field('error', e.message)
-        span.add_field('http_code', e.http_code)
-        span.add_field('http_body', e.http_body)
-        raise
       end
     end
+  end
+
+private
+
+  private_class_method def self.build_agent_hash(user)
+    {
+      objectType: 'Agent',
+      name: user.full_name,
+      mbox: "mailto:#{user.email}",
+    }
   end
 
   private_class_method def self.authentication_header

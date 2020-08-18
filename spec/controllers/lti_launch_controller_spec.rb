@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe LtiLaunchController, type: :controller do
-  let(:state) { SecureRandom.uuid }
+  let(:state) { LtiLaunchController.generate_state }
 
   describe 'POST #login' do
     let(:lti_launch_params) { build(:lti_launch_login_params) }
 
     before(:each) do
-      allow(SecureRandom).to receive(:uuid).and_return(state)
+      allow(LtiLaunchController).to receive(:generate_state).and_return(state)
       post :login, params: lti_launch_params
     end
 
@@ -23,14 +23,15 @@ RSpec.describe LtiLaunchController, type: :controller do
   end
 
   describe 'POST #launch' do
+    let(:canvas_user_id) { 12345 }
     let!(:target_link_uri) { 'https://target/link' }
-    let!(:lti_launch) { create(:lti_launch_model, target_link_uri: target_link_uri, state: state) }
-    let!(:id_token_payload) { FactoryBot.json(:lti_resource_link_launch_request, target_link_uri: target_link_uri) }
+    let!(:lti_launch) { create(:lti_launch_canvas, target_link_uri: target_link_uri, state: state, canvas_user_id: canvas_user_id) }
+    let!(:id_token_payload) { FactoryBot.json(:lti_launch_assignment_message, target_link_uri: target_link_uri, canvas_user_id: canvas_user_id) }
     let!(:id_token) { Keypair.jwt_encode(JSON.parse(id_token_payload, symbolize_names: true)) }
     let!(:lti_launch_params) { { :id_token => id_token, :state => state } }
 
     context 'user in the launch payload matches a local user by canvas_id' do
-      let!(:lti_user) { create(:with_canvas_id_user) }
+      let!(:lti_user) { create(:registered_user, canvas_id: canvas_user_id) }
 
       before(:each) do
         public_jwks = { keys: [ Keypair.current.public_jwk_export ] }.to_json

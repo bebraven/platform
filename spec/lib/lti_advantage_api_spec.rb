@@ -6,7 +6,7 @@ RSpec.describe LtiAdvantageAPI do
   let(:canvas_cloud_url) { Rails.application.secrets.canvas_cloud_url }
   let(:access_token) { FactoryBot.json(:lti_advantage_access_token) }
   let(:access_token_value) { JSON.parse(access_token)['access_token'] }
-  let(:assignment_lti_launch) { create(:lti_launch_resource_link) }
+  let(:assignment_lti_launch) { create(:lti_launch_assignment) }
   subject(:api) { LtiAdvantageAPI.new(assignment_lti_launch) }
 
   before(:each) do

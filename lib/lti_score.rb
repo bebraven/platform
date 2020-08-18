@@ -4,6 +4,8 @@
 # https://canvas.instructure.com/doc/api/score.html
 class LtiScore
   
+  LTI_SCORE_SUBMISSION_URL_KEY = "https://canvas.instructure.com/lti/submission"
+
   module ActivityProgress
     INITIALIZED='Initialized'
     STARTED='Started'
@@ -55,7 +57,7 @@ class LtiScore
       :activityProgress => activity_progress,
       :gradingProgress => grading_progress,
     }
-    msg['https://canvas.instructure.com/lti/submission'] = submission if submission 
+    msg[LTI_SCORE_SUBMISSION_URL_KEY] = submission if submission
     msg[:scoreGiven] = score_given if score_given
     msg[:scoreMaximum] = score_maximum if score_maximum
     msg[:comment] = comment if comment

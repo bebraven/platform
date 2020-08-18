@@ -16,7 +16,10 @@ class LtiAssignmentSelectionController < ApplicationController
     cc = CourseContent.find(params[:assignment_id])
     cc.save_version!(current_user)
 
-    assignment_url = course_content_url(params[:assignment_id])
+    assignment_url = course_content_course_content_history_url(
+      params[:assignment_id],
+      cc.last_version.id,
+    )
     @deep_link_return_url, @jwt_response = helpers.lti_deep_link_response_message(lti_launch, assignment_url)
   end
 end

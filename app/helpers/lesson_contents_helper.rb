@@ -26,6 +26,7 @@ module LessonContentsHelper
     lrs_proxy_url.path = LrsXapiProxy.lrs_path
     {
       :endpoint => lrs_proxy_url.to_s,
+      :auth => "#{LtiAuthentication::LTI_AUTH_HEADER_PREFIX} #{params[:state]}", 
       # Our LRS proxy will supply the correct values for these
       # Send empty values to get the Rise 360 Tincan code won't error out on missing keys
       :actor => '{"name":"'"#{USERNAME_PLACEHOLDER}"'", "mbox":["mailto:'"#{PASSWORD_PLACEHOLDER}"'"]}',

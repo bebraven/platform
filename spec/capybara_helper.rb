@@ -8,6 +8,8 @@ end
 Capybara.server_host = ENV['SPEC_HOST'] if ENV['SPEC_HOST']
 Capybara.server_port = ENV['SPEC_PORT'] if ENV['SPEC_PORT']
 
+Capybara.threadsafe = true # Allows us to change config on a per session basis.
+
 chrome_shim = ENV.fetch('GOOGLE_CHROME_SHIM', nil)
 chrome_host = ENV.fetch('SELENIUM_HOST', nil)
 

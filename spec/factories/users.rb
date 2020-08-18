@@ -22,13 +22,12 @@ FactoryBot.define do
       sequence(:password) { |i| "password#{i}" }
       confirmed_at { DateTime.now }
 
-      factory :admin_user do
-        admin { true }
+      factory :fellow_user do
+        canvas_id { '1234' }
       end
 
-      factory :with_canvas_id_user do
-        # Match custom.user_id in :lti_link_launch_request factory
-        canvas_id { 55555 }
+      factory :admin_user do
+        admin { true }
       end
     end
 

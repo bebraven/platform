@@ -20,7 +20,7 @@
         <td><%= course_content_history.title %></td>
         <td><%= course_content_history.user.email %></td>
         <td><%= course_content_history.body %></td>
-        <td><%= link_to 'Show', [@course_content, course_content_history] %></td>
+        <td><%= link_to "#{course_content_history.id}", [@course_content, course_content_history] %></td>
       </tr>
     <% end %>
   </tbody>

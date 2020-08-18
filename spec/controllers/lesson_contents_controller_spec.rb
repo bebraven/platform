@@ -13,7 +13,7 @@ RSpec.describe LessonContentsController, type: :controller do
 
   # TODO: https://app.asana.com/0/1174274412967132/1184057808812010
   let(:valid_session) { {} } 
-  let(:state) { SecureRandom.uuid }
+  let(:state) { LtiLaunchController.generate_state }
 
   describe "GET #new" do
     it "returns a success response" do
@@ -49,7 +49,7 @@ RSpec.describe LessonContentsController, type: :controller do
 
   describe "POST #create" do
     let(:file_upload) { fixture_file_upload(Rails.root.join('spec/fixtures', 'example_rise360_package.zip'), 'application/zip') }
-    let!(:lti_launch) { create(:lti_launch_deep_link, target_link_uri: 'https://target/link', state: state) }
+    let!(:lti_launch) { create(:lti_launch_assignment_selection, target_link_uri: 'https://target/link', state: state) }
 
     context "with invalid params" do
       it "raises an error when state param is missing" do
@@ -74,7 +74,7 @@ RSpec.describe LessonContentsController, type: :controller do
         post :create, params: {state: state, lesson_content_zipfile: file_upload}, session: valid_session
 
         expected_url = LtiDeepLinkingRequestMessage.new(lti_launch.id_token_payload).deep_link_return_url
-        expect(response.body).to match /<form action="#{expected_url}"/
+        expect(response.body).to match /<form action="#{Regexp.escape(expected_url)}"/
 
         lesson_content_url = lesson_content_url(LessonContent.last)
         expect(response.body).to match /<iframe id="lesson-content-preview" src="#{lesson_content_url}"/

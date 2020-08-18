@@ -11,13 +11,6 @@ class CourseContentsController < ApplicationController
   # GET /course_contents/1
   # GET /course_contents/1.json
   def show
-    # TODO: we can either launch a course contents to actually do the project or we can launch it in preview mode when inserting
-    # the params[:state] will be there if it actually needs to talk to the LRS. Clean this up and make sure it's not trying to
-    # talk to the LRS in preview mode. See the iframe here for preview mode: app/views/lti_assignment_selection/create.html.erb 
-    # Task: https://app.asana.com/0/1174274412967132/1187445581799823
-    if params[:state]
-      @project_lti_id = LtiLaunch.current(params[:state]).activity_id
-    end
   end
 
   # GET /course_contents/new
@@ -73,6 +66,10 @@ class CourseContentsController < ApplicationController
 
   # POST /course_contents/1/publish
   # POST /course_contents/1/publish.json
+  # This is for publishing content to *portal.bebraven.org (aka Portal).
+  # To publish to braven.instructure.com (aka Canvas LMS), we use LTI:
+  #  - For modules/courses/lessons: LessonContentsController
+  #  - F projects/assignments: LTIAssignmentSelectionController
   def publish
     respond_to do |format|
       if @course_content.publish(course_content_params)

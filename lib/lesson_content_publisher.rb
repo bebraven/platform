@@ -26,14 +26,19 @@ class LessonContentPublisher
       bucket = AwsS3Bucket.new
 
       zipfile.open do |file|
-        Zip::File.open(file.path) do |zip_file|
-          zip_file.each do |entry|
-            next unless entry.file?
-            s3_object = bucket.object(s3_object_key(zipfile.key, entry.name))
-            s3_object.put({
-                acl: "public-read",
-                body: entry.get_input_stream.read,
-            })
+        Honeycomb.start_span(name: 'LessonContentPublisher.publish.zipfile') do |span|
+          span.add_field('file.path', file.path)
+          span.add_field('file.size', file.size)
+
+          Zip::File.open(file.path) do |zip_file|
+            zip_file.each do |entry|
+              next unless entry.file?
+              s3_object = bucket.object(s3_object_key(zipfile.key, entry.name))
+              s3_object.put({
+                  acl: "public-read",
+                  body: entry.get_input_stream.read,
+              })
+            end
           end
         end
       end
