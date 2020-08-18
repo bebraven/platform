@@ -19,6 +19,19 @@ class LtiLaunch < ApplicationRecord
     launch = LtiLaunch.where(state: state).authenticated.first!
   end
 
+  # Alias for current but returns false if there is no authenticated LtiLaunch for this "state"
+  def self.is_valid?(state)
+     # TODO: need to expire launches. They shouldn't be valid forever. Maybe only 2 weeks.
+     # Actually, we should just clear out launch records from the database periodically,
+     # whatever the valid length of time we choose. No reason for the launches table to grow
+     # forever. The state parameters are sent in the iframed URL and authentication header so
+     # an attacker could theoretically brute force a login, which makes it more important to
+     # to not have them valid forever.
+     # Task: https://app.asana.com/0/1174274412967132/1184057808812020
+     ll = LtiLaunch.where(state: state).authenticated.first
+     (ll.present? ? ll : false)
+  end
+
   # Authenticates an LtiLaunch with the id_token sent from the platform
   def self.authenticate(state, id_token)
     idt = LtiIdToken.parse_and_verify(id_token)
@@ -40,6 +53,11 @@ class LtiLaunch < ApplicationRecord
   # Returns the parse request message payload of the launch
   def request_message
     @request_message ||= LtiIdToken.parse(id_token_payload)
+  end
+
+  # The user that this launch is for.
+  def user
+    User.find_by_canvas_id(request_message.canvas_user_id)
   end
 
   # Each lesson or project has a single activity ID that ties together all the xAPI statements

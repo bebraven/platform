@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://lrs.braven.org/data/xAPI/statements
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - rest-client/2.1.0 (linux-musl x86_64) ruby/2.6.5p114
+      Authorization:
+      - Basic REMOVED
+      X-Experience-Api-Version:
+      - 1.0.2
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 11 Aug 2020 21:47:27 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '27'
+      Connection:
+      - keep-alive
+      Server:
+      - nginx
+      Vary:
+      - Origin
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Expose-Headers:
+      - ETag
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Strict-Transport-Security:
+      - max-age=15552000; includeSubDomains
+      X-Download-Options:
+      - noopen
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Experience-Api-Consistent-Through:
+      - '2020-08-11T21:47:27.424Z'
+      X-Experience-Api-Version:
+      - 1.0.3
+      Etag:
+      - W/"1b-kqVs0oGuVBgzC/ayBcKByJHOxKY"
+    body:
+      encoding: UTF-8
+      string: '{"more":"","statements":[]}'
+  recorded_at: Tue, 11 Aug 2020 21:47:27 GMT
+recorded_with: VCR 6.0.0

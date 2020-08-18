@@ -49,26 +49,18 @@ class SalesforceAPI
 
   def get(path, params={}, headers={})
     RestClient.get("#{@salesforce_url}#{path}", {params: params}.merge(@global_headers.merge(headers)))
-  rescue => e
-    handle_rest_client_error(e)
   end
 
   def post(path, body, headers={})
     RestClient.post("#{@salesforce_url}#{path}", body, @global_headers.merge(headers))
-  rescue => e
-    handle_rest_client_error(e)
   end
 
   def put(path, body, headers={})
     RestClient.put("#{@salesforce_url}#{path}", body, @global_headers.merge(headers))
-  rescue => e
-    handle_rest_client_error(e)
   end
 
   def patch(path, body, headers={})
     RestClient.patch("#{@salesforce_url}#{path}", body, @global_headers.merge(headers))
-  rescue => e
-    handle_rest_client_error(e)
   end
 
   def get_program_info(program_id)
@@ -135,11 +127,5 @@ class SalesforceAPI
 #    }
 #    post("/services/apexrest/participants/currentandfuture/", body.to_json, JSON_HEADERS) # Defined in BZ_ProgramParticipantInfoService apex class in Salesforce
 #  end
-
-  def handle_rest_client_error(e)
-    Rails.logger.error("{\"Error\":\"#{e.message}\"}")
-    Rails.logger.error(e.response.body)
-    raise
-  end
 
 end

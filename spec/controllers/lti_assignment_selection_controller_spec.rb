@@ -16,9 +16,9 @@ RSpec.describe LtiAssignmentSelectionController, type: :controller do
   # LtiAssignmentSelectionController. Be sure to keep this updated too.
   let(:valid_session) { {} } # TODO: remove this once we don't require a valid session for the logged in user.
 
-  let(:state) { SecureRandom.uuid }
+  let(:state) { LtiLaunchController.generate_state }
   let(:target_link_uri) { 'https://target/link' }
-  let(:lti_launch) { create(:lti_launch_deep_link, target_link_uri: target_link_uri, state: state) }
+  let(:lti_launch) { create(:lti_launch_assignment_selection, target_link_uri: target_link_uri, state: state) }
   let!(:assignment) { create(:course_content_assignment) }
 
   describe "GET #new" do
@@ -38,10 +38,16 @@ RSpec.describe LtiAssignmentSelectionController, type: :controller do
       it "shows the confirmation form and preview iframe" do
         expected_url = LtiDeepLinkingRequestMessage.new(lti_launch.id_token_payload).deep_link_return_url
 
-        post :create, params: {state: state, assignment_id: assignment.id}, session: valid_session
-        expect(response.body).to match /<form action="#{expected_url}"/
+        post :create, params: {state: lti_launch.state, assignment_id: assignment.id}, session: valid_session
+        expect(response.body).to match /<form action="#{Regexp.escape(expected_url)}"/
         expect(response.body).to match /<iframe src=".*\/#{assignment.id}"/
       end
+
+      it 'saves a new version of the project' do
+        expect { post :create, params: {state: lti_launch.state, assignment_id: assignment.id}, session: valid_session }.to change {CourseContentHistory.count}.by(1)
+        expect(assignment.body).to eq(CourseContentHistory.last.body)
+      end
+
     end
 
     context "with invalid params" do

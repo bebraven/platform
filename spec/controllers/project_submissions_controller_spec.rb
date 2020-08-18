@@ -24,7 +24,7 @@ require 'lti_score'
 # removed from Rails core in Rails 5, but can be added back in via the
 # `rails-controller-testing` gem.
 
-RSpec.describe CourseContentHistoriesController, type: :controller do
+RSpec.describe ProjectSubmissionsController, type: :controller do
   render_views
   let(:user) { create :fellow_user, admin: true } # TODO: there is a bug where the user has to be an admin to not get redirected to the Portal. Remove admin when fixed.
 
@@ -39,62 +39,42 @@ RSpec.describe CourseContentHistoriesController, type: :controller do
     sign_in user
   end
 
-  describe 'GET #index' do
-    it 'returns a success response' do
-      get :index, params: {course_content_id: course_content.id}, session: valid_session
-      expect(response).to be_successful
-    end
-  end
+  describe 'POST #create' do
+    let(:lti_launch) { create(:lti_launch_assignment) }
+    let(:project) { create(:course_content_assignment_with_versions) }
 
-  describe 'GET #show' do
-    context "in platformweb" do
-      it 'returns a success response' do
-        get(
-          :show,
-          params: {
-            course_content_id: course_content.id,
-            id: course_content_history.id,
-            # Note: we don't pass in state
-          },
-        )
-        expect(response).to be_successful
-      end
-    end
+    it 'creates a submission' do
+      allow_any_instance_of(LtiAdvantageAPI)
+        .to receive(:get_access_token)
+        .and_return('oasjfoasjofdj')
 
-    context "TA view in Canvas" do
-      let(:lti_launch) { create(:lti_launch_assignment) }
-      it 'returns a success response' do
-        allow(LtiLaunch).to receive(:current).and_return(lti_launch)
-        allow(lti_launch).to receive(:activity_id).and_return('some_activity_id')
-        get(
-          :show,
-          params: {
-            course_content_id: course_content.id,
-            id: course_content_history.id,
-            state: lti_launch.state,
-            user_id: user.id,
-          },
-          session: valid_session,
-        )
-        expect(response).to be_successful
-      end
-    end
+      stub_request(:post, "#{lti_launch.request_message.line_item_url}/scores").to_return(body: '{"fake" : "response"}')
 
-    context "Student view in Canvas" do
-      let(:lti_launch) { create(:lti_launch_assignment) }
-      it 'returns a success response' do
-        allow(LtiLaunch).to receive(:current).and_return(lti_launch)
-        allow(lti_launch).to receive(:activity_id).and_return('some_activity_id')
-        get(
-          :show,
-          params: {
-            course_content_id: course_content.id,
-            id: course_content_history.id,
-            state: lti_launch.state,
-          },
-        )
-        expect(response).to be_successful
-      end
+      url = "#{course_content_course_content_history_url(
+        project,
+        project.last_version,
+      )}?user_override_id=#{user.id}"
+
+      post(
+        :create,
+        params: {
+          project_id: project.id,
+          state: lti_launch.state,
+          version: project.last_version.id,
+        },
+        session: valid_session,
+      )
+
+      expect(WebMock)
+        .to have_requested(
+          :post,
+          "#{lti_launch.request_message.line_item_url}/scores",
+        ).with { |req|
+          body = JSON.parse(req.body)
+          body['userId'].to_i == user.canvas_id.to_i \
+          && body[LtiScore::LTI_SCORE_SUBMISSION_URL_KEY]['submission_data'] == url
+        }
+        .once
     end
   end
 end

@@ -36,28 +36,20 @@ class CanvasAPI
 
   def get(path, params={}, headers={})
     RestClient.get("#{@api_url}#{path}", {params: params}.merge(@global_headers.merge(headers)))
-  rescue => e
-    handle_rest_client_error(e)
   end
 
   def post(path, body, headers={})
     RestClient.post("#{@api_url}#{path}", body, @global_headers.merge(headers))
-  rescue => e
-    handle_rest_client_error(e)
   end
 
   def put(path, body, headers={})
     RestClient.put("#{@api_url}#{path}", body, @global_headers.merge(headers))
-  rescue => e
-    handle_rest_client_error(e)
   end
 
   def delete(path, body={}, headers={})
     # Delete helper method doesn't accept a payload. Have to drop down lower level.
     RestClient::Request.execute(method: :delete, 
       url: "#{@api_url}#{path}", payload: body, headers: @global_headers.merge(headers))
-  rescue => e
-    handle_rest_client_error(e)
   end
 
   def update_course_page(course_id, wiki_page_id, wiki_page_body)
@@ -205,9 +197,4 @@ class CanvasAPI
 
   end
 
-  def handle_rest_client_error(e)
-    Rails.logger.error("{\"Error\":\"#{e.message}\"}")
-    Rails.logger.error(e.response.body)
-    raise
-  end
 end

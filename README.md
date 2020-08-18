@@ -105,11 +105,41 @@ first ask someone to create a Salesforce account for you (or get the admin accou
 **Important Note**: whenever you change the password for the account that created the connected app, a new security token
 will be emailed to that user in an email titled "Your new Salesforce security token".
 
-### LTI Extension
-We add functionality to our [online Portal](https://braven.instructure.com) (aka Canvas) by implementing an LTI Extension. Details of what an LTI Extension is can be [found here](https://docs.google.com/document/d/1sLFnqo8-lr556EwyIUHy_jLWOwzGEkub6nFKDWPO58Y/edit?usp=sharing). In order to work on things are added to the Portal through LTI, you'll need to do the following:
+### Canvas
 
 #### Create A Portal Course
-Create a course on the Portal as your Sandbox/Dev Env. Call it `Playground - <insert your name>`
+Create a course in Canvas as your sandbox/development environment. Call it `Playground - <insert your name>`. Publish it. 
+
+#### Create test users
+In your Canvas course, select **People** in navigation and add test users to your course by email. 
+
+Your test user's email address will be your Braven email with a suffix identifying the user. 
+
+For example:
+
+ - `myname+teststudent1@bebraven.org` for a student
+ - `myname+testta1@bebraven.org` for a TA
+
+After adding your test users, they need to accept their course invitations. There are a couple of ways to do this:
+
+ - Email: check your email, click on the link to accept the invitation.
+ - Canvas: go to **People**, select the user, then click **Act as User**. You will either automatically enroll, or be prompted by Canvas to join the course.
+
+You also need to add your test user to your development database with the same email and Canvas ID. 
+
+To locate a user's Canvas ID, go to **People**, and hover over the user's name. The ID will appear in the URL. 
+For example: `https://braven.instructure.com/courses/48/users/78`. The user's Canvas ID is 78. 
+
+In you development directory, run `devc`, and add your test user in the Rails console. 
+
+Edit the **email** and **canvas_id** in the following to match those of your test user:
+
+```
+User.create email: 'some_email', canvas_id: canvas_id, admin: false, first_name: 'Test', last_name: 'Student', password: 'some_password', confirmed_at: DateTime.now
+```
+
+#### LTI extension
+We add functionality to our [online Portal](https://braven.instructure.com) (aka Canvas) by implementing an LTI Extension. Details of what an LTI Extension is can be [found here](https://docs.google.com/document/d/1sLFnqo8-lr556EwyIUHy_jLWOwzGEkub6nFKDWPO58Y/edit?usp=sharing). In order to work on things are added to the Portal through LTI, you'll need to do the following:
 
 #### Make Sure Your Dev Env Is Setup For SSL Support
 Make sure you setup the nginx-dev container for [SSL Support](https://github.com/beyond-z/nginx-dev#ssl-support) and that https://platformweb works.
@@ -197,6 +227,11 @@ Or only tests in a particular directory, like our feature tests which use Seleni
     docker-compose exec platformweb bundle exec rspec spec/feature
 
 You can also run a single spec ofc.
+
+JavaScript unit tests (using Jest) may not work inside your container. You can run them outside the container by first
+installing the JS dependencies locally with `yarn`, then running Jest with:
+
+    yarn test
 
 ### Static Code Analysis (aka linter)
 We use Codacy to run static code analysis. Everytime you push a branch to the repo it runs. 

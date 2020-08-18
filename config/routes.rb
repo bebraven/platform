@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   resources :course_contents do
     post :publish
-    resources :course_content_histories, path: 'versions', only: [:index, :show, :create]
+    resources :course_content_histories, path: 'versions', only: [:index, :show]
   end
   resources :file_upload, only: [:create]
 
@@ -40,7 +40,7 @@ Rails.application.routes.draw do
   end
 
   resources :projects, only: [:index, :show] do
-    resources :project_submissions, only: [:index, :show], :path => 'submissions'
+    resources :project_submissions, :path => 'submissions', only: [:create]
   end
 
   resources :lessons, only: [:index, :show] do

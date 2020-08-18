@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request: !ruby/struct:VCR::Request
+    method: get
+    uri: https://lrs.braven.org/data/xAPI/statements
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - rest-client/2.1.0 (linux-musl x86_64) ruby/2.6.5p114
+      Authorization:
+      - Basic REMOVED
+      X-Experience-Api-Version:
+      - 1.0.2
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 12 Aug 2020 20:02:55 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '27'
+      Connection:
+      - keep-alive
+      Server:
+      - nginx
+      Vary:
+      - Origin
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Expose-Headers:
+      - ETag
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Strict-Transport-Security:
+      - max-age=15552000; includeSubDomains
+      X-Download-Options:
+      - noopen
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Experience-Api-Consistent-Through:
+      - '2020-08-12T20:02:55.435Z'
+      X-Experience-Api-Version:
+      - 1.0.3
+      Etag:
+      - W/"1b-kqVs0oGuVBgzC/ayBcKByJHOxKY"
+    body:
+      encoding: UTF-8
+      string: "{\"more\":\"\",\"statements\":[{\"id\":\"<%= id %>\",\"timestamp\":\"2020-08-11T17:48:45.433Z\",\"actor\":{\"name\":\"first last\",\"mbox\":\"mailto:admin@beyondz.org\",\"objectType\":\"Agent\"},\"verb\":{\"id\":\"http://adlnet.gov/expapi/verbs/answered\",\"display\":{\"und\":\"answered\"}},\"result\":{\"response\":\"<%= response %>\"},\"object\":{\"id\":\"https://braven.instructure.com/courses/42/assignments/266\",\"objectType\":\"Activity\",\"definition\":{\"type\":\"http://adlnet.gov/expapi/activities/cmi.interaction\",\"name\":{\"und\":\"<%= name %>\"},\"description\":{\"und\":\"https://platformweb/course_contents/5#/h2c-0510\"},\"interactionType\":\"fill-in\"}},\"stored\":\"2020-08-11T17:48:45.709Z\",\"authority\":{\"objectType\":\"Agent\",\"name\":\"LTI PoC\",\"mbox\":\"mailto:ltipoc@bebraven.org\"},\"version\":\"1.0.0\"}]}"
+  recorded_at: Wed, 12 Aug 2020 20:02:55 GMT
+recorded_with: VCR 6.0.0

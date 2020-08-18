@@ -14,15 +14,25 @@ FactoryBot.define do
 
     factory :lti_launch_model do
       nonce { SecureRandom.hex(10) }
-      state { SecureRandom.uuid }
+      state { LtiLaunchController.generate_state }
   
-      factory :lti_launch_resource_link do
-        id_token_payload { JSON.parse FactoryBot.json(:lti_resource_link_launch_request) }
-      end 
+      factory :lti_launch_canvas do
+        transient do
+          canvas_user_id { 5555 }
+          course_id { 55 }
+        end
 
-      factory :lti_launch_deep_link do
-        id_token_payload { JSON.parse FactoryBot.json(:lti_deep_link_launch_request) }
-      end 
+        factory :lti_launch_assignment do
+          transient do
+            assignment_id { 555 }
+          end
+          id_token_payload { JSON.parse FactoryBot.json(:lti_launch_assignment_message, course_id: course_id, canvas_user_id: canvas_user_id, assignment_id: assignment_id) }
+        end 
+
+        factory :lti_launch_assignment_selection do
+          id_token_payload { JSON.parse FactoryBot.json(:lti_launch_assignment_selection_message, course_id: course_id, canvas_user_id: canvas_user_id) }
+        end 
+      end
     end
   end
 end

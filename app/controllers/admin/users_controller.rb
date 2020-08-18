@@ -44,7 +44,12 @@ class Admin::UsersController < ApplicationController
 
   def update
     filtered_user_params = user_params.reject { |_, v| v.blank? }
-    if @user.update_attributes(filtered_user_params)
+
+    User.skip_callback(:validation, :before, :do_account_registration)
+    user_changes_persisted = @user.update_attributes(filtered_user_params)
+    User.set_callback(:validation, :before, :do_account_registration)
+
+    if user_changes_persisted
       redirect_to admin_user_path(@user), notice: 'User was changed successfully'
     else
       render action: :edit
