@@ -5,5 +5,5 @@
     <input type='submit' value='Yes' />
   </form>
   <br/>
-  <iframe id="lesson-content-preview" src="<%= lesson_content_url(@lesson_content) %>"></iframe>
+  <iframe id="lesson-content-preview" src="<%= lesson_content_url(@lesson_content, state: params[:state]) %>"></iframe>
 </div>

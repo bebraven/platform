@@ -13,4 +13,13 @@ module LtiHelper
     [deep_link.deep_link_return_url, jwt_response]
   end
 
+  def set_lti_launch
+    return if @lti_launch
+    @lti_launch = LtiLaunch.current(params[:state]) if params[:state]
+  end
+
+  def is_sessionless_lti_launch?
+    set_lti_launch
+    (@lti_launch ? @lti_launch.sessionless? : false )
+  end
 end

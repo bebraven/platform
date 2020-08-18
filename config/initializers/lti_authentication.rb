@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 require 'lti_launch'
 
+# This module is responsible for handling authentication for LtiLaunches that don't have access
+# to normal Devise session based authentication. For example, in Chrome incognito mode third
+# party cookies are blocked by default so when we run in an iFrame on Canvas our cookies aren't
+# set by the browser causing authentication to fallback to this.
 module LtiAuthentication
 
   # Note: if you change this, keep it in sync with: app/javascript/packs/xapi_assignment.js
@@ -40,7 +44,11 @@ module LtiAuthentication
         end
 
         status = :ok
-        message = "Authenticated user_id = #{user.id} using LtiAuthentication::WardenStrategy"
+        message = "LtiAuthentication::WardenStrategy done authenticating user_id = #{user.id}"
+        unless ll.sessionless
+          ll.sessionless = true
+          ll.save! 
+        end
         return finish_authenticate(span, status, message, url, canvas_id, user)
       end
     end
@@ -48,10 +56,11 @@ module LtiAuthentication
 private
 
     def finish_authenticate(span, status, message, url = nil, canvas_id = nil, user = nil)
-      span.add_field('lti_auth.status', status)
+      span.add_field('status', status)
       span.add_field('lti_auth.message', message)
-      span.add_field('lti_auth.url', url) if url 
-      span.add_field('lti_auth.canvas_id', canvas_id) if canvas_id
+      span.add_field('url', url) if url 
+      span.add_field('canvas_id', canvas_id) if canvas_id
+      span.add_field('user_id', user.id) if user
       if status == :ok
         Rails.logger.debug(message)
         success!(user)

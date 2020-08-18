@@ -72,6 +72,12 @@ class LtiLaunch < ApplicationRecord
     "#{Rails.application.secrets.canvas_cloud_url}/courses/#{cid}/assignments/#{aid}"
   end
 
+  # True if this is an LtiLaunch that doesn't have access to normal Devise session based authentication
+  # and needs to use the "state" parameter as the effective authentication token.
+  def sessionless?
+    !!sessionless
+  end
+
   # Returns a unique identifier for us when issuing and JWT
   def braven_iss
     BRAVEN_ISS
