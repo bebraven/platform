@@ -7,4 +7,4 @@
 // Dev Only: makes guard-webpacker and hot reloading work.
 import WebpackerReact from 'webpacker-react'
 import Sidebar from 'components/Sidebar'
-WebpackerReact.setup({Sidebar})
+WebpackerReact.registerComponents({Sidebar})

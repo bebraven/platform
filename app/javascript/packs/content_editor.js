@@ -12,9 +12,9 @@ var ReactRailsUJS = require("react_ujs");
 ReactRailsUJS.useContext(componentRequireContext);
 
 // Dev Only: makes guard-webpacker and hot reloading work.
-import WebpackerReact from 'webpacker-react'
-import ContentEditor from 'components/ContentEditor'
-WebpackerReact.setup({ContentEditor})
+import WebpackerReact from 'webpacker-react';
+import ContentEditor from 'components/ContentEditor';
+WebpackerReact.registerComponents({ContentEditor});
 
 // Use axe a11y testing in development.
 import React from 'react'

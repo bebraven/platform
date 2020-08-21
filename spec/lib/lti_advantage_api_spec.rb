@@ -51,4 +51,14 @@ RSpec.describe LtiAdvantageAPI do
     # Write tests for this if we run into this situation in the wild.
     
   end
+
+  describe "#get_line_item_for_user" do
+    it "gets the previous submission" do
+      canvas_user_id = 1234;
+      url = "#{assignment_lti_launch.request_message.line_item_url}/results?user_id=#{canvas_user_id}"
+      stub_request(:get, url).to_return(body: '{}')
+      api.get_line_item_for_user(canvas_user_id)
+      expect(WebMock).to have_requested(:get, url)
+    end
+  end
 end

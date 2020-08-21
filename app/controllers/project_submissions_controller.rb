@@ -6,11 +6,14 @@ require 'uri'
 # TODO: Migrate when we can create the project model dependencies
 # TODO: https://app.asana.com/0/1174274412967132/1186960110311121
 class ProjectSubmissionsController < ApplicationController
+  include LtiHelper
   include DryCrud::Controllers::Nestable
-
+  
   nested_resource_of Project
 
   before_action :set_project_version, only: [:create]
+  before_action :set_lti_launch, only: [:create]
+  skip_before_action :verify_authenticity_token, only: [:create], if: :is_sessionless_lti_launch?
 
   # Project submissions aren't recorded in our DB yet (e.g, we don't use the
   # ProjectSubmission table or model).
@@ -21,13 +24,13 @@ class ProjectSubmissionsController < ApplicationController
   # retrieved when we view the submission by xapi_assignment.js.
   def create
     params.require([:state])
-    lti_launch = LtiLaunch.current(params[:state])
 
     # We're using CourseContentHistoriesController to view and work on projects
-    submission_url = Addressable::URI.parse(course_content_course_content_history_url(
+    submission_url = Addressable::URI.parse(
+      course_content_course_content_history_url(
         @project_version.course_content,
         @project_version.id,
-      ),
+      )
     )
     submission_url.query = { user_override_id: current_user.id }.to_query
 
@@ -37,7 +40,7 @@ class ProjectSubmissionsController < ApplicationController
       current_user.canvas_id,
       submission_url.to_s,
     )
-    LtiAdvantageAPI.new(lti_launch).create_score(lti_score)
+    LtiAdvantageAPI.new(@lti_launch).create_score(lti_score)
   end
 
   private

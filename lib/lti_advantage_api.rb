@@ -27,7 +27,7 @@ class LtiAdvantageAPI
 
     @iss = assignment_lti_launch.braven_iss
     @client_id = assignment_lti_launch.client_id 
-    @scope = parse_scope(assignment_lti_launch) 
+    @scope = parse_scope(assignment_lti_launch)
     @line_items_url = assignment_lti_launch.request_message.line_items_url
     @line_item_url = assignment_lti_launch.request_message.line_item_url
     @global_headers = JSON_HEADERS # get_access_token below needs this initialized
@@ -41,6 +41,11 @@ class LtiAdvantageAPI
   # LtiAdvantageAPI.new(<the_launch>).create_score( LtiScore.generate(...) ) 
   def create_score(lti_score)
     response = post("#{@line_item_url}/scores", lti_score)
+    JSON.parse(response.body)
+  end
+
+  def get_line_item_for_user(canvas_user_id)
+    response = get("#{@line_item_url}/results?user_id=#{canvas_user_id}")
     JSON.parse(response.body)
   end
 
