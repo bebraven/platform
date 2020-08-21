@@ -9,15 +9,25 @@ unless ENV['BZ_AUTH_SERVER'] # Only run these specs if on a server with local da
 
 RSpec.describe CourseContentHistoriesController, type: :feature do
   let!(:project) { create(:course_content_assignment_with_versions) }
+  let!(:lti_launch_assignment) { create(:lti_launch_assignment) }
 
   before(:each) do
+    lti = Addressable::URI.parse(lti_launch_assignment.request_message.line_item_url)
     VCR.configure do |c|
       c.ignore_localhost = true
       # Must ignore the Capybara host IFF we are running tests that have browser AJAX requests to that host.
-      c.ignore_hosts Capybara.server_host
+      c.ignore_hosts Capybara.server_host, lti.host,
       # Need this to pass :vcr option to describe blocks.
       c.configure_rspec_metadata!
     end
+
+    allow_any_instance_of(LtiAdvantageAPI)
+      .to receive(:get_access_token)
+      .and_return('some access token')
+
+    allow_any_instance_of(LtiAdvantageAPI)
+      .to receive(:get_line_item_for_user)
+      .and_return({})
   end
 
   after(:each) do

@@ -2,6 +2,8 @@ require 'vcr'
 
 VCR.configure do |config|
   config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
+  # Turn this on for more debugging output
+  # config.debug_logger = $stderr
   config.hook_into :webmock
   config.ignore_hosts ENV['SELENIUM_HOST'] if ENV['SELENIUM_HOST']
   config.ignore_localhost = true

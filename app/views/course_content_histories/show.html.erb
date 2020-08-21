@@ -4,20 +4,20 @@
 
   <% unless @user_override_id %>
     <!-- Submit -->
-    <%= form_with url: project_project_submissions_path(@course_content) do |f| %>
-      <input id="state" name='state' type='hidden' value="<%= params[:state] %>" />
-      <input id='version' name='version' type='hidden' value="<%= @course_content_history.id %>" />
-      <!-- TODO: https://app.asana.com/0/1174274412967132/1187342807279865 -->
-      <input type="submit" value="Submit" />
-    <% end %>
+    <%= react_component('Projects/ProjectSubmitButton', {
+      hasSubmission: @has_previous_submission,
+      ltiLaunchState: params[:state],
+      projectId: @course_content.id,
+      projectVersion: @course_content_history.id,
+    })%>
   <% end %>
 </div>
 
-<% if @lti_auth_state && @project_lti_id %>
+<% if @lti_launch && @project_lti_id %>
   <!-- Load previous answers -->
   <%= content_tag :div, '', id: "javascript_variables", data: {
     user_override_id: @user_override_id,
-    lti_auth_state: @lti_auth_state,
+    lti_auth_state: @lti_launch.state,
     project_lti_id: @project_lti_id } %>
   <%= javascript_pack_tag 'xapi_assignment' %>
 <% end %>

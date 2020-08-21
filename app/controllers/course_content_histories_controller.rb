@@ -1,15 +1,16 @@
+require 'lti_advantage_api'
+
 # This controller currently handles viewing and filling in ansewrs in a 
 # project. 
 # Submitting a project is handled by ProjectSubmissionsController.
 # TODO: https://app.asana.com/0/1174274412967132/1186960110311121
 class CourseContentHistoriesController < ApplicationController
+  include LtiHelper
   include DryCrud::Controllers::Nestable
   nested_resource_of CourseContent
   layout 'content_editor'
 
-  # TODO: Only for sessionless launches: https://app.asana.com/0/1174274412967132/1188539121871585
-  skip_before_action :verify_authenticity_token, only: [:create] 
-
+  before_action :set_lti_launch, only: [:show]
   before_action :set_course_content, only: [:index, :show, :create]
 
   # GET /course_contents/:id/versions
@@ -50,9 +51,15 @@ class CourseContentHistoriesController < ApplicationController
     # a submission.
     # Specifying a override_user_id indicates a TA is viewing a student's
     # submission.
+    @project_lti_id = @lti_launch.activity_id
+
     @user_override_id = params[:user_override_id]
-    @lti_auth_state = params[:state]
-    @project_lti_id = LtiLaunch.current(params[:state]).activity_id
+    unless @user_override_id
+      @has_previous_submission = LtiAdvantageAPI
+        .new(@lti_launch)
+        .get_line_item_for_user(current_user.canvas_id)
+        .present?
+    end
   end
 
   private
