@@ -72,6 +72,17 @@ class LtiLaunch < ApplicationRecord
     "#{Rails.application.secrets.canvas_cloud_url}/courses/#{cid}/assignments/#{aid}"
   end
 
+  # The course ID in this launch. Raises ArgumentError if not an int.
+  def course_id
+    Integer(request_message.custom['course_id'])
+  end
+
+  # The section IDs this user is added to, as a list.
+  def section_ids
+    # Original format looks like "section_ids": "49,200"
+    request_message.custom['section_ids'].split(',')
+  end
+
   # True if this is an LtiLaunch that doesn't have access to normal Devise session based authentication
   # and needs to use the "state" parameter as the effective authentication token.
   def sessionless?

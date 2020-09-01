@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   end
   resources :file_upload, only: [:create]
 
+  resources :form_submissions, only: [:create]
+  get 'form_submissions/peer_review', to: 'form_submissions#peer_review'
+
   devise_for :users, controllers: { registrations: 'users/registrations', confirmations: 'users/confirmations', passwords: 'users/passwords' }
 
   devise_scope :user do

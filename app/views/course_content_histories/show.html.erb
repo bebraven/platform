@@ -1,19 +1,28 @@
 <div class="bz-assignment">
   <!-- Project -->
-  <%== @course_content_history.body %>
+  <% if @course_content.content_type == "form" %>
+    <%= form_with(url: form_submissions_path, method: "post", local: true) do |form| %>
+      <%== @course_content_history.body %>
+      <%= form.submit %>
+    <% end %>
+  <% else %>
+    <%== @course_content_history.body %>
+  <% end %>
 
-  <% unless @user_override_id %>
-    <!-- Submit -->
-    <%= react_component('Projects/ProjectSubmitButton', {
-      hasSubmission: @has_previous_submission,
-      ltiLaunchState: params[:state],
-      projectId: @course_content.id,
-      projectVersion: @course_content_history.id,
-    })%>
+  <% if @course_content.content_type == "assignment" %>
+    <% unless @user_override_id %>
+      <!-- Submit -->
+      <%= react_component('Projects/ProjectSubmitButton', {
+        hasSubmission: @has_previous_submission,
+        ltiLaunchState: params[:state],
+        projectId: @course_content.id,
+        projectVersion: @course_content_history.id,
+      })%>
+    <% end %>
   <% end %>
 </div>
 
-<% if @lti_launch && @project_lti_id %>
+<% if @lti_launch && @project_lti_id && @course_content.content_type == "assignment" %>
   <!-- Load previous answers -->
   <%= content_tag :div, '', id: "javascript_variables", data: {
     user_override_id: @user_override_id,

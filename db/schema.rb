@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_20_205947) do
+ActiveRecord::Schema.define(version: 2020_09_01_154421) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,16 @@ ActiveRecord::Schema.define(version: 2020_08_20_205947) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["value"], name: "index_emails_on_value"
+  end
+
+  create_table "form_key_values", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "key", null: false
+    t.string "value"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "key"], name: "index_form_key_values_on_user_id_and_key", unique: true
+    t.index ["user_id"], name: "index_form_key_values_on_user_id"
   end
 
   create_table "grade_categories", force: :cascade do |t|
@@ -443,6 +453,7 @@ ActiveRecord::Schema.define(version: 2020_08_20_205947) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "course_content_histories", "course_contents"
   add_foreign_key "course_content_histories", "users"
+  add_foreign_key "form_key_values", "users"
   add_foreign_key "grade_categories", "programs"
   add_foreign_key "lesson_interactions", "users"
   add_foreign_key "lesson_submissions", "lessons"

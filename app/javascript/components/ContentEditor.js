@@ -443,6 +443,7 @@ class ContentEditor extends Component {
                                 <option value="">SELECT PAGE TYPE</option>
                                 <option value="wiki_page">Module</option>
                                 <option value="assignment">Project</option>
+                                <option value="form">Survey</option>
                               </select>
                               <br/>
                               <input type="number" name="course_content[course_id]"

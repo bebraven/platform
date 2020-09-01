@@ -1,0 +1,8 @@
+<p>Words</p>
+<%= form_with(url: form_submissions_path, method: "post", local: true) do |form| %>
+  <% @users.each do |user| %>
+    <input id="slider-<%= user['id'] %>" type="range" name="peer-review-<%= current_user.canvas_id %>-for-<%= user['id'] %>">
+    <label for="slider-<%= user['id'] %>"><%= user['name'] %></label>
+  <% end %>
+  <%= form.submit %>
+<% end %>

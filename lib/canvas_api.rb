@@ -160,6 +160,12 @@ class CanvasAPI
     JSON.parse(response.body)
   end
 
+  def get_section_students(course_id, section_id)
+    response = get("/courses/#{course_id}/sections/#{section_id}", {'include[]' => 'students'})
+    section = JSON.parse(response.body)
+    section['students']
+  end
+
   # See: https://canvas.instructure.com/doc/api/file.pagination.html
   def get_all_from_pagination(response)
     info = JSON.parse(response.body)
