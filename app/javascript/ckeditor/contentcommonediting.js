@@ -664,6 +664,7 @@ export default class ContentCommonEditing extends Plugin {
             model: ( viewElement, modelWriter ) => {
                 return modelWriter.createElement( 'textInput', new Map( [
                     ...filterAllowedAttributes(viewElement.getAttributes()),
+                    ['name', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId()],
                     ['data-bz-retained', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId()],
                     ['placeholder', viewElement.getAttribute('placeholder') || ''],
                 ] ) );
@@ -675,6 +676,7 @@ export default class ContentCommonEditing extends Plugin {
                 const input = viewWriter.createEmptyElement( 'input', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'text' ],
+                    [ 'name', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'placeholder', modelElement.getAttribute('placeholder') || '' ],
                 ] ) );
@@ -687,6 +689,7 @@ export default class ContentCommonEditing extends Plugin {
                 const input = viewWriter.createEmptyElement( 'input', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'text' ],
+                    [ 'name', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'placeholder', modelElement.getAttribute('placeholder') || '' ],
                 ] ) );
@@ -702,6 +705,7 @@ export default class ContentCommonEditing extends Plugin {
             model: ( viewElement, modelWriter ) => {
                 return modelWriter.createElement( 'textArea', new Map( [
                     ...filterAllowedAttributes(viewElement.getAttributes()),
+                    [ 'name', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'data-bz-retained', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'placeholder', viewElement.getAttribute('placeholder') || '' ],
                 ] ) );
@@ -712,6 +716,7 @@ export default class ContentCommonEditing extends Plugin {
             view: ( modelElement, viewWriter ) => {
                 const textarea = viewWriter.createEmptyElement( 'textarea', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
+                    [ 'name', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'placeholder', modelElement.getAttribute('placeholder') || '' ],
                 ] ) );
@@ -723,6 +728,7 @@ export default class ContentCommonEditing extends Plugin {
             view: ( modelElement, viewWriter ) => {
                 const textarea = viewWriter.createEmptyElement( 'textarea', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
+                    [ 'name', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'placeholder', modelElement.getAttribute('placeholder') || '' ],
                 ] ) );
@@ -780,6 +786,7 @@ export default class ContentCommonEditing extends Plugin {
             model: ( viewElement, modelWriter ) => {
                 return modelWriter.createElement( 'slider', new Map( [
                     ...filterAllowedAttributes(viewElement.getAttributes()),
+                    [ 'name', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'data-bz-retained', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'min', viewElement.getAttribute('min') || Slider.DEFAULT_MIN ],
                     [ 'max', viewElement.getAttribute('max') || Slider.DEFAULT_MAX ],
@@ -793,6 +800,7 @@ export default class ContentCommonEditing extends Plugin {
                 return viewWriter.createEmptyElement( 'input', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'range' ],
+                    [ 'name', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'min', modelElement.getAttribute('min') || Slider.DEFAULT_MIN ],
                     [ 'max', modelElement.getAttribute('max') || Slider.DEFAULT_MAX ],
@@ -806,6 +814,7 @@ export default class ContentCommonEditing extends Plugin {
                 const input = viewWriter.createEmptyElement( 'input', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'type', 'range' ],
+                    [ 'name', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'min', modelElement.getAttribute('min') || Slider.DEFAULT_MIN ],
                     [ 'max', modelElement.getAttribute('max') || Slider.DEFAULT_MAX ],
