@@ -16,7 +16,7 @@ class FormSubmissionsController < ApplicationController
   def create
     ActiveRecord::Base.transaction do
       request.request_parameters.keys.each do |key|
-        next if ['authenticity_token', 'commit'].includes? key
+        next if ['authenticity_token', 'commit'].include? key
         FormKeyValue.create_with(value: request.request_parameters[key]).create_or_find_by!(key: key, user: current_user)
       end
     end
