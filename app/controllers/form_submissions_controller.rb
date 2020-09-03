@@ -8,8 +8,8 @@ class FormSubmissionsController < ApplicationController
     false
   end
 
-  # POST /form_submission
-  # POST /form_submission.json
+  # POST /form_submissions
+  # POST /form_submissions.json
   def create
     ActiveRecord::Base.transaction do
       request.request_parameters.keys.each do |key|
