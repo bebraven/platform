@@ -1,9 +1,9 @@
 <div>
-  <p>Select an existing assignment</p>
+  <p>Select an existing assignment or survey</p>
 
   <%= form_tag(lti_assignment_selection_path) do -%>
     <select name="assignment_id" id="assignment_id">
-      <% @assignments.each do |assignment| %>
+      <% (@assignments + @surveys).each do |assignment| %>
         <option value="<%= assignment.id %>"><%= assignment.title %></option>
       <% end %>
     </select>
@@ -16,4 +16,12 @@
   <p>Upload a Rise 360 lesson</p>
 
   <%= render partial: "lesson_contents/upload" %>
+
+  <p><strong>OR</strong></p>
+
+  <form action="<%= @deep_link_return_url %>" method="post" id="deep-link-form">
+    <input id="JWT" name='JWT' type='hidden' value="<%= @jwt_response %>" />
+    <input type='submit' value='Insert Peer Review survey' />
+  </form>
+
 </div>

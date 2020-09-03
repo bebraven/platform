@@ -11,6 +11,12 @@ class LtiAssignmentSelectionController < ApplicationController
   def new
     params.require([:state])
     @assignments = CourseContent.where(content_type: 'assignment')
+
+    # TODO: everything after this is bad :(
+    @surveys = CourseContent.where(content_type: 'form')
+
+    @deep_link_return_url, @jwt_response = helpers.lti_deep_link_response_message(@lti_launch,
+      form_submissions_peer_review_url)
   end
 
   # TODO: this should be in the ProjectsController or a new ProjectContentsController create, not here.

@@ -163,7 +163,7 @@ class CanvasAPI
   def get_section_students(course_id, section_id)
     response = get("/courses/#{course_id}/sections/#{section_id}", {'include[]' => 'students'})
     section = JSON.parse(response.body)
-    section['students']
+    section['students'] or []
   end
 
   # See: https://canvas.instructure.com/doc/api/file.pagination.html
