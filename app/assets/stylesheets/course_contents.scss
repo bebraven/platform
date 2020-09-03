@@ -104,6 +104,17 @@
     textarea {
         min-height: 6rem;
     }
+
+    .peer-review {
+
+        label {
+            margin-top: 1.5rem;
+        }
+
+        input[type="range"] {
+            margin-bottom: 1.5rem;
+        }
+    }
 }
 
 html {

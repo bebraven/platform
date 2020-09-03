@@ -1,8 +1,40 @@
-<p>Words</p>
-<%= form_with(url: form_submissions_path, method: "post", local: true) do |form| %>
-  <% @users.each do |user| %>
-    <input id="slider-<%= user['id'] %>" type="range" name="peer-review-<%= current_user.canvas_id %>-for-<%= user['id'] %>">
-    <label for="slider-<%= user['id'] %>"><%= user['name'] %></label>
-  <% end %>
-  <%= form.submit %>
-<% end %>
+<div class="bz-assignment">
+  <div class="peer-review">
+    <h2 id="cohort-teamwork-evaluation">Cohort Teamwork Evaluation</h2>
+    <p>As you know, as part of your Capstone Challenge Project grade, you will be evaluated by your peers and your
+    Leadership Coach for your contributions to your team throughout the Challenge. This means you'll need to spend a few
+    minutes right now reflecting on your teammates and evaluating them. Your evaluation will be averaged with all the
+    others, resulting in a final Teamwork score for each Fellow in your cohort.</p>
+
+    <%= form_with(url: form_submissions_path, method: "post", local: true) do |form| %>
+      <% @users.each do |user| %>
+        <h3><%= user['name'] %></h3>
+        <fieldset>
+          <label for="slider-1-<%= user['id'] %>">Actively contributed to team success</label>
+          <input id="slider-1-<%= user['id'] %>" type="range" min="0" max="10" step="2"
+                 name="actively-contributed-to-team-success-peer-score-for-<%= user['id'] %>">
+          <div class="display-value"><span class="current-value"></span></div>
+        </fieldset>
+        <fieldset>
+          <label for="slider-2-<%= user['id'] %>">Met deadlines and fulfilled responsibilities in a timely manner</label>
+          <input id="slider-2-<%= user['id'] %>" type="range" min="0" max="10" step="2"
+                 name="met-deadlines-peer-score-for-<%= user['id'] %>">
+          <div class="display-value"><span class="current-value"></span></div>
+        </fieldset>
+        <fieldset>
+          <label for="slider-3-<%= user['id'] %>">Gave feedback to others to help them be more successful and productiver</label>
+          <input id="slider-3-<%= user['id'] %>" type="range" min="0" max="10" step="2"
+                 name="gave-feedback-peer-score-for-<%= user['id'] %>">
+          <div class="display-value"><span class="current-value"></span></div>
+        </fieldset>
+        <fieldset>
+          <label for="slider-4-<%= user['id'] %>">Embraced different perspectives on the team with openness and a sense of possibility</label>
+          <input id="slider-4-<%= user['id'] %>" type="range" min="0" max="10" step="2"
+                 name="embraced-different-perspectives-peer-score-for-<%= user['id'] %>">
+          <div class="display-value"><span class="current-value"></span></div>
+        </fieldset>
+      <% end %>
+      <%= form.submit %>
+    <% end %>
+  </div>
+</div>

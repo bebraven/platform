@@ -2,11 +2,14 @@ require 'lti_advantage_api'
 
 class FormSubmissionsController < ApplicationController
   include LtiHelper
+  layout 'content_editor'
 
   # Non-standard controller without normal CRUD methods. Disable the convenience module.
   def dry_crud_enabled?
     false
   end
+
+  before_action :set_lti_launch, only: [:peer_review]
 
   # POST /form_submissions
   # POST /form_submissions.json
@@ -25,6 +28,6 @@ class FormSubmissionsController < ApplicationController
     @lti_launch.section_ids.each do |section_id|
       all_users += CanvasAPI.client.get_section_students(@lti_launch.course_id, section_id)
     end
-    @users = all_users.delete_if { |x| x['id'] == current_user.canvas_id }
+    @users = all_users.uniq.delete_if { |x| x['id'] == current_user.canvas_id }
   end
 end
