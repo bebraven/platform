@@ -12,11 +12,7 @@ class SetupPortalAccount
 
   def run
     find_or_create_portal_user!
-    SyncPortalEnrollmentForAccount
-      .new(portal_user: portal_user,
-           salesforce_participant: sf_participant,
-           salesforce_program: sf_program)
-      .run
+    sync_portal_enrollment!
     user = update_portal_references!
     send_confirmation_notification(user)
   end
@@ -24,6 +20,14 @@ class SetupPortalAccount
   private
 
   attr_reader :sf_contact_id
+
+  def sync_portal_enrollment!
+    SyncPortalEnrollmentForAccount
+      .new(portal_user: portal_user,
+           salesforce_participant: sf_participant,
+           salesforce_program: sf_program)
+      .run
+  end
 
   def send_confirmation_notification(user)
     user.send_confirmation_instructions
@@ -75,7 +79,11 @@ class SetupPortalAccount
   end
 
   def portal_user
-    @portal_user ||= canvas_client.find_user_by(email: sf_participant.email)
+    @portal_user ||= canvas_client.find_user_by(
+      email: sf_participant.email,
+      salesforce_contact_id: sf_contact_id,
+      student_id: sf_participant.student_id
+    )
   end
 
   def sf_participant

@@ -10,6 +10,7 @@ class SyncPortalEnrollmentForAccount
   end
 
   def run
+    logger.info("Started sync enrollment for #{sf_participant.email}")
     case sf_participant.status
     when SalesforceAPI::ENROLLED
       add_enrollment!
@@ -17,8 +18,9 @@ class SyncPortalEnrollmentForAccount
       drop_enrollment!
     when SalesforceAPI::COMPLETED
       complete_enrollment!
+    else
+      logger.warn("Doing nothing! Got #{sf.participant.status} from SF")
     end
-    # Log warning for else case
   end
 
   private
@@ -36,8 +38,9 @@ class SyncPortalEnrollmentForAccount
     when SalesforceAPI::FELLOW
       sync_enrollment(sf_program.fellow_course_id, CanvasAPI::STUDENT_ENROLLMENT, 
                       course_section_name)
+    else
+      logger.warn("Got unknown role #{sf_participant.role} from SF")
     end
-    # Log warning for else case
   end
 
   def course_section_name
@@ -54,8 +57,9 @@ class SyncPortalEnrollmentForAccount
       drop_course_enrollment(sf_program.fellow_course_id)
     when SalesforceAPI::FELLOW
       drop_course_enrollment(sf_program.fellow_course_id)
+    else
+      logger.warn("Got unknown role #{sf_participant.role} from SF")
     end
-    # Log warning for else case
   end
 
   def complete_enrollment!
@@ -67,6 +71,7 @@ class SyncPortalEnrollmentForAccount
     enrollment = find_user_enrollment(course_id)
     return if enrollment.nil?
 
+    logger.info('Removing user enrollment from canvas')
     canvas_client.delete_enrollment(enrollment: enrollment)
   end
 
@@ -79,6 +84,8 @@ class SyncPortalEnrollmentForAccount
     elsif !enrollment.section_id.eql?(section.id) || !enrollment.type.eql?(role)
       canvas_client.delete_enrollment(enrollment: enrollment)
       enroll_user(course_id, role, section)
+    else
+      logger.warn('Skipping as user enrollment looks fine')
     end
   end
 
@@ -107,5 +114,9 @@ class SyncPortalEnrollmentForAccount
 
   def canvas_client
     CanvasAPI.client
+  end
+
+  def logger
+    Rails.logger
   end
 end

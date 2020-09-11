@@ -15,7 +15,7 @@
         <em>(<%= @minimum_password_length %> characters minimum)</em>
         <% end %>
       <% end %>
-      <%= f.password_field :password, class: 'form-control', required: true, autocomplete: "new-password" %>
+      <%= f.password_field :password, class: 'form-control', required: true, autocomplete: "new-password", autofocus: true %>
     </div>
   
     <div class="field">

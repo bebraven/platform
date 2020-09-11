@@ -3,7 +3,7 @@ require 'rest-client'
 class CanvasAPI
   UserNotOnCanvas = Class.new(StandardError)
 
-  LMSUser = Struct.new(:id)
+  LMSUser = Struct.new(:id, :email)
   LMSEnrollment = Struct.new(:id, :course_id, :type, :section_id)
   LMSSection = Struct.new(:id, :name)
 
@@ -107,7 +107,7 @@ class CanvasAPI
         'communication_channel[confirmation_url]' => true,
          # Note: the old code used the Join user.id and not the SF id. But now the user account may not
          # be created yet when we're running Sync To LMS.
-        'pseudonym[sis_user_id]' => "BVSFID#{salesforce_id}-SISID#{student_id}",
+        'pseudonym[sis_user_id]' => format_to_sis_id(salesforce_id, student_id),
         'enable_sis_reactivation' => true
     }
     response = post('/accounts/1/users', body)
@@ -118,19 +118,25 @@ class CanvasAPI
     user = find_user_in_canvas(email)
     raise UserNotOnCanvas, "Email: #{email}" if user.nil?
 
-    LMSUser.new(user['id'])
+    LMSUser.new(user['id'], user['email'])
   end
 
-  def find_user_by(email:)
+  def find_user_by(email:, salesforce_contact_id:, student_id:)
     user = find_user_in_canvas(email)
+    if user.nil?
+      user = find_user_in_canvas(
+        format_to_sis_id(salesforce_contact_id, student_id)
+      )
+    end
+
     return nil if user.nil?
 
-    LMSUser.new(user['id'])
+    LMSUser.new(user['id'], user['email'])
   end
 
 
-  def find_user_in_canvas(email)
-    response = get("/accounts/1/users?search_term=#{CGI.escape(email)}")
+  def find_user_in_canvas(search_term)
+    response = get("/accounts/1/users?search_term=#{CGI.escape(search_term)}")
     users = JSON.parse(response.body)
     users.length == 1 ? users[0] : nil
   end 
@@ -163,7 +169,7 @@ class CanvasAPI
     return enrollment if enrollment.nil?
 
     LMSEnrollment.new(enrollment['id'], enrollment['course_id'],
-                      enrollment['type'], enrollment['section_id'])
+                      enrollment['type'].to_sym, enrollment['course_section_id'])
   end
 
   # Enrolls the user in the new course, without modifying any existing data
@@ -274,4 +280,9 @@ class CanvasAPI
 
   end
 
+  private
+
+  def format_to_sis_id(salesforce_contact_id, student_id)
+    "BVSFID#{salesforce_contact_id}-SISID#{student_id}"
+  end
 end
