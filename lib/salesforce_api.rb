@@ -27,7 +27,7 @@ class SalesforceAPI
   FELLOW = :Fellow
 
   class SalesforceDataError < StandardError; end
-  ParticipantNotOnSalesforceError = Class.new(StandardError)
+  ParticipantNotOnSalesForceError = Class.new(StandardError)
   ProgramNotOnSalesforceError = Class.new(StandardError)
 
   # TODO: Figure out how to make this work with a single instance
@@ -163,7 +163,7 @@ class SalesforceAPI
   def find_participants_by(program_id:)
     participants = get_participants(program_id)
 
-    particpants.map do |participant|
+    participants.map do |participant|
       SFParticipant.new(participant['FirstName'], participant['LastName'],
                       participant['Email'], participant['Role'].to_sym,
                       participant['ProgramId'], participant['ContactId'],
