@@ -47,7 +47,6 @@ class User < ApplicationRecord
     end
   end
 
-  before_validation :do_account_registration, on: :create
   before_create :attempt_admin_set, unless: :admin?
   
   validates :email, uniqueness: true

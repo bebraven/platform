@@ -66,4 +66,17 @@ class ApplicationController < ActionController::Base
   def remove_x_frame_options
     response.headers.delete "X-Frame-Options"
   end
+
+  # For LTI authentication (esp in a browser without access to cookies / session), the
+  # state param is the de-facto "authenticated session" identifier. It is used to look up
+  # the LtiLaunch for context on this "session"
+  def current_state_param
+    # TODO: the state param may be in one of three places, see: config/initializers/lti_authentication.rb 
+    # Abstract that out into a common utility / way for any controller or lib or service to be able to 
+    # access the state param of the current request. Perhaps using middleware? Like TracePropagation::Middleware does?
+    # https://app.asana.com/0/1174274412967132/1191053265938819
+    params[:state]
+  end
+  helper_method :current_state_param
+
 end

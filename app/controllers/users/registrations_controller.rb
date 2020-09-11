@@ -8,18 +8,24 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # GET /resource
   def show
     # Show the thank you for registering page.
-    self.resource = User.find_by(salesforce_id: params[:u])
+    self.resource = find_user_by_salesforce_id
   end
 
   # GET /resource/sign_up
-  # def new
-  #   super
-  # end
+  def new
+    super do
+      return render :bad_link unless salesforce_id
+
+      return render :already_exists if find_user_by_salesforce_id.present?
+    end
+  end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    AccountCreator.new(sign_up_params: sign_up_params).run
+
+    redirect_to action: :show
+  end
 
   # GET /resource/edit
   # def edit
@@ -44,12 +50,26 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def cancel
   #   super
   # end
+  #
+  private
+
+  def salesforce_id
+    params[:u]
+  end
+
+  def find_user_by_salesforce_id
+    User.find_by(salesforce_id: salesforce_id)
+  end
 
   protected
 
   # If you have extra params to permit, append them to the sanitizer.
   def configure_sign_up_params
     devise_parameter_sanitizer.permit(:sign_up, keys: [:salesforce_id])
+  end
+
+  def sign_up_params
+    devise_parameter_sanitizer.sanitize(:sign_up)
   end
 
   # If you have extra params to permit, append them to the sanitizer.

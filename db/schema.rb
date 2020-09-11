@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_17_204515) do
+ActiveRecord::Schema.define(version: 2020_08_20_205947) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,6 +121,24 @@ ActiveRecord::Schema.define(version: 2020_08_17_204515) do
   create_table "lesson_contents", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "activity_id"
+    t.integer "quiz_questions"
+    t.index ["activity_id"], name: "index_lesson_contents_on_activity_id"
+  end
+
+  create_table "lesson_interactions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "activity_id", null: false
+    t.boolean "success"
+    t.integer "progress"
+    t.string "verb", null: false
+    t.integer "canvas_course_id", null: false
+    t.integer "canvas_assignment_id", null: false
+    t.boolean "new", default: true, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["new", "user_id", "activity_id", "verb"], name: "index_lesson_interactions_1"
+    t.index ["user_id"], name: "index_lesson_interactions_on_user_id"
   end
 
   create_table "lesson_submissions", force: :cascade do |t|
@@ -426,6 +444,7 @@ ActiveRecord::Schema.define(version: 2020_08_17_204515) do
   add_foreign_key "course_content_histories", "course_contents"
   add_foreign_key "course_content_histories", "users"
   add_foreign_key "grade_categories", "programs"
+  add_foreign_key "lesson_interactions", "users"
   add_foreign_key "lesson_submissions", "lessons"
   add_foreign_key "lesson_submissions", "users"
   add_foreign_key "lessons", "grade_categories"

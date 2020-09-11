@@ -1,0 +1,6 @@
+<%= render "devise/shared/error_messages", resource: resource %>
+<h2>You've already signed up!</h1>
+<div>
+  <p>Please <%= link_to "log-in here.", new_user_session_path %></p>
+  <p>If believe you don't have an account, please <a href="mailto:support@bebraven.org">contact us here</a></p>
+</div>

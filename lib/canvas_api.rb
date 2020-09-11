@@ -1,6 +1,15 @@
 require 'rest-client'
 
 class CanvasAPI
+  UserNotOnCanvas = Class.new(StandardError)
+
+  LMSUser = Struct.new(:id)
+  LMSEnrollment = Struct.new(:id, :course_id, :type, :section_id)
+  LMSSection = Struct.new(:id, :name)
+
+  TA_ENROLLMENT = :TaEnrollment
+  STUDENT_ENROLLMENT = :StudentEnrollment
+
   attr_reader :canvas_url
 
   # Custom HTML to prepend to each body.
@@ -60,6 +69,28 @@ class CanvasAPI
     put("/courses/#{course_id}/pages/#{wiki_page_id}", body)
   end
 
+  # Batch updates grades for lessons using the Canvas Submissions API:
+  # https://canvas.instructure.com/doc/api/submissions.html#method.submissions_api.update
+  # grades_by_user_id: hash containing canvas_user_id => grade
+  def update_lesson_grades(course_id, assignment_id, grades_by_user_id)
+    body = grades_by_user_id.map { |canvas_user_id, grade|
+      [ "grade_data[#{canvas_user_id}][posted_grade]", grade.to_s]
+    }.to_h
+
+    response = post(
+      "/courses/#{course_id}/assignments/#{assignment_id}/submissions/update_grades",
+      body,
+    )
+
+    JSON.parse(response.body)
+  end
+
+  def create_account(first_name:, last_name:, user_name:, email:, contact_id:, student_id:, timezone:, docusign_template_id:)
+    user = create_user(first_name, last_name, user_name, email, contact_id, student_id, timezone, docusign_template_id)
+
+    LMSUser.new(user['id'])
+  end
+
   def create_user(first_name, last_name, username, email, salesforce_id, student_id, timezone, docusign_template_id=nil)
     body = {
         'user[name]' => "#{first_name} #{last_name}",
@@ -82,6 +113,21 @@ class CanvasAPI
     response = post('/accounts/1/users', body)
     JSON.parse(response.body)
   end
+
+  def find_user_by!(email:)
+    user = find_user_in_canvas(email)
+    raise UserNotOnCanvas, "Email: #{email}" if user.nil?
+
+    LMSUser.new(user['id'])
+  end
+
+  def find_user_by(email:)
+    user = find_user_in_canvas(email)
+    return nil if user.nil?
+
+    LMSUser.new(user['id'])
+  end
+
 
   def find_user_in_canvas(email)
     response = get("/accounts/1/users?search_term=#{CGI.escape(email)}")
@@ -110,6 +156,16 @@ class CanvasAPI
     (enrollments.blank? ? nil : enrollments) # No enrollments returns an empty array and nil is nicer to deal with.
   end
 
+  def find_enrollment(user_id:, course_id:)
+    enrollment = get_user_enrollments(user_id, course_id)
+      &.filter { |e| e['course_id']&.to_i.eql?(course_id&.to_i) }
+      &.last
+    return enrollment if enrollment.nil?
+
+    LMSEnrollment.new(enrollment['id'], enrollment['course_id'],
+                      enrollment['type'], enrollment['section_id'])
+  end
+
   # Enrolls the user in the new course, without modifying any existing data
   def enroll_user_in_course(canvas_user_id, course_id, canvas_role, section_id)
     body = {
@@ -123,6 +179,13 @@ class CanvasAPI
     post("/courses/#{course_id}/enrollments", body)
   end
 
+  def delete_enrollment(enrollment:)
+    cancel_enrollment(
+      { 'course_id' => enrollment.course_id, 'id' => enrollment.id }
+    )
+    nil
+  end
+
   # See: https://canvas.instructure.com/doc/api/enrollments.html#method.enrollments_api.destroy
   # Valid values for task:
   #   conclude, delete,  deactivate
@@ -134,9 +197,23 @@ class CanvasAPI
     JSON.parse(response.body)
   end
 
+  def find_section_by(course_id:, name:)
+    sections = get_sections(course_id)
+    section = sections.filter { |s| s['name'] == name }&.first
+    return nil if section.nil?
+
+    LMSSection.new(section['id'], section['name'])
+  end
+
   def get_sections(course_id)
     response = get("/courses/#{course_id}/sections?per_page=100")
     get_all_from_pagination(response)
+  end
+
+  def create_lms_section(course_id:, name:)
+    section = create_section(course_id, name)
+    # Check what create section returns
+    LMSSection.new(section['id'], section['name'])
   end
 
   def create_section(course_id, section_name)

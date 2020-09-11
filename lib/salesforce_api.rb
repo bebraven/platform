@@ -8,10 +8,39 @@ class SalesforceAPI
   # Pass these into any POST or PUT request where the body is json.
   JSON_HEADERS = {content_type: :json, accept: :json}
 
+  SFContact = Struct.new(:id, :email, :first_name, :last_name)
+  SFParticipant = Struct.new(:first_name, :last_name, :email, :role,
+                             :program_id, :contact_id, :status, :student_id,
+                             :cohort, :cohort_schedule)
+  SFProgram = Struct.new(:id, :name, :school_id, :fellow_course_id,
+                         :leadership_coach_course_id,
+                         :leadership_coach_course_section_name, :timezone,
+                         :docusign_template_id,
+                         :pre_accelerator_qualtrics_survey_id,
+                         :post_accelerator_qualtrics_survey_id,
+                         :lc_docusign_template_id)
+
+  ENROLLED = 'Enrolled' 
+  DROPPED = 'Dropped'
+  COMPLETED = 'Completed'
+  LEADERSHIP_COACH = :'Leadership Coach'
+  FELLOW = :Fellow
+
   class SalesforceDataError < StandardError; end
+  ParticipantNotOnSalesforceError = Class.new(StandardError)
+  ProgramNotOnSalesforceError = Class.new(StandardError)
+
+  # TODO: Figure out how to make this work with a single instance
+  # @client = nil
 
   # Use this to get an authenticated instance of the API client
   def self.client
+    # A sloppy singleton
+    # if @client.nil?
+    #   s = new
+    #   @client = s.authenticate
+    # end
+    # @client
     s = new
     s.authenticate
   end
@@ -109,6 +138,58 @@ class SalesforceAPI
       "IsEmailBounced,BZ_Geographical_Region__c,Current_Employer__c,Career__c,Title,Job_Function__c,Current_Major__c," \
       "High_School_Graduation_Date__c,Anticipated_Graduation__c,Graduate_Year__c")
     JSON.parse(response.body)
+  end
+
+  def find_program(id:)
+    program = get_program_info(id)
+    raise ProgramNotOnSalesforceError if program.nil?
+
+    SFProgram.new(program['Id'], program['Name'], program['SchoolId'],
+              program['Target_Course_ID_in_LMS__c'].to_i,
+              program['LMS_Coach_Course_Id__c'].to_i,
+              program['Section_Name_in_LMS_Coach_Course__c'],
+              program['Default_Timezone__c'].to_sym,
+              program['Docusign_Template_ID__c'],
+              program['Preaccelerator_Qualtrics_Survey_ID__c'],
+              program['Postaccelerator_Qualtrics_Survey_ID__c'],
+              program['LC_DocuSign_Template_ID__c'])
+  end
+
+  def find_contact(id:)
+    contact = get_contact_info(id)
+    SFContact.new(contact['Id'], contact['Email'], contact['FirstName'], contact['LastName'])
+  end
+
+  def find_participants_by(program_id:)
+    participants = get_participants(program_id)
+
+    particpants.map do |participant|
+      SFParticipant.new(participant['FirstName'], participant['LastName'],
+                      participant['Email'], participant['Role'].to_sym,
+                      participant['ProgramId'], participant['ContactId'],
+                      participant['ParticipantStatus'], participant['StudentId'],
+                      participant['CohortName'], participant['CohortScheduleDayTime'])
+    end
+  end
+
+
+  def find_participant(contact_id:)
+    participants = get_participants(nil, contact_id)
+    raise ParticipantNotOnSalesForceError, "Contact ID #{contact_id}" if participants.empty?
+
+    # TODO: Figure out the criteria for in case of many participants
+    participant = participants.first
+
+    SFParticipant.new(participant['FirstName'], participant['LastName'],
+                      participant['Email'], participant['Role'].to_sym,
+                      participant['ProgramId'], participant['ContactId'],
+                      participant['ParticipantStatus'], participant['StudentId'],
+                      participant['CohortName'], participant['CohortScheduleDayTime'])
+  end
+
+  def update_contact(id, canvas_id:)
+    set_canvas_id(id, canvas_id)
+    true
   end
 
   def set_canvas_id(contact_id, canvas_id)

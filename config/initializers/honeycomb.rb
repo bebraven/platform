@@ -11,4 +11,6 @@ Honeycomb.configure do |config|
     send_data.action_controller
     deliver.action_mailer
   ].freeze
+  # Turn this on if you want to see some craziness
+  # config.debug = true
 end

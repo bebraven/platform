@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for?(:title) ? yield(:title) : 'Braven Platform' %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <title><%= content_for?(:title) ? yield(:title) : 'Braven Platform' %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <% if current_state_param %> <meta name="state" content="<%= current_state_param %>"> <% end %>
+    <meta name="serialized-trace" content="<%= Honeycomb.current_span.to_trace_header %>">
+    <%# Boomerang inserts the script tag to start executing it right here which needs to be 
+        after the above two <meta> elements b/c it depends on them. %>
+    <%= javascript_pack_tag 'boomerang' %>
 
     <link rel="shortcut icon" href="https://bebraven.org/wp-content/themes/bebraven/favicon.ico">
 

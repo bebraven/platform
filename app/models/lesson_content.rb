@@ -1,22 +1,27 @@
-require 'lesson_content_publisher'
+require 'lesson_content_util'
 
 # Represents the contents of a Canvas module, e.g. a Rise 360 course
 class LessonContent < ApplicationRecord
-  after_create_commit :publish
+  # Note: Callbacks are executed in reverse order.
+  after_create_commit :update_metadata!, :publish
 
   # Rise 360 lesson zipfile
   has_one_attached :lesson_content_zipfile
 
   def launch_url
-   "#{LtiLessonContentsProxy.proxy_url}#{LessonContentPublisher.launch_path(lesson_content_zipfile.key)}"
+   "#{LtiLessonContentsProxy.proxy_url}#{LessonContentUtil.launch_path(lesson_content_zipfile.key)}"
   end
    
   private
  
   def publish
-    # TODO: Extract this asynchronously
+    # TODO: Extract this asynchronously, and ensure update_metadata runs *after*.
     # https://app.asana.com/0/1174274412967132/1184800386160057
-    LessonContentPublisher.publish(lesson_content_zipfile)
+    LessonContentUtil.publish(lesson_content_zipfile)
+  end
+
+  def update_metadata!
+    LessonContentUtil.update_metadata!(self)
   end
 
 end

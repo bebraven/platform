@@ -109,4 +109,30 @@ RSpec.describe CanvasAPI do
     end
   end
 
+  describe "#update_lesson_grades" do
+    let(:course_id) { 111 }
+    let(:assignment_id) { 222 }
+
+    it 'POSTS to submissions URL' do
+      url = "#{CANVAS_API_URL}/courses/#{course_id}/assignments/#{assignment_id}/submissions/update_grades"
+
+      # Generate random grades for user IDs
+      grades_by_user_id = [ 333, 444, 555 ].map{
+        |canvas_user_id| [canvas_user_id, rand(1..10)]
+      }.to_h
+
+      # Stub request
+      stub_request(:post, url).to_return(body: '{}')
+      canvas.update_lesson_grades(
+        course_id,
+        assignment_id,
+        grades_by_user_id,
+      )
+
+      expect(WebMock)
+        .to have_requested(:post, url)
+        .once
+    end
+  end
+
 end

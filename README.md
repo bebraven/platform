@@ -233,7 +233,51 @@ installing the JS dependencies locally with `yarn`, then running Jest with:
 
     yarn test
 
-### Static Code Analysis (aka linter)
+### CI/CD Pipeline + Monitoring
+TODO: write an overview of how we deploy, how we've configured CI, Booster vs Braven (vs soon to be Highlander) pipelines
+      how Heroku has metrics and logs you can view, etc.
+
+#### Continuous Integration
+TODO: talk about this
+
+#### Sentry
+TODO: talk about this
+
+#### Honeycomb
+We've instrumented our server-side and client-side code to send traces and spans to [Honeycomb](https://ui.honeycomb.io/braven/datasets) 
+so we can troubleshoot and analyze it. While the auto-instrumentation is very useful, when writing new code you should
+always ask yourself *"Is there information here that may be useful if problems arise and I need to troubleshoot?"* and
+*"Am I worried this may have a performance impact?"* If the answer is yes to either, you should add some manual Honeycomb
+instrumentation to your code.
+
+[See here for more details about our Honeycomb setup](https://github.com/bebraven/platform/wiki/Honeycomb)
+
+##### Server-side instrumentation
+On the server-side we use [Honeycomb Beeline](https://docs.honeycomb.io/getting-data-in/ruby/beeline/). Here
+is an example of how to add a piece of interesting information to the current trace:
+```
+Honeycomb.add_field('interesting_thing', 'banana')
+```
+
+And here is an example of wrapping something that may be slow in a span so you can find out for sure once
+it comes under load in production:
+```
+Honeycomb.start_span(name: 'maybe_slow_operation') do |span|
+  span.add_field('interesting_thing', 'banana')
+end
+```
+
+##### Client-side instrumentation
+On the client-side, use the wrapper classes in `honeycomb.js` to add manual instrumentation. E.g.
+```
+const honey_span = new HoneycombXhrSpan('controller.name', 'action.name', {
+    'field1.to.add': 'value1', 
+    'field2.to.add': 'value2'});
+```
+To get an overall view of the user experience on a page including the Javascript that runs, group by 
+`trace.trace_id` in Honeycomb and click on the trace you want to see. 
+
+#### Codacy - Static Code Analysis (aka linter)
 We use Codacy to run static code analysis. Everytime you push a branch to the repo it runs. 
 
 **You can see [status here](https://app.codacy.com/manual/bebraven/platform/dashboard)**
@@ -243,6 +287,7 @@ Make sure you get invited to the project so that you'll get emails about your co
 *Note: you can also run it locally using the `codacy-analysis-cli` but I HIGHLY recommend against it. It's really hard
 to get it working properly and the branch has to be completely clean and fully committed. Just push your branch and open a
 pull request. Go fix any issues as well as get a peer code review before merging the pull request.*
+
 
 ### Project structure
 

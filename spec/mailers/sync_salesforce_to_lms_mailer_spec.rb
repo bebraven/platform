@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe SalesforceToLmsSyncMailer, type: :mailer do
+RSpec.describe SyncSalesforceToLmsMailer, type: :mailer do
   describe '#success_email' do
     let(:recipient) { 'example@example.com' }
-    let(:mail) { SalesforceToLmsSyncMailer.with(email: recipient).success_email }
+    let(:mail) { SyncSalesforceToLmsMailer.with(email: recipient).success_email }
 
     # before(:each) { mail.deliver_now }
 
@@ -24,7 +24,7 @@ RSpec.describe SalesforceToLmsSyncMailer, type: :mailer do
 
   describe '#failure_email' do
     let(:recipient) { 'example@example.com' }
-    let(:mail) { SalesforceToLmsSyncMailer.with(email: recipient).failure_email }
+    let(:mail) { SyncSalesforceToLmsMailer.with(email: recipient).failure_email }
 
     # before(:each) { mail.deliver_now }
 

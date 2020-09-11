@@ -4,11 +4,12 @@ const real_tincan = jest.requireActual('tincanjs');
 jest.mock('tincanjs');
 
 beforeEach(() => {
-    // Set up our document body
+    // Set up our document 
+    document.head.innerHTML = '<meta name="state" content="test">';
     document.body.innerHTML =
-        '<div id="javascript_variables" data-project-lti-id="1" data-lti-auth-state="test"></div>' +
+        '<div id="javascript_variables" data-project-lti-id="1"></div>' +
         '<input type="text" data-bz-retained="test-id">' +
-        '<textarea data-bz-retained="test-id-2"></textarea>'
+        '<textarea data-bz-retained="test-id-2"></textarea>';
 });
 
 test('set input value to matching statement response', () => {
@@ -286,11 +287,12 @@ test('fetches more pages if needed', () => {
 });
 
 test('inputs are set to read-only in TA view', () => {
-    // Set up our document body for TA view.
+    // Set up our document for TA view.
+    document.head.innerHTML = '<meta name="state" content="test">';
     document.body.innerHTML =
-        '<div id="javascript_variables" data-project-lti-id="1" data-user-override-id="10" data-lti-auth-state="test"></div>' +
+        '<div id="javascript_variables" data-project-lti-id="1" data-user-override-id="10"></div>' +
         '<input type="text" data-bz-retained="test-id">' +
-        '<textarea data-bz-retained="test-id-2"></textarea>'
+        '<textarea data-bz-retained="test-id-2"></textarea>';
     // Note: this has side-effects, both from top-level code and from code run during in the
     // ready callback.
     const xapi_assignment = require('packs/xapi_assignment');
@@ -303,11 +305,12 @@ test('inputs are set to read-only in TA view', () => {
 });
 
 test('uses the overridden student ID if it is passed in', () => {
-    // Set up our document body for TA view.
+    // Set up our document for TA view.
+    document.head.innerHTML = '<meta name="state" content="test">';
     document.body.innerHTML =
-        '<div id="javascript_variables" data-project-lti-id="1" data-user-override-id="10" data-lti-auth-state="test"></div>' +
+        '<div id="javascript_variables" data-project-lti-id="1" data-user-override-id="10"></div>' +
         '<input type="text" data-bz-retained="test-id">' +
-        '<textarea data-bz-retained="test-id-2"></textarea>'
+        '<textarea data-bz-retained="test-id-2"></textarea>';
     // Note: this has side-effects, both from top-level code and from code run during in the
     // ready callback.
     const xapi_assignment = require('packs/xapi_assignment');
