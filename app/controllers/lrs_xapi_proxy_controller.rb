@@ -2,6 +2,7 @@ require "lrs_xapi_proxy"
 
 class LrsXapiProxyController < ApplicationController
   skip_before_action :verify_authenticity_token
+  wrap_parameters false # Disable putting everything inside a "lrs_xapi_proxy" param. This controller doesn't represent a model.
 
   # Non-standard controller without normal CRUD methods. Disable the convenience module.
   def dry_crud_enabled?() false end
@@ -23,5 +24,7 @@ class LrsXapiProxyController < ApplicationController
       render plain: response_body, status: response.code, content_type: content_type and return if content_type == LrsXapiProxy::OCTET_STREAM_MIME_TYPE
       render json: response_body, status: response.code and return if content_type == LrsXapiProxy::JSON_MIME_TYPE
     end
+  rescue RestClient::Exception => e
+    render json: e.http_body.to_json, status: e.http_code
   end
 end

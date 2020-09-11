@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -22,18 +24,18 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  
-  gem 'rspec-rails', '~> 3.6'
-  gem 'factory_bot_rails'
-  gem 'shoulda-matchers'
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+
   gem 'dotenv'
+  gem 'factory_bot_rails'
+  gem 'rspec-rails', '~> 3.6'
+  gem 'shoulda-matchers'
 end
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem 'web-console', '>= 3.3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'web-console', '>= 3.3.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
@@ -41,16 +43,19 @@ group :development do
   # Require rack-livereload in development bc we use it in config/environments/development.rb.
   gem 'rack-livereload', require: true
 
-  gem 'libnotify', require: false
-  gem 'webpacker-react', "~> 1.0.0.beta.1"
-  gem 'pry-rescue', require: false
-  gem 'pry-stack_explorer', require: false
-  gem 'rubocop', require: false
   gem 'guard-livereload', require: false
   gem 'guard-rails', require: false
   gem 'guard-rspec', require: false
   gem 'guard-webpacker', require: false
   gem 'guard-yarn', require: false
+  gem 'libnotify', require: false
+  gem 'pry-rescue', require: false
+  gem 'pry-stack_explorer', require: false
+  gem 'rubocop', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'webpacker-react', '~> 1.0.0.beta.1'
 end
 
 group :test do
@@ -74,11 +79,11 @@ group :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
+gem 'bulk_insert'
 gem 'paranoia'
 gem 'will_paginate'
-gem 'bulk_insert'
 
 gem 'rest-client'
 
@@ -90,8 +95,8 @@ gem 'react-rails'
 gem 'sentry-raven'
 
 # Using a branch for a time being to remove R18n until we decide what we want to do
-gem 'rubycas-server-core', github: 'bebraven/rubycas-server-core', branch: 'platform-compat'
 gem 'rubycas-server-activerecord'
+gem 'rubycas-server-core', github: 'bebraven/rubycas-server-core', branch: 'platform-compat'
 
 # Honeycomb
 gem 'honeycomb-beeline'

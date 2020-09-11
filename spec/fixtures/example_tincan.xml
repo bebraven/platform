@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<tincan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://projecttincan.com/tincan.xsd">
+  <activities>
+    <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise" type="http://adlnet.gov/expapi/activities/course">
+      <name lang="en-US">LEAD AUTHENTICALLY</name>
+      <description lang="en-US">&lt;span style=&#34;color: rgb(0, 0, 0); font-size: 20px;&#34;&gt;Learn the who, what, when, where, why, and how of the Braven Accelerator to set yourself up for success this semester. Also, discover your inner leader.&lt;/span&gt;</description>
+      <launch lang="en-US">index.html</launch>
+    </activity>
+      <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/xQvXXBKjohmGHnPUlyck9VqMlQ0hgcgy" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">WELCOME TO BRAVEN/blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/qIcY1E9rKGCfY45vT66RmrKRcx8G_8M3" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">WHY BRAVEN MATTERS/blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/tkj4lxf13yahW7F3lpduYN2cInD5xBW9" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">WHAT&#39;S IN STORE FOR THIS SEMESTER AND BEYOND? /blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/syAZ_gjrDNIRc1sLX_T2UEIGUOaFRAHc" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">WHAT&#39;S EXPECTED OF YOU/blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/TtPxzV_CLFcG1DeRF5r2PkeUt6fZJ5rf" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">HOW DO I ACHIEVE ALL OF THIS?/blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/3TioUuz2quXIpJ70dBXt1ybiM3IHXi13" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">MASTERY QUESTIONS #1/quiz</name>
+      <description lang="en-US">Let&amp;#39;s assess what you&amp;#39;ve learned so far!&amp;nbsp;</description>
+    </activity>
+            
+    <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/3TioUuz2quXIpJ70dBXt1ybiM3IHXi13/ckcw1on0800043g67ej5pue8c" type="http://adlnet.gov/expapi/activities/cmi.interaction">
+      <name lang="en-US">The Braven Accelerator is made up of 3 parts, what are these?</name>
+      <description lang="en-US"></description>
+      <interactionType>choice</interactionType>
+      <correctResponsePatterns>
+            <correctResponsePattern>choice_ckcw1on0800043g67ej5pue8c_ckcw1on0800053g677pu93ftu</correctResponsePattern>
+            <correctResponsePattern>choice_ckcw1on0800043g67ej5pue8c_ckcw1on0800063g675f0mg45p</correctResponsePattern>
+            <correctResponsePattern>choice_ckcw1on0800043g67ej5pue8c_cke04hy79005v3g6452o3a5u9</correctResponsePattern>
+            </correctResponsePatterns>
+            <choices>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_ckcw1on0800053g677pu93ftu</id>
+        <description lang="en-US">Design Your Career</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_ckcw1on0800063g675f0mg45p</id>
+        <description lang="en-US">Hustle to Career</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_cke04hy79005v3g6452o3a5u9</id>
+        <description lang="en-US">Capstone Challenge</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_cke04i1kq006k3g64pb3nybdc</id>
+        <description lang="en-US">Design Your Job</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_cke04ib13007e3g642y1d442k</id>
+        <description lang="en-US">Hustle to Tomorrow</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_cke04ijd1008d3g64wu9xrns8</id>
+        <description lang="en-US">The Ultimate Challenge&amp;nbsp;</description>
+      </component>
+            </choices>
+          </activity>
+        
+    <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/3TioUuz2quXIpJ70dBXt1ybiM3IHXi13/ckcw1on0900073g676oa4036m" type="http://adlnet.gov/expapi/activities/cmi.interaction">
+      <name lang="en-US">What are the two most important commitments you need to make to succeed in this Accelerator?&amp;nbsp;</name>
+      <description lang="en-US"></description>
+      <interactionType>choice</interactionType>
+      <correctResponsePatterns>
+            <correctResponsePattern>choice_ckcw1on0900073g676oa4036m_ckcw1on0900083g670331cnvz</correctResponsePattern>
+            <correctResponsePattern>choice_ckcw1on0900073g676oa4036m_ckcw1on09000a3g67iz12z6cf</correctResponsePattern>
+            </correctResponsePatterns>
+            <choices>
+            <component>
+        <id>choice_ckcw1on0900073g676oa4036m_ckcw1on0900083g670331cnvz</id>
+        <description lang="en-US">&lt;strong&gt;I will create a functional resume and cover letter that I am proud of&lt;/strong&gt;, one that I can use to apply to internships and jobs after the semester is over</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0900073g676oa4036m_ckcw1on09000a3g67iz12z6cf</id>
+        <description lang="en-US">&lt;strong&gt;I will apply to as many career-accelerating opportunities as possible&lt;/strong&gt; because I know that obtaining at least two can help me get a good job sooner after I graduate.</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0900073g676oa4036m_ckcw1on09000b3g67xfz31bir</id>
+        <description lang="en-US">&lt;strong&gt;I will Embrace the Journey ahead of me&lt;/strong&gt;, and will work hard to become a leader and be empowered to excel anywhere &amp;ndash; no matter where I come from.</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0900073g676oa4036m_ckcw1on0900093g67pq03flbi</id>
+        <description lang="en-US">&lt;strong&gt;I will attend all of my Learning Labs as scheduled&amp;nbsp;&lt;/strong&gt;because my participation benefits and elevates the experience of all the Fellows in my cohort.</description>
+      </component>
+            </choices>
+          </activity>
+              <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/d2ot-N2YvRn3P_kHlOSEbckBWYJz0fJc" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">BECOMING BRAVEN/blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/pG0R5hl7YDD-NDLB_vVhnspJ3a5nBmZF" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">WRAP-UP/blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/hv3h9s-lYDVHlX3rBQPo6M-90RJs5Gaz" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">FEEDBACK CORNER/blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/KkiYDYw8nwnR_hbIJQdHAwDb8Lro8apy" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">NEXT STEPS/blocks</name>
+      <description lang="en-US"></description>
+    </activity>
+          <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/gv3Zrsourh3MlaZ7yHBptLv0eMMEy7pg" type="http://adlnet.gov/expapi/activities/module">
+      <name lang="en-US">MASTERY QUESTIONS #2/quiz</name>
+      <description lang="en-US">Let&amp;#39;s assess what you&amp;#39;ve learned so far!&amp;nbsp;</description>
+    </activity>
+            
+    <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/gv3Zrsourh3MlaZ7yHBptLv0eMMEy7pg/ckcw1on0800043g67ej5pue8c" type="http://adlnet.gov/expapi/activities/cmi.interaction">
+      <name lang="en-US">Which of the following is not a good example of possible underperformance from stereotype threats?</name>
+      <description lang="en-US"></description>
+      <interactionType>choice</interactionType>
+      <correctResponsePatterns>
+            <correctResponsePattern>choice_ckcw1on0800043g67ej5pue8c_cke04i1kq006k3g64pb3nybdc</correctResponsePattern>
+            </correctResponsePatterns>
+            <choices>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_ckcw1on0800053g677pu93ftu</id>
+        <description lang="en-US">Women choosing not to go into fields of science or engineering&amp;nbsp;</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_ckcw1on0800063g675f0mg45p</id>
+        <description lang="en-US">African American children not swimming as well as their peers in swimming class</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_cke04hy79005v3g6452o3a5u9</id>
+        <description lang="en-US">Women getting lower grades than men in science and engineering class</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_cke04i1kq006k3g64pb3nybdc</id>
+        <description lang="en-US">White men excelling at basketball</description>
+      </component>
+            <component>
+        <id>choice_ckcw1on0800043g67ej5pue8c_cke04ib13007e3g642y1d442k</id>
+        <description lang="en-US">Students of lower socioeconomic status getting lower grades than they used to after transferring into more affluent schools</description>
+      </component>
+            </choices>
+          </activity>
+        
+    <activity id="http://OrDngAKqbvX4sCs0vBpsk-P1VXsst1vc_rise/gv3Zrsourh3MlaZ7yHBptLv0eMMEy7pg/cke05adpl00l13g649nhzperj" type="http://adlnet.gov/expapi/activities/cmi.interaction">
+      <name lang="en-US">According to a current leading theory in psychological research, your personality (who you are) is made up of five elements (&amp;quot;the New Big Five&amp;quot;). Match the element with its description</name>
+      <description lang="en-US"></description>
+      <interactionType>matching</interactionType>
+      <correctResponsePatterns>
+            <correctResponsePattern>source_cke05adpm00l23g64wbuv4ksa[.]target_cke05adpm00l23g64wbuv4ksa</correctResponsePattern>
+            <correctResponsePattern>source_cke05adpm00l33g642pri297l[.]target_cke05adpm00l33g642pri297l</correctResponsePattern>
+            <correctResponsePattern>source_cke05adpm00l43g64tg0abg28[.]target_cke05adpm00l43g64tg0abg28</correctResponsePattern>
+            <correctResponsePattern>source_cke05bd3s00l53g64a7gfai1q[.]target_cke05bd3s00l53g64a7gfai1q</correctResponsePattern>
+            <correctResponsePattern>source_cke05bhqd00l63g64s7onmw3f[.]target_cke05bhqd00l63g64s7onmw3f</correctResponsePattern>
+            </correctResponsePatterns>
+            <source>
+            <component>
+        <id>source_cke05adpm00l23g64wbuv4ksa</id>
+        <description lang="en-US">Your biological traits as a human></description>
+      </component>
+            <component>
+        <id>source_cke05adpm00l33g642pri297l</id>
+        <description lang="en-US">Your dispositional traits ></description>
+      </component>
+            <component>
+        <id>source_cke05adpm00l43g64tg0abg28</id>
+        <description lang="en-US">Your adaptations ></description>
+      </component>
+            <component>
+        <id>source_cke05bd3s00l53g64a7gfai1q</id>
+        <description lang="en-US">Your self-defining life narrative ></description>
+      </component>
+            <component>
+        <id>source_cke05bhqd00l63g64s7onmw3f</id>
+        <description lang="en-US">Your cultural and social context></description>
+      </component>
+            </source>
+      <target>
+                  <component>
+            <id>target_cke05adpm00l23g64wbuv4ksa</id>
+            <description lang="en-US">e.g. what you look like, things you can/can&#39;t physically do</description>
+          </component>
+                  <component>
+            <id>target_cke05adpm00l33g642pri297l</id>
+            <description lang="en-US">i.e. your character: extrovert/introvert, risk tolerance, etc.</description>
+          </component>
+                  <component>
+            <id>target_cke05adpm00l43g64tg0abg28</id>
+            <description lang="en-US">e.g. how you choose to enjoy yourself, how you handle stress, etc.</description>
+          </component>
+                  <component>
+            <id>target_cke05bd3s00l53g64a7gfai1q</id>
+            <description lang="en-US">i.e. how you explain what happens to you and how it connects to your story </description>
+          </component>
+                  <component>
+            <id>target_cke05bhqd00l63g64s7onmw3f</id>
+            <description lang="en-US">what culture(s) you live in, what your role is in your family, community, school, or work.</description>
+          </component>
+              </target>
+          </activity>
+            </activities>
+</tincan>

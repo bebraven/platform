@@ -1,5 +1,5 @@
 require 'rails_helper'
-require 'lesson_content_publisher'
+require 'lesson_content_util'
 
 RSpec.describe LessonContentsController, type: :controller do
   render_views
@@ -25,8 +25,8 @@ RSpec.describe LessonContentsController, type: :controller do
     context 'existing lesson content' do
       it 'redirects to public url with LRS query parameters' do
         launch_path = '/lessons/somekey/index.html'
-        allow(LessonContentPublisher).to receive(:launch_path).and_return(launch_path)
-        allow(LessonContentPublisher).to receive(:publish).and_return(launch_path)
+        allow(LessonContentUtil).to receive(:launch_path).and_return(launch_path)
+        allow(LessonContentUtil).to receive(:publish).and_return(launch_path)
 
         get :show, params: {:id => lesson_content_with_zipfile.id, :state => state}
 
@@ -59,8 +59,8 @@ RSpec.describe LessonContentsController, type: :controller do
     context "with valid params" do
       it "shows the confirmation form and preview iframe" do
         launch_path = '/lessons/somekey/index.html'
-        allow(LessonContentPublisher).to receive(:launch_path).and_return(launch_path)
-        allow(LessonContentPublisher).to receive(:publish).and_return(launch_path)
+        allow(LessonContentUtil).to receive(:launch_path).and_return(launch_path)
+        allow(LessonContentUtil).to receive(:publish).and_return(launch_path)
 
         post :create, params: {state: state, lesson_content_zipfile: file_upload}
 
@@ -74,8 +74,8 @@ RSpec.describe LessonContentsController, type: :controller do
 
       it 'attaches uploaded zipfile' do
         launch_path = '/lessons/somekey/index.html'
-        allow(LessonContentPublisher).to receive(:launch_path).and_return(launch_path)
-        allow(LessonContentPublisher).to receive(:publish).and_return(launch_path)
+        allow(LessonContentUtil).to receive(:launch_path).and_return(launch_path)
+        allow(LessonContentUtil).to receive(:publish).and_return(launch_path)
 
         expect {
           post :create, params: {state: state, lesson_content_zipfile: file_upload}

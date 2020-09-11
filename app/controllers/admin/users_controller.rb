@@ -29,9 +29,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def create
-    User.skip_callback(:validation, :before, :do_account_registration)
     @user = User.create(user_params.merge(confirmed_at: DateTime.now))
-    User.set_callback(:validation, :before, :do_account_registration)
 
     if @user.persisted?
       redirect_to admin_users_path, notice: 'User was added successfully'
@@ -45,9 +43,7 @@ class Admin::UsersController < ApplicationController
   def update
     filtered_user_params = user_params.reject { |_, v| v.blank? }
 
-    User.skip_callback(:validation, :before, :do_account_registration)
     user_changes_persisted = @user.update_attributes(filtered_user_params)
-    User.set_callback(:validation, :before, :do_account_registration)
 
     if user_changes_persisted
       redirect_to admin_user_path(@user), notice: 'User was changed successfully'

@@ -154,10 +154,12 @@ RSpec.feature 'Submit a project', :type => :feature do
         # Make the LTI state ID invalid
         # Capybara's fill_in doesn't work because the input is hidden
         page.execute_script(
-          "document.getElementsByName('state')[0].value = 'invalidstate'",
+          "document.querySelector('input[type=\"hidden\"][name=\"state\"]').value = 'invalidstate'"
         )
         click_button 'project-submit-button'
+
         expect(page).to have_selector('.alert-warning')
+
       end
     end
   end
