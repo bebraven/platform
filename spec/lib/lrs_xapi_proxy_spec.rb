@@ -251,6 +251,31 @@ RSpec.describe LrsXapiProxy do
         end
       end
 
+      context 'with a NaN duration' do
+        let(:query_parameters) {{ 'statementId': 'test' }}
+        let(:post_body) {{
+          'testParam1': 'test1',
+          'testParam2': 'test2',
+          'result': {
+            'duration': 'PTNaNS',
+          },
+        }.to_json}
+        let(:method) { 'PUT' }
+
+        it 'replaces the duration with 0.0' do
+          expected_body = {
+            'testParam1': 'test1',
+            'testParam2': 'test2',
+            'result': {
+              'duration': 'PT0.0S',
+            }
+          }.to_json
+
+          expect(WebMock).to have_requested(:put, url)
+            .with(body: expected_body, query: query_parameters).once
+        end
+      end
+
       context 'with a valid duration' do
         let(:query_parameters) {{ 'statementId': 'test' }}
         let(:post_body) {{

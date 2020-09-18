@@ -50,6 +50,11 @@ class LrsXapiProxy
         if content_type == JSON_MIME_TYPE
           data = JSON.parse(request.raw_post)
           data['actor'] = build_agent_hash(user) if data['actor']
+
+          # LRS rejects NaN values for duration. This is an issue with Rise's xAPI activities with 
+          # timing associated with them, e.g. "progressed".
+          data['result']['duration'] = 'PT0.0S' if data.dig('result', 'duration') == 'PTNaNS'
+
           data = data.to_json
         end
       end

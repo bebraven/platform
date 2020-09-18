@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/bebraven/rowan_bot.git
   revision: d1aa54700b3feded4b57af5ce7307f7920973db9
-  branch: master
+  ref: d1aa547
   specs:
     rowan_bot (0.1.0)
       capybara
@@ -140,7 +140,7 @@ GEM
       rubycas-client (>= 2.2.1)
     diff-lcs (1.4.4)
     docile (1.3.2)
-    docusign_esign (3.4.0)
+    docusign_esign (3.5.0)
       json (~> 2.1, >= 2.1.0)
       jwt (~> 2.2, >= 2.2.1)
       typhoeus (~> 1.0, >= 1.0.1)
@@ -386,14 +386,14 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     rubocop-ast (0.1.0)
       parser (>= 2.7.0.1)
-    rubocop-performance (1.8.0)
-      rubocop (>= 0.87.0)
-    rubocop-rails (2.8.0)
+    rubocop-performance (1.7.0)
+      rubocop (>= 0.82.0)
+    rubocop-rails (2.6.0)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
-      rubocop (>= 0.87.0)
-    rubocop-rspec (1.43.2)
-      rubocop (~> 0.87)
+      rubocop (>= 0.82.0)
+    rubocop-rspec (1.41.0)
+      rubocop (>= 0.68.1)
     ruby-progressbar (1.10.1)
     ruby_dep (1.5.0)
     rubycas-client (2.3.9)
@@ -427,9 +427,8 @@ GEM
     simplecov-cobertura (1.3.1)
       simplecov (~> 0.8)
     simplecov-html (0.12.2)
-    slack-ruby-client (0.14.6)
-      activesupport
-      faraday (>= 0.9)
+    slack-ruby-client (0.15.1)
+      faraday (>= 1.0)
       faraday_middleware
       gli
       hashie
