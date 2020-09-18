@@ -4,16 +4,19 @@ require 'rails_helper'
 
 RSpec.describe SetupPortalAccount do
   describe '#run' do
-    let(:sf_client) { double('SalesforceAPI', find_participant: SalesforceAPI::SFParticipant.new, find_program: SalesforceAPI::SFProgram.new, update_contact: nil) }
-    let(:canvas_client) { double('CanvasAPI', find_user_by: CanvasAPI::LMSUser.new, create_account: CanvasAPI::LMSUser.new) }
-    let(:platform_user) { double('User', update!: nil, send_confirmation_instructions: nil) }
-    let(:enrollment_process) { double('SyncPortalEnrollmentForAccount', run: nil) }
+    let(:sf_client) { instance_double('SalesforceAPI', find_participant: SalesforceAPI::SFParticipant.new, find_program: SalesforceAPI::SFProgram.new, update_contact: nil) }
+    let(:canvas_client) { instance_double('CanvasAPI', find_user_by: CanvasAPI::LMSUser.new, create_account: CanvasAPI::LMSUser.new) }
+    let(:platform_user) { instance_double('User', update!: nil, send_confirmation_instructions: nil, email: nil, first_name: nil, last_name: nil) }
+    let(:enrollment_process) { instance_double('SyncPortalEnrollmentForAccount', run: nil) }
 
-    before(:each) do
+    let(:join_api_client) { instance_double('JoinAPI', find_user_by: JoinAPI::JoinUser.new, create_user: JoinAPI::JoinUser.new) }
+
+    before do
       allow(SalesforceAPI).to receive(:client).and_return(sf_client)
       allow(CanvasAPI).to receive(:client).and_return(canvas_client)
       allow(SyncPortalEnrollmentForAccount).to receive(:new).and_return(enrollment_process)
       allow(User).to receive(:find_by!).and_return(platform_user)
+      allow(JoinAPI).to receive(:client).and_return(join_api_client)
     end
 
     it 'creates a canvas user when it does not exist' do
@@ -40,6 +43,30 @@ RSpec.describe SetupPortalAccount do
       expect(canvas_client).not_to have_received(:create_account)
     end
 
+    it 'does not do join api stuff if no config var set' do
+      ENV['CREATE_JOIN_USER_ON_SIGN_UP'] = nil
+      SetupPortalAccount.new(salesforce_contact_id: nil).run
+
+      expect(join_api_client).not_to have_received(:find_user_by)
+    end
+
+
+    it 'finds a join user if the user already exist' do
+      ENV['CREATE_JOIN_USER_ON_SIGN_UP'] = 'foobar'
+      SetupPortalAccount.new(salesforce_contact_id: nil).run
+
+      expect(join_api_client).to have_received(:find_user_by)
+    end
+
+    it 'create a new join user if the user does not exist' do
+      ENV['CREATE_JOIN_USER_ON_SIGN_UP'] = 'foobar'
+      allow(join_api_client).to receive(:find_user_by).and_return(nil)
+
+      SetupPortalAccount.new(salesforce_contact_id: nil).run
+
+      expect(join_api_client).to have_received(:create_user)
+    end
+
     it 'starts the portal enrollment process' do
       SetupPortalAccount.new(salesforce_contact_id: nil).run
 
@@ -47,9 +74,10 @@ RSpec.describe SetupPortalAccount do
     end
 
     it 'updates portal references on platform' do
+      ENV['CREATE_JOIN_USER_ON_SIGN_UP'] = 'foobar'
       SetupPortalAccount.new(salesforce_contact_id: nil).run
 
-      expect(platform_user).to have_received(:update!)
+      expect(platform_user).to have_received(:update!).twice
     end
 
     it 'updates portal references on salesforce' do

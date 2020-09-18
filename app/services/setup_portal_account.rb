@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'join_api'
+
+# Sets up portal account and join user
 class SetupPortalAccount
   UserNotEnrolledOnSFError = Class.new(StandardError)
 
@@ -12,8 +15,11 @@ class SetupPortalAccount
 
   def run
     find_or_create_portal_user!
+    user = User.find_by!(salesforce_id: sf_contact_id)
+    join_user_id = find_or_create_join_user!(user).id if should_create_join_user?
     sync_portal_enrollment!
-    user = update_portal_references!
+    update_user_references!(user, salesforce_id: sf_contact_id,
+                                  join_user_id: join_user_id)
     send_confirmation_notification(user)
   end
 
@@ -33,11 +39,18 @@ class SetupPortalAccount
     user.send_confirmation_instructions
   end
 
-  def update_portal_references!
-    user = User.find_by!(salesforce_id: sf_contact_id)
-    user.update!(canvas_id: portal_user.id)
-    sf_client.update_contact(sf_contact_id, canvas_id: portal_user.id)
+  def update_user_references!(user, salesforce_id:, join_user_id:)
+    user.update!(canvas_id: portal_user.id, join_user_id: join_user_id)
+    sf_client.update_contact(salesforce_id, canvas_id: portal_user.id)
     user
+  end
+
+  def find_or_create_join_user!(user)
+    UpdateJoinUsers.new.run([user]).first
+  end
+
+  def should_create_join_user?
+    ENV['CREATE_JOIN_USER_ON_SIGN_UP'].present?
   end
 
   def find_or_create_portal_user!
@@ -100,5 +113,9 @@ class SetupPortalAccount
 
   def canvas_client
     CanvasAPI.client
+  end
+
+  def join_api_client
+    JoinAPI.client
   end
 end
