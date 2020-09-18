@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_20_205947) do
+ActiveRecord::Schema.define(version: 2020_09_14_084043) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -433,6 +433,7 @@ ActiveRecord::Schema.define(version: 2020_08_20_205947) do
     t.string "unconfirmed_email"
     t.string "salesforce_id"
     t.integer "canvas_id"
+    t.integer "join_user_id"
     t.index ["admin"], name: "index_users_on_admin"
     t.index ["canvas_id"], name: "index_users_on_canvas_id", unique: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true

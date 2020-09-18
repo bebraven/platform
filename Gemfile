@@ -110,7 +110,7 @@ gem 'platform-api', require: false
 # To develop locally, you can mount your local rowan_bot code as a volume in docker-compose.yml
 # and then change the following to this:
 # gem 'rowan_bot', path: '/app/rowan_bot'
-gem 'rowan_bot', github: 'bebraven/rowan_bot', branch: 'master'
+gem 'rowan_bot', github: 'bebraven/rowan_bot', ref: 'b078c0f'
 
 # Implementation of JSON Web Token (JWT) standard: https://github.com/jwt/ruby-jwt
 gem 'jwt'
