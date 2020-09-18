@@ -16,7 +16,7 @@ class SetupPortalAccount
   def run
     find_or_create_portal_user!
     user = User.find_by!(salesforce_id: sf_contact_id)
-    join_user_id = find_or_create_join_user!(user).id if should_create_join_user?
+    join_user_id = find_or_create_join_user!(user, portal_user.id).id if should_create_join_user?
     sync_portal_enrollment!
     update_user_references!(user, salesforce_id: sf_contact_id,
                                   join_user_id: join_user_id)
@@ -25,7 +25,7 @@ class SetupPortalAccount
 
   private
 
-  attr_reader :sf_contact_id
+  attr_reader :sf_contact_id, :portal_user
 
   def sync_portal_enrollment!
     SyncPortalEnrollmentForAccount
@@ -45,8 +45,8 @@ class SetupPortalAccount
     user
   end
 
-  def find_or_create_join_user!(user)
-    UpdateJoinUsers.new.run([user]).first
+  def find_or_create_join_user!(user, portal_user_id)
+    UpdateJoinUsers.new.run([{ user: user, canvas_user_id: portal_user_id }]).first
   end
 
   def should_create_join_user?

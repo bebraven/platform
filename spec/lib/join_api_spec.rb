@@ -45,7 +45,7 @@ RSpec.describe JoinAPI do
       test_email = 'test@example.com'
       stub_request(:any, join_user_create_path).to_return(body: { email: test_email, id: 1 }.to_json)
 
-      join_api_client.create_user(email: test_email, first_name: 'first_name', last_name: 'last_name')
+      join_api_client.create_user(email: test_email, first_name: 'first_name', last_name: 'last_name', canvas_user_id: 'canvas_user_id')
 
       expect(WebMock).to have_requested(:post, join_user_create_path)
         .with(headers: { 'Authorization' => "Bearer #{Rails.application.secrets.join_api_token}" }).once
@@ -55,7 +55,7 @@ RSpec.describe JoinAPI do
       test_email = 'test@example.com'
       stub_request(:any, join_user_create_path).to_return(body: { email: test_email, id: 1 }.to_json)
 
-      response = join_api_client.create_user(email: test_email, first_name: 'first_name', last_name: 'last_name')
+      response = join_api_client.create_user(email: test_email, first_name: 'first_name', last_name: 'last_name', canvas_user_id: 'canvas_user_id')
 
       expect(response.email).to eql(test_email)
     end
@@ -63,7 +63,7 @@ RSpec.describe JoinAPI do
     it 'raises error when there is an error' do
       stub_request(:any, join_user_create_path).to_return(status: [500, 'Internal Server Error'])
 
-      expect { join_api_client.create_user(email: 'test@email.com', first_name: 'first_name', last_name: 'last_name') }.to raise_error RestClient::InternalServerError
+      expect { join_api_client.create_user(email: 'test@email.com', first_name: 'first_name', last_name: 'last_name', canvas_user_id: 'canvas_user_id') }.to raise_error RestClient::InternalServerError
     end
   end
 end

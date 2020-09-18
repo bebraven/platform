@@ -21,19 +21,19 @@ RSpec.describe UpdateJoinUsers do
     end
 
     it 'finds a user if the user already exist' do
-      UpdateJoinUsers.new.run([dummy_user])
+      UpdateJoinUsers.new.run([{ user: dummy_user, canvas_user_id: nil }])
 
       expect(join_api_client).to have_received(:find_user_by)
     end
 
     it 'create a new user if the user does not exist' do
-      UpdateJoinUsers.new.run([dummy_user])
+      UpdateJoinUsers.new.run([{ user: dummy_user, canvas_user_id: nil }])
 
       expect(join_api_client).to have_received(:create_user)
     end
 
     it 'updates join user id for the user' do
-      UpdateJoinUsers.new.run([dummy_user])
+      UpdateJoinUsers.new.run([{ user: dummy_user, canvas_user_id: nil }])
 
       expect(dummy_user).to have_received(:update!)
     end
