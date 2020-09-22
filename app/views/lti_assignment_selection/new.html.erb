@@ -11,9 +11,23 @@
     <input type='submit' value='Preview' />
   <% end -%>
 
+  <br/>
   <p><strong>OR</strong></p>
 
   <p>Upload a Rise 360 lesson</p>
 
   <%= render partial: "lesson_contents/upload" %>
+
+  <br/>
+  <p><strong>OR</strong></p>
+  <p>Insert Waivers assignment</p>
+   <div id="waiver-create">
+     <!-- TODO: clean me up. HAX -->
+    <% @deep_link_return_url, @jwt_response = lti_deep_link_response_message(@lti_launch, 'https://platformweb/waivers/launch')  %>
+    <form action="<%= @deep_link_return_url %>" method="post" id="deep-link-form">
+      <input id="JWT" name='JWT' type='hidden' value="<%= @jwt_response %>" />
+      <input type='submit' value='Insert' />
+    </form>
+  </div> 
+
 </div>

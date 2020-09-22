@@ -1,0 +1,11 @@
+<% content_for :title, 'Submit Waivers' %>
+
+<% if @waivers_already_signed %>
+  Thanks for signing your waivers. There is nothing left to do here!
+<% else %>
+  <% content_for :head do %>
+    <%= render inline: @form_head %>
+  <% end %>
+  
+  <%= render inline: @form_body %>
+<% end %> 

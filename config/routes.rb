@@ -56,6 +56,12 @@ Rails.application.routes.draw do
   resources :roles, except: [:show]
   resources :users, only: [:index, :show]
 
+  resources :waivers, only: [:new, :create] do
+    collection do
+      get :launch
+    end
+  end
+
   resources :postal_codes, only: [:index, :show] do
     collection do
       get :distance

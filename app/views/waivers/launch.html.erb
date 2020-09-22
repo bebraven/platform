@@ -1,0 +1,9 @@
+<% content_for :title, 'Launch Waivers Form' %>
+
+<% if @waivers_already_signed %>
+  Thanks for signing your waivers. There is nothing left to do here!
+<% else %>
+  <p>In order to participate in Braven, please sign and submit the waivers.</p>
+  <br/>
+  <p><a href="<%= @new_window_url %>" class="btn btn-primary btn-lg" target="_parent">Click here to get started</a></p>
+<% end %>

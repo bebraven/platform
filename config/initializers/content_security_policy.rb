@@ -21,6 +21,7 @@ Rails.application.config.content_security_policy do |policy|
                      "http://#{Rails.application.secrets.application_host}:*",
                      "ws://#{Rails.application.secrets.application_host}:*" if Rails.env.development?
   # Allow loading scripts (like livereload.js) from localhost and app host insecurely in development.
+  # If you need to loosen the policy only for select controllers, see WaiversController for an example how.
   policy.script_src   :self, :https, "http://localhost:*",
                       "http://#{Rails.application.secrets.application_host}:*",
                       :unsafe_inline if Rails.env.development?

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_15_173814) do
+ActiveRecord::Schema.define(version: 2020_09_20_123125) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -97,9 +97,11 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.date "end_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "waivers_signed_at"
     t.index ["base_course_id"], name: "index_course_memberships_on_base_course_id"
     t.index ["role_id"], name: "index_course_memberships_on_role_id"
     t.index ["user_id", "base_course_id", "role_id"], name: "program_memberships_index"
+    t.index ["user_id", "base_course_id"], name: "index_course_memberships_on_user_id_and_base_course_id"
     t.index ["user_id"], name: "index_course_memberships_on_user_id"
   end
 
