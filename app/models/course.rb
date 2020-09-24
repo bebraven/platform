@@ -1,12 +1,5 @@
-class Course < Program
-  has_many :grade_categories
-  has_many :projects, :through => :grade_categories
-  has_many :lessons, :through => :grade_categories  
-
-  before_validation do
-    name.strip!
-    term.strip!
-  end
-
-  validates_presence_of :term
+class Course < BaseCourse
+  has_many :course_memberships
+  has_many :users, through: :course_memberships
+  has_many :roles, through: :course_memberships
 end

@@ -2,7 +2,7 @@ require_relative 'boot'
 
 require 'rails/all'
 
-require_relative '../lib/lti_lesson_contents_proxy'
+require_relative '../lib/lti_rise360_proxy'
 require_relative '../lib/honeycomb_trace_propagation'
 
 # Require the gems listed in Gemfile, including any gems
@@ -20,7 +20,7 @@ module Platform
     config.action_controller.default_protect_from_forgery = true
 
     # Allows us to serve Rise360 static files hosted on AWS S3 through our server avoiding browser cross-origin issues.
-    config.middleware.use LtiLessonContentsProxy, backend: "https://#{Rails.application.secrets.aws_files_bucket}.s3.amazonaws.com"
+    config.middleware.use LtiRise360Proxy, backend: "https://#{Rails.application.secrets.aws_files_bucket}.s3.amazonaws.com"
 
     # Allows us to continue Honeycomb traces propagated from an external source, like client-side Javascript.
     # Note that this needs to come before Honeycomb::Rack::Middleware to work (but that's inserted after this runs).

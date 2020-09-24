@@ -32,9 +32,9 @@ RSpec.describe GradeCategory, type: :model do
       end
     end
 
-    context 'when no associated program' do
+    context 'when no associated base_course' do
       it 'disallows saving' do
-        grade_category.program = nil
+        grade_category.base_course = nil
         expect { grade_category.save! }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end

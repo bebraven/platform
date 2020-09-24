@@ -16,9 +16,9 @@ RSpec.describe Role, type: :model do
   # Associations 
   ##############
 
-  it { should have_many :program_memberships }
-  it { should have_many(:users).through(:program_memberships) }
-  it { should have_many(:programs).through(:program_memberships) }
+  it { should have_many :course_memberships }
+  it { should have_many(:users).through(:course_memberships) }
+  it { should have_many(:courses).through(:course_memberships) }
   
   ##################
   # Instance methods

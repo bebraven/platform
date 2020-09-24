@@ -72,7 +72,7 @@ class LtiLaunchController < ApplicationController
       sign_in user
       Rails.logger.debug("Done signing in LTI-authenticated user #{user.email}")
     else
-      Rails.logger.debug("Invalid user came through LTI launch: #{ll.request_message}")
+      Rails.logger.debug("Invalid user came through LTI launch: #{ll.request_message.inspect}")
     end
   end
 

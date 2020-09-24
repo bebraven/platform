@@ -12,22 +12,22 @@
     <div class="card">
       <div class="card-header">
         <span data-feather="shield"></span>
-        Program Memberships
+        Course Memberships
       </div>
         
       <ul class="list-group list-group-flush">
-        <% if @user.program_memberships.empty? %>
+        <% if @user.course_memberships.empty? %>
           <li class="list-group-item">None at this time.</li>
         <% else %>
-          <% @user.program_memberships.each do |membership| %>
+          <% @user.course_memberships.each do |membership| %>
             <li class="list-group-item">
-              <b><%= membership.program.name %> <%= membership.role.name %></b>
+              <b><%= membership.course.name %> <%= membership.role.name %></b>
               <br/>
               
               <%= membership.start_date.strftime('%Y-%m-%d') %> to
               <%= membership.end_date ? membership.end_date.strftime('%Y-%m-%d') : 'Present' %>
               <br/>
-              Total Grade: <%= as_percent @user.total_grade(membership.program) %>
+              Total Grade: <%= as_percent @user.total_grade(membership.course) %>
             </li>
           <% end %>
         <% end %>

@@ -29,8 +29,7 @@ user_count = User.count
 FactoryBot.create_list(:registered_user, 5) unless user_count > 3
 puts "Created #{User.count - user_count} users"
 
-org = Organization.find_or_create_by! name: 'San Jose State University'
-course = Course.find_or_create_by! name: 'SJSU', organization: org, term: 'Spring 2020'
+course = Course.find_or_create_by! name: 'SJSU'
 role = Role.find_or_create_by! name: 'Participant'
 
 User.all.each{|p| p.start_membership(course.id, role.id) if p.program_memberships.empty?}
@@ -40,8 +39,8 @@ User.all.each{|p| p.start_membership(course.id, role.id) if p.program_membership
 ####
 
 
-grade_category1 = GradeCategory.find_or_create_by! name: 'Category 1', program: course, percent_of_grade: 0.75
-grade_category2 = GradeCategory.find_or_create_by! name: 'Category 2', program: course, percent_of_grade: 0.25
+grade_category1 = GradeCategory.find_or_create_by! name: 'Category 1', base_course: course, percent_of_grade: 0.75
+grade_category2 = GradeCategory.find_or_create_by! name: 'Category 2', base_course: course, percent_of_grade: 0.25
 
 project1 = Project.find_or_create_by! name: 'Test Project 1', grade_category: grade_category1, percent_of_grade_category: 0.5, points_possible: 10
 project2 = Project.find_or_create_by! name: 'Test Project 2', grade_category: grade_category2, percent_of_grade_category: 0.5, points_possible: 20, grades_published_at: DateTime.now 

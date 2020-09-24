@@ -12,7 +12,7 @@
     <% @grade_categories.each do |grade_category| %>
       <tr>
         <td><%= link_to grade_category.name, grade_category %></td>
-        <td><%= link_to grade_category.program.name, grade_category.program %></td>
+        <td><%= link_to grade_category.base_course.name, grade_category.base_course %></td>
       </tr>
     <% end %>
   </tbody>

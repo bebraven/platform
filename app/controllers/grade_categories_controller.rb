@@ -1,7 +1,7 @@
 class GradeCategoriesController < ApplicationController
   include DryCrud::Controllers::Nestable
 
-  nested_resource_of Program
+  nested_resource_of BaseCourse
 
   # GET /grade_categories
   # GET /grade_categories.json

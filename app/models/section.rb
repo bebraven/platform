@@ -1,7 +1,9 @@
 class Section < ApplicationRecord
 
-  belongs_to :program
   belongs_to :logistic
+  belongs_to :course, -> {
+    where(base_courses: { type: 'Course' })
+  }, foreign_key: :base_course_id
 
   before_validation { name.try(:strip!) }
 

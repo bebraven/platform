@@ -22,6 +22,8 @@
   </head>
 
   <body>
+    <h2><%= content_for?(:headline) ? yield(:headline) : 'Platform' %></h2>
+    <%= content_for?(:headline_buttons) ? yield(:headline_buttons) : '' %>
     <%= content_for?(:content) ? yield(:content) : yield %>
   </body>
 </html>
