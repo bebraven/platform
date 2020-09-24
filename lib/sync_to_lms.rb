@@ -215,7 +215,7 @@ class SyncToLMS
   # Loads the program info on the first call and caches it for future calls.
   def get_program(program_id)
     unless @programs[program_id]
-      p = Program.new
+      p = Course.new
       program_info = @salesforce_api.get_program_info(program_id)
       raise SalesforceAPI::SalesforceDataError.new("Missing 'Default_Timezone__c' data") unless program_info['Default_Timezone__c']
       p.attributes = {

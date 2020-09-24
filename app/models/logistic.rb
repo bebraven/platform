@@ -1,6 +1,8 @@
 class Logistic < ApplicationRecord
 
-  belongs_to :program
+  belongs_to :course, -> {
+    where(base_courses: { type: 'Course' })
+  }, foreign_key: :base_course_id
 
   before_validation { day_of_week.strip! }
   before_validation { time_of_day.strip! }

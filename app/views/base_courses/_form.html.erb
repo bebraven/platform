@@ -1,0 +1,42 @@
+<%= form_with(model: base_course, local: true) do |form| %>
+  <% if base_course.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(base_course.errors.count, "error") %> prohibited this <%= humanized_type(base_course) %> from being saved:</h2>
+
+      <ul>
+      <% base_course.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="form-group">
+        <%= form.label :name %>
+        <%= form.text_field :name, class: 'form-control' %>
+      </div>
+
+      <% if base_course.type == 'Course' %>
+        <div class="form-group">
+            <%= form.label :canvas_course_id %>
+            <%= form.number_field :canvas_course_id, class: 'form-control' %>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= form.label :course_resource %>
+        <%= form.collection_select :course_resource_id, CourseResource.all, :id, :name, {}, class: 'form-control' %>
+        <%= link_to 'Add new', :new_course_resource, class: 'btn btn-secondary' %>
+      </div>
+
+      <%= form.hidden_field :type %>
+
+      <div class="actions">
+        <%= form.submit class: 'btn btn-primary' %>
+        <%= link_to 'Cancel', base_courses_path, class: 'btn btn-secondary'%>
+      </div>
+    </div>
+  </div>
+<% end %>

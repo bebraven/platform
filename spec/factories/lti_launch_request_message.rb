@@ -40,7 +40,7 @@ FactoryBot.define do
       first_name { 'MyFirstName' }
       last_name { 'MyLastName' }
       canvas_user_id { 55555 }
-      section_ids { '55' } # This is a string, maybe delimited somehow if in multiple sections?
+      section_ids { '55' } # This is a string, comma delimited if in multiple sections
     end
 
     # These are not valid attributes so they have to be added manually to the hash. Only works when this

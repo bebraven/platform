@@ -1,0 +1,13 @@
+<% content_for(:headline) do %>
+  Course Management
+<% end %>
+
+<%= success(notice) %>
+
+<h3>Course Templates</h3>
+<%= link_to 'New course template', new_course_template_path, class: 'btn btn-sm btn-outline-secondary' %>
+<%= render 'list', base_courses: @base_courses.where(type: 'CourseTemplate') %>
+
+<h3>Courses</h3>
+<%= link_to 'New course', new_course_path, class: 'btn btn-sm btn-outline-secondary' %>
+<%= render 'list', base_courses: @base_courses.where(type: 'Course') %>

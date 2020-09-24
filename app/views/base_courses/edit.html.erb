@@ -1,0 +1,5 @@
+<% content_for :headline do %>
+  Editing <%= humanized_type(@base_course) %>
+<% end %>
+
+<%= render 'form', base_course: @base_course %>

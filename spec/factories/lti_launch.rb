@@ -32,6 +32,10 @@ FactoryBot.define do
         factory :lti_launch_assignment_selection do
           id_token_payload { JSON.parse FactoryBot.json(:lti_launch_assignment_selection_message, course_id: course_id, canvas_user_id: canvas_user_id) }
         end 
+
+        factory :lti_launch_resource_link_request do
+          id_token_payload { JSON.parse FactoryBot.json(:lti_launch_resource_link_request_message, course_id: course_id, canvas_user_id: canvas_user_id) }
+        end
       end
     end
   end

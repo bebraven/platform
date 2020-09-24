@@ -3,6 +3,8 @@ Rails.application.routes.default_url_options[:host] = Rails.application.secrets.
 
 Rails.application.routes.draw do
 
+  resources :course_resources
+
   resources :course_contents do
     post :publish
     resources :course_content_histories, path: 'versions', only: [:index, :show]
@@ -23,7 +25,9 @@ Rails.application.routes.draw do
   resources :locations, only: [:index, :show]
   resources :majors, except: [:show]
 
-  resources :programs
+  resources :base_courses, only: [:index], path: 'course_management'
+  resources :courses, controller: 'base_courses', type: 'Course'
+  resources :course_templates, controller: 'base_courses', type: 'CourseTemplate'
 
   # See this for why we nest things only 1 deep:
   # http://weblog.jamisbuck.org/2007/2/5/nesting-resources
@@ -110,11 +114,13 @@ Rails.application.routes.draw do
   get '/lti/link_selection/new', to: 'lesson_contents#new' # https://canvas.instructure.com/doc/api/file.link_selection_placement.html
   post '/lti/link_selection', to: 'lesson_contents#create' # https://canvas.instructure.com/doc/api/file.link_selection_placement.html
 
+  get '/lti/course_resources', to: 'course_resources#lti_show'
+
   # Proxy xAPI messages to the LRS.
   match '/data/xAPI/*endpoint', to: 'lrs_xapi_proxy#xAPI', via: [:get, :put]
 
-  # There is a route similar to the commented out one below that doesn't show up here. See 'lib/lti_lesson_contents_proxy.rb' and 'config/application.rb'
-  # match '/lesson_contents_proxy/*endpoint', to: AWS_S3
+  # There is a route similar to the commented out one below that doesn't show up here. See 'lib/lti_rise360_proxy.rb' and 'config/application.rb'
+  # match '/rise360_proxy/*endpoint', to: AWS_S3
 
   # Honeycomb Instrumentation Routes
   post '/honeycomb_js/send_span', to: 'honeycomb_js#send_span'

@@ -1,0 +1,20 @@
+<% content_for(:headline) do %>
+  <%= humanized_type(@base_course) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td><%= @base_course.name %></td>
+    </tr>
+  </tbody>
+</table>
+<br/>
+<%= link_to 'Back To All BaseCourses', base_courses_path %>

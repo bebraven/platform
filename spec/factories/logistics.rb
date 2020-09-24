@@ -3,6 +3,6 @@ FactoryBot.define do
     day_of_week { 'Tuesday' }
     time_of_day { '8:00pm' }
 
-    association :program, factory: :program
+    association :course, factory: :course
   end
 end

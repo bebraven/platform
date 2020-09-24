@@ -214,6 +214,59 @@ figure.table {
         text-align: left;
 }
 
+.bz-assignment input[type=submit] {
+	background-image: none;
+	background: #DB2B36;
+	border: 1px solid transparent;
+	border-color: white;
+	border-radius: 5px;
+	color: white;
+	cursor: pointer;
+	display: inline-block;
+	font-family: "TradeGothicNo.20-CondBold", Impact, sans-serif;
+	font-size: 21px;
+	font-weight: 400;
+	letter-spacing: 1px;
+	line-height: 1.333em;
+	margin: 0;
+	padding: 10px 50px;
+	text-align: center;
+	text-transform: uppercase;
+	text-shadow: none;
+	transition: all 0.5s ease 0s;
+	user-select: none;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+ .bz-assignment input[type=submit]:focus {
+	background-color: #3071a9;
+	border-color: #285e8e;
+	outline: 5px auto -webkit-focus-ring-color;
+	outline-offset: -2px;
+	text-decoration: none;
+}
+
+.bz-assignment input[type=submit]:active:focus {
+	outline: 5px auto -webkit-focus-ring-color;
+	outline-offset: -2px;
+}
+
+.bz-assignment input[type=submit]:hover {
+	background-color: #3071a9;
+	background: #000;
+	border-color: #285e8e;
+	text-decoration: none;
+}
+
+.bz-assignment input[type=submit]:active {
+	-webkit-box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+	background-color: #3071a9;
+	background-image: none;
+	border-color: #285e8e;
+	box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+	outline: 0;
+}
 
 /* TYPOGRAPHY */
 body {
@@ -244,7 +297,7 @@ button.ck.ck-button.ck-heading_h6 .ck-button__label,
 button.ck.ck-button.ck-heading_h2 .ck-button__label,
 button.ck.ck-button.ck-heading_h4 .ck-button__label,
 button.ck.ck-button.ck-heading_h6 .ck-button__label {
-	color: #EB3B46;
+	color: #DB2B36;
 }
 
 button.ck.ck-button.ck-heading_h2 .ck-button__label {

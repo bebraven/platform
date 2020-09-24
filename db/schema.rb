@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_14_084043) do
+ActiveRecord::Schema.define(version: 2020_09_15_173814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,17 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "base_courses", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.integer "canvas_course_id"
+    t.bigint "course_resource_id"
+    t.index ["course_resource_id"], name: "index_base_courses_on_course_resource_id"
+    t.index ["name"], name: "index_base_courses_on_name", unique: true
+  end
+
   create_table "course_content_histories", force: :cascade do |t|
     t.bigint "course_content_id", null: false
     t.string "title"
@@ -78,6 +89,26 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
     t.string "course_name"
   end
 
+  create_table "course_memberships", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "base_course_id", null: false
+    t.integer "role_id", null: false
+    t.date "start_date"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["base_course_id"], name: "index_course_memberships_on_base_course_id"
+    t.index ["role_id"], name: "index_course_memberships_on_role_id"
+    t.index ["user_id", "base_course_id", "role_id"], name: "program_memberships_index"
+    t.index ["user_id"], name: "index_course_memberships_on_user_id"
+  end
+
+  create_table "course_resources", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "emails", force: :cascade do |t|
     t.string "value", null: false
     t.datetime "created_at", null: false
@@ -86,12 +117,12 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
   end
 
   create_table "grade_categories", force: :cascade do |t|
-    t.bigint "program_id", null: false
+    t.bigint "base_course_id", null: false
     t.string "name", null: false
     t.float "percent_of_grade"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["program_id"], name: "index_grade_categories_on_program_id"
+    t.index ["base_course_id"], name: "index_grade_categories_on_base_course_id"
   end
 
   create_table "industries", force: :cascade do |t|
@@ -190,10 +221,10 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
   create_table "logistics", force: :cascade do |t|
     t.string "day_of_week", null: false
     t.string "time_of_day", null: false
-    t.integer "program_id", null: false
+    t.integer "base_course_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["day_of_week", "time_of_day", "program_id"], name: "index_logistics_on_day_of_week_and_time_of_day_and_program_id", unique: true
+    t.index ["day_of_week", "time_of_day", "base_course_id"], name: "index_logistics_on_day_time_course", unique: true
   end
 
   create_table "lti_launches", force: :cascade do |t|
@@ -219,13 +250,6 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
     t.index ["parent_id"], name: "index_majors_on_parent_id"
   end
 
-  create_table "organizations", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["name"], name: "index_organizations_on_name", unique: true
-  end
-
   create_table "phones", force: :cascade do |t|
     t.string "value", null: false
     t.datetime "created_at", null: false
@@ -244,31 +268,6 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
     t.string "city"
     t.index ["code"], name: "index_postal_codes_on_code", unique: true
     t.index ["state"], name: "index_postal_codes_on_state"
-  end
-
-  create_table "program_memberships", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "program_id", null: false
-    t.integer "role_id", null: false
-    t.date "start_date"
-    t.date "end_date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["program_id"], name: "index_program_memberships_on_program_id"
-    t.index ["role_id"], name: "index_program_memberships_on_role_id"
-    t.index ["user_id", "program_id", "role_id"], name: "program_memberships_index"
-    t.index ["user_id"], name: "index_program_memberships_on_user_id"
-  end
-
-  create_table "programs", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "term", null: false
-    t.integer "organization_id", null: false
-    t.string "type"
-    t.index ["name", "term", "organization_id"], name: "index_programs_on_name_and_term_and_organization_id", unique: true
-    t.index ["name"], name: "index_programs_on_name", unique: true
   end
 
   create_table "project_submissions", force: :cascade do |t|
@@ -371,10 +370,10 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
   create_table "sections", force: :cascade do |t|
     t.string "name", null: false
     t.integer "logistic_id", null: false
-    t.integer "program_id", null: false
+    t.integer "base_course_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["name", "program_id"], name: "index_sections_on_name_and_program_id", unique: true
+    t.index ["name", "base_course_id"], name: "index_sections_on_name_and_base_course_id", unique: true
   end
 
   create_table "service_tickets", force: :cascade do |t|
@@ -442,15 +441,15 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "base_courses", "course_resources"
   add_foreign_key "course_content_histories", "course_contents"
   add_foreign_key "course_content_histories", "users"
-  add_foreign_key "grade_categories", "programs"
+  add_foreign_key "grade_categories", "base_courses"
   add_foreign_key "lesson_interactions", "users"
   add_foreign_key "lesson_submissions", "lessons"
   add_foreign_key "lesson_submissions", "users"
   add_foreign_key "lessons", "grade_categories"
-  add_foreign_key "logistics", "programs"
-  add_foreign_key "programs", "organizations"
+  add_foreign_key "logistics", "base_courses"
   add_foreign_key "project_submissions", "projects"
   add_foreign_key "project_submissions", "users"
   add_foreign_key "projects", "grade_categories"
@@ -462,8 +461,8 @@ ActiveRecord::Schema.define(version: 2020_09_14_084043) do
   add_foreign_key "rubric_row_ratings", "rubric_rows"
   add_foreign_key "rubric_rows", "rubric_row_categories"
   add_foreign_key "rubrics", "projects"
+  add_foreign_key "sections", "base_courses"
   add_foreign_key "sections", "logistics"
-  add_foreign_key "sections", "programs"
   add_foreign_key "user_sections", "sections"
   add_foreign_key "user_sections", "users"
 end

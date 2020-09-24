@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-sm-6">
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% base_courses.each do |base_course| %>
+          <tr>
+            <td><%= link_to base_course.name, base_course %></td>
+            <td class="text-right smaller">
+              <%= link_to 'Edit', edit_polymorphic_path(base_course) %> |
+              <%= link_to 'Delete', base_course, method: :delete, data: { confirm: 'Are you sure you want to delete this item?' } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

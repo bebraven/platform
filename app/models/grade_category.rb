@@ -3,7 +3,7 @@
 # everything in that category counts as X percent of your final grade.
 class GradeCategory < ApplicationRecord
   
-  belongs_to :program
+  belongs_to :base_course
   has_many :projects
   has_many :lessons
 

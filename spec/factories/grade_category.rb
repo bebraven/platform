@@ -3,6 +3,6 @@ FactoryBot.define do
     sequence(:name) { |i| "Grade Category Name #{i}" }
     percent_of_grade { 0.25 }
 
-    program
+    association :base_course, factory: :course
   end
 end
