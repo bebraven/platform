@@ -30,6 +30,7 @@ FactoryBot.create_list(:registered_user, 5) unless user_count > 3
 puts "Created #{User.count - user_count} users"
 
 course = Course.find_or_create_by! name: 'SJSU'
+course_template = CourseTemplate.find_or_create_by! name: 'Accelerator Template'
 role = Role.find_or_create_by! name: 'Participant'
 
 User.all.each{|p| p.start_membership(course.id, role.id) if p.program_memberships.empty?}

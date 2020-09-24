@@ -104,6 +104,11 @@ Rails.application.routes.draw do
   get '/cas/proxyValidate', to: 'cas#proxyValidate'
   get '/cas/proxy', to: 'cas#proxy'
 
+  # LinkedIn authorization routes
+  get '/linked_in/login' => 'linked_in_authorization#login'
+  get '/linked_in/auth' => 'linked_in_authorization#launch'
+  get '/linked_in/auth_redirect' => 'linked_in_authorization#oauth_redirect'
+
   # LTI Extension Routes
   post '/lti/login', to: 'lti_launch#login'
   post '/lti/launch', to: 'lti_launch#launch'

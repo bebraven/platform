@@ -29,6 +29,10 @@ FactoryBot.define do
       factory :admin_user do
         admin { true }
       end
+
+      factory :linked_in_user do
+        linked_in_state { '' }
+      end
     end
 
   end

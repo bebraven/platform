@@ -433,6 +433,8 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.string "salesforce_id"
     t.integer "canvas_id"
     t.integer "join_user_id"
+    t.string "linked_in_access_token"
+    t.string "linked_in_state"
     t.index ["admin"], name: "index_users_on_admin"
     t.index ["canvas_id"], name: "index_users_on_canvas_id", unique: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
