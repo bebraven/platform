@@ -52,6 +52,8 @@ class WaiversController < ApplicationController
       # Test Waiver form
       #url = '/rest/forms/view/4810809?participantId=a2X1J0000014qozUAA' # xTestBooster3
       url = '/rest/forms/view/4810809?participantId=a2X1J000000mQfEUAU' # xTestHighlanderFellow1
+# Pre-accel survery test
+#      url = '/rest/forms/view/4810782?participantId=a2X1J000000mQfEUAU' # xTestHighlanderFellow1
     end
     # TODO: don't hardcode.
     response = RestClient.get('https://braven.tfaforms.net'+url)
