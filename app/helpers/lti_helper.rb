@@ -1,5 +1,6 @@
 require 'lti_deep_linking_response_message'
 require 'lti_deep_linking_request_message'
+require 'lrs_xapi_proxy'
 
 module LtiHelper
 

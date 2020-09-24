@@ -238,7 +238,16 @@ TODO: write an overview of how we deploy, how we've configured CI, Booster vs Br
       how Heroku has metrics and logs you can view, etc.
 
 #### Continuous Integration
-TODO: talk about this
+
+The platform pipeline in Heroku runs [continuous integration (CI) tests](https://dashboard.heroku.com/pipelines/0017371f-020c-434b-b666-c5b9870468ea/tests/1763) using the configuration in [app.json](https://devcenter.heroku.com/articles/heroku-ci#configuring-your-test-environment). 
+
+Most specs should run as part of the CI suite, so merging is blocked until tests pass. 
+
+However, if you have a flaky test (e.g., one that communicates with external services outside of VCR), you can [tag](https://relishapp.com/rspec/rspec-core/v/2-4/docs/command-line/tag-option) it with `ci_exclude`:
+
+  it "flaky test", ci_exclude: true do; end
+
+and it won't run as part of continuous integration. 
 
 #### Sentry
 TODO: talk about this

@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'rise360_util'
 
 RSpec.describe CourseResourcesController, type: :controller do
   render_views
@@ -60,28 +61,45 @@ RSpec.describe CourseResourcesController, type: :controller do
 
   context "with LTI launch" do
     let(:state) { LtiLaunchController.generate_state }
+    let(:canvas_course_id) { '54321' }
+    let(:launch_path) { '/lessons/somekey/index.html' }
+    let(:lti_launch) { create(:lti_launch_resource_link_request, target_link_uri: 'https://target/link', course_id: canvas_course_id, state: state) }
+    let!(:user) { create :registered_user, admin: true, canvas_id: lti_launch.request_message.canvas_user_id } # TODO: bug where you have to be an admin. Remove admin once that's fixed.
 
     describe "GET #lti_show" do
 
+      before(:each) do
+        allow(Rise360Util).to receive(:launch_path).and_return(launch_path)
+        allow(Rise360Util).to receive(:publish).and_return(launch_path)
+      end
+
       context 'existing course resource' do
-        it 'redirects to public url' do
-          launch_path = '/lessons/somekey/index.html'
-          allow(Rise360Util).to receive(:launch_path).and_return(launch_path)
-          allow(Rise360Util).to receive(:publish).and_return(launch_path)
 
-          course = create(:course_with_resource)
-          lti_launch = create(:lti_launch_resource_link_request, target_link_uri: 'https://target/link', course_id: course.canvas_course_id, state: state)
-          user = create :registered_user, admin: true, canvas_id: lti_launch.request_message.canvas_user_id # TODO: bug where you have to be an admin. Remove admin once that's fixed.
-
-          get :lti_show, params: {:id => course.course_resource.id, :state => state}
-
-          redirect_url = Addressable::URI.parse(response.location)
-          expected_url =  Addressable::URI.parse(course.course_resource.launch_url)
-          expect(redirect_url.path).to eq(expected_url.path)
+        context 'for course' do
+          it 'redirects to public url' do
+            course = create(:course_with_resource, canvas_course_id: canvas_course_id)
+  
+            get :lti_show, params: {:id => course.course_resource.id, :state => state}
+  
+            redirect_url = Addressable::URI.parse(response.location)
+            expected_url =  Addressable::URI.parse(course.course_resource.launch_url)
+            expect(redirect_url.path).to eq(expected_url.path)
+          end
         end
+
+        context 'for course resource' do
+          it 'redirects to public url' do
+            course_template = create(:course_template_with_resource, canvas_course_id: canvas_course_id)
+  
+            get :lti_show, params: {:id => course_template.course_resource.id, :state => state}
+  
+            redirect_url = Addressable::URI.parse(response.location)
+            expected_url =  Addressable::URI.parse(course_template.course_resource.launch_url)
+            expect(redirect_url.path).to eq(expected_url.path)
+          end
+        end 
+
       end
     end
-
   end
-
 end

@@ -14,7 +14,7 @@ class CourseResourcesController < ApplicationController
 
   def lti_show
     canvas_course_id = @lti_launch.request_message.custom['course_id']
-    base_course = Course.find_by(canvas_course_id: canvas_course_id)
+    base_course = BaseCourse.find_by(canvas_course_id: canvas_course_id)
     if base_course&.course_resource
       url = Addressable::URI.parse(base_course.course_resource.launch_url)
       url.query_values = helpers.launch_query
