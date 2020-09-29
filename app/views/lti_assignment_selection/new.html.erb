@@ -11,9 +11,23 @@
     <input type='submit' value='Preview' />
   <% end -%>
 
+  <br/>
   <p><strong>OR</strong></p>
 
   <p>Upload a Rise 360 lesson</p>
 
   <%= render partial: "lesson_contents/upload" %>
+
+  <br/>
+  <p><strong>OR</strong></p>
+
+  <p>Insert an Attendance assignment</p>
+  <div id="attendance-create">
+     <!-- TODO: clean me up. HAX. -->
+     TODO: Add the ability to create an attendance event. We need the name of the event in order to display it to LCs or staff
+     when taking attendance. The name should match the assignment name methinks. Do we need to grab it from canvas and store
+     it locally or can we look it up on the fly? Either way, we also need to look up or store the datetime of the event
+     when showing the event for LCs or staff to take attendance and that time should be the due-date for the Canvas section that
+     the LC is the TA for.
+  </div> 
 </div>

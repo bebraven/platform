@@ -1,0 +1,160 @@
+<% content_for(:headline) do %>
+  TAKE ATTENDANCE FOR
+<% end %>
+
+<!-- TODO: move this into an actual CSS file -->
+<style>
+
+    .attendance-container {
+      width: 768px;
+    }
+
+    #attend_event {
+        background-color: #EBF7F7;
+    }
+
+    .attendance-people-list {
+        list-style-type: none;
+        padding: 0;
+    }    
+
+    .attendance-people-list li {
+        padding: 0.5em;
+    }    
+
+    .attendance-people-list li:nth-child(2n + 1) {
+        background-color: #eee;
+    }
+
+    .boxes-container {
+        white-space: nowrap;
+        display: block; /* fallback in case flex isn't supported */
+        display: flex;
+        font-size: 90%; 
+        align-items: center;
+    }    
+
+    .boxes-container input {
+        display: none;
+    }    
+
+    .boxes-container input + span {
+        display: inline-block;
+        padding: 0.5em 0.75em;
+        background-color: white;
+        border-color: #cecdcd;
+        border-style: solid;
+    }    
+
+    .boxes-container .present span {
+        border-width: 1px 1px 1px 1px; 
+        border-radius: .5em 0 0 .5em;
+    }    
+
+    .boxes-container .absent span {
+        border-width: 1px 1px 1px 1px; 
+        border-radius: 0 .5em .5em 0;
+    }    
+
+    .boxes-container .late span {
+        border-width: 1px 1px 1px 1px; 
+        padding: 0.2em;
+        margin-left: 0.75em;
+    }
+
+    .boxes-container .present input:checked + span {
+        background-color: #43cc6e;
+        border-color: #2cb155;
+    }    
+
+    .boxes-container .absent input:checked + span {
+        background-color: #fb6a6a;
+        border-color:#e04646;
+    }    
+
+    .boxes-container .late:hover span,
+    .boxes-container .late input:checked + span {
+        background-color: #fb6a6a;
+    }
+
+    input[name=reason] {
+        box-sizing: border-box;
+        width: 75%;
+    }
+
+    input[name=reason]:not(:focus) {
+        background: transparent;
+        background-repeat: no-repeat;
+        background-position: right center;
+        padding-right: 24px;
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4Igp3aWR0aD0iMjQiIGhlaWdodD0iMjQiCnZpZXdCb3g9IjAgMCAyNCAyNCIKc3R5bGU9IiBmaWxsOiMwMDAwMDA7Ij4gICAgPHBhdGggZD0iTSA3LjQyOTY4NzUgOS41IEwgNS45Mjk2ODc1IDExIEwgMTIgMTcuMDcwMzEyIEwgMTguMDcwMzEyIDExIEwgMTYuNTcwMzEyIDkuNSBMIDEyIDE0LjA3MDMxMiBMIDcuNDI5Njg3NSA5LjUgeiI+PC9wYXRoPjwvc3ZnPg==');
+        border: none;
+    }
+
+</style>
+
+<datalist id="reason_list">
+    <option value="Sick / Dr. Appt" />
+    <option value="Work" />
+    <option value="School" />
+    <option value="Caregiving" />
+    <option value="Bereavement / Family Emergency" />
+    <option value="Transportation" />
+    <option value="Professional Development" />
+    <option value="Vacation" />
+</datalist>
+
+<!-- TODO: make this default to select the event that is coming up soon, have the "reason" 
+     field default to hidden on only show if "absent" is checked, switch the present/absent 
+     styles when one or the other is clicked, and pre-populate previous results  -->
+
+
+<div class="late-description"><em>Note that late means over 15 minutes late.</em></div>
+<br/>
+
+<div class="attendance-container">
+<%= form_with(model: @attendance_event, local: true) do |form| %>
+  <div class="row">
+    <div class="col-sm-6">
+
+      <div class="form-group attendance-event-list">
+        <%# form.label :attend_event, 'Take Attendance For', class: 'form-control-lg' %>
+        <%= form.collection_select :attend_event, @attendance_events, :id, :name, { :selected => @current_event.id }, class: 'form-control' %>
+      </div>
+
+<!-- TODO: I think think should render the partial shared by the show template that is
+     responsible for showing the attendance form for a single event. -->
+<ul class="attendance-people-list">
+  <% @fellows.each do |fellow| %>
+    <li><p><strong><%= fellow.full_name %></strong>:</p>
+      <span class="boxes-container">
+        <label class="present"><input type="radio"><span>Present</span></label>
+        <label class="absent"><input type="radio"><span>Absent</span></label>
+        <label class="late"><input type="checkbox"><span>Late</span></label>
+      </span>
+      <span>
+        <input type="text" name="reason" list="reason_list" placeholder="Reason for absence" data-lpignore="true"></input>
+          <!-- TODO: Start it off hidden and display it if absent is clicked-->
+      </span>
+    </li>
+  <% end %>
+</ul>
+
+<br/>
+    
+      <div class="actions">
+        <%= form.submit class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+</div>
+<br/>
+<br/>
+<!-- BOOM, Here is the current course using the Referer header and parsing out the state from
+the query param:
+<code>auth=LtiState _the_state_</code>
+<br/>
+<br/>
+course_id = <strong><%# @lti_launch.request_message.custom['course_id'] %></strong>
+ -->

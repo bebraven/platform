@@ -211,6 +211,11 @@ class CanvasAPI
     LMSSection.new(section['id'], section['name'])
   end
 
+  def get_section(section_id)
+    response = get("/sections/#{section_id}")
+    JSON.parse(response.body)
+  end
+
   def get_sections(course_id)
     response = get("/courses/#{course_id}/sections?per_page=100")
     get_all_from_pagination(response)

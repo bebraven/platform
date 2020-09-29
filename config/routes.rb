@@ -75,6 +75,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :attendance_events, only: [:show, :create, :index]
+
   root to: "home#welcome"
 
   # Admin stuff

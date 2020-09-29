@@ -1,0 +1,20 @@
+<% content_for(:headline) do %>
+  TEST ATTENDANCE EVENT
+<% end %>
+
+<!-- TODO: turn this into a template that will show the attendance form for a single event and then
+     use this or the partial that this renders in the index template as well which will show a dropdown
+     of events, defaulting to the one we think is next, and render this particular event depending on the
+     dropdown selection -->
+
+<!-- Proof of concept for whether we can access the current LtiLanuch inside an iframe inside Rise360 content
+     esp when in Chrome incognito or Firefox where we don't have access to session. -->
+What can we access here in Javascript or from the headers when iframed inside rise360??
+<br/>
+<br/>
+BOOM, Here is the current course using the Referer header and parsing out the state from
+the query param:
+<code>auth=LtiState _the_state_</code>
+<br/>
+<br/>
+course_id = <strong><%= @lti_launch.request_message.custom['course_id'] %></strong>
