@@ -3,16 +3,11 @@
       <%= link_to root_path, class: "navbar-brand p-0" do %>
         <%= image_tag 'braven_logo.png', alt: 'logo', height: '50', loading: 'lazy' %>
       <% end %>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
 
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <%= link_to 'Log out', destroy_user_session_path,  method: :delete %>
-          </li>
-        </ul>
-      </div>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <%= link_to 'Log out', destroy_user_session_path,  method: :delete %>
+        </li>
+      </ul>
     </div>
   </nav>

@@ -1,0 +1,2 @@
+class BaseCoursePolicy < ApplicationPolicy
+end

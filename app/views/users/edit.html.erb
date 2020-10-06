@@ -1,0 +1,77 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item ml-3"><%= link_to "Users", users_path %></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit <%= @user.first_name %></li>
+  </ol>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <%= form_for(@user, url: user_path(@user)) do |f| %>
+        <legend>Edit <%= @user.first_name %>'s account</legend>
+
+        <div class="row">
+          <div class="form-group col">
+            <%= f.label :first_name %><br />
+            <%= f.text_field :first_name, autocomplete: "first-name", class: "form-control", required: true, placeholder: "Jane" %>
+          </div>
+
+          <div class="form-group col">
+            <%= f.label :last_name %><br />
+            <%= f.text_field :last_name, autocomplete: "last-name", class: "form-control", required: true, placeholder: "Doe" %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :email %><br />
+          <%= f.email_field :email, autocomplete: "email", class: "form-control", required: true, placeholder: "jane.doe@example.com" %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :password %><br />
+          <%= f.password_field :password,  autocomplete: "password", class: "form-control" %>
+        </div>
+
+        <div class="row">
+          <div class="form-group col">
+            <%= f.label :salesforce_id, "Salesforce Contact ID" %><br />
+            <%= f.text_field :salesforce_id, autocomplete: "salesforce-id", class: "form-control", placeholder: "0012A00001ulxrKMAQ" %>
+          </div>
+
+          <div class="form-group col">
+            <%= f.label :canvas_id, "Canvas User ID" %><br />
+            <%= f.text_field :canvas_id, autocomplete: "canvas-id", class: "form-control", placeholder: "1234" %>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col">
+            <p>Global roles</p>
+            <%= f.collection_check_boxes :role_ids, Role.global, :id, :name do |b| %>
+              <div class="form-check">
+                <%= b.check_box(class: "form-check-input") %>
+                <%= b.label(class: "form-check-label") %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="actions mb-5">
+          <%= f.submit "Edit User", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-sm text-danger mt-5">
+      <% if @user.errors.any? %>
+        <p>The user was not saved!</p>
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+</div>
+

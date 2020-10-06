@@ -11,7 +11,7 @@ RSpec.describe CasController, type: :routing do
     let!(:valid_user) { create(:registered_user) }
     let(:valid_user_creds) {{ email: valid_user.email, password: valid_user.password }}
   
-    let(:return_service) { 'http://braven/' }
+    let(:return_service) { 'http://braven/cas/login' }
     let(:proxy_service) { 'http://bravenproxy/' }
 
     describe "/cas/serviceValidate" do

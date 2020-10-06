@@ -1,0 +1,2 @@
+class CourseTemplatePolicy < BaseCoursePolicy
+end

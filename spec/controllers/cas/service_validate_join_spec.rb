@@ -1,6 +1,5 @@
 require "rails_helper"
 require "capybara_helper"
-require "platform_helper"
 
 include ERB::Util
 include Rack::Utils

@@ -1,5 +1,6 @@
 import Command from '@ckeditor/ckeditor5-core/src/command';
 import { findAllowedParentIgnoreLimit, getNamedAncestor } from './utils';
+import uid from '@ckeditor/ckeditor5-utils/src/uid';
 
 export default class InsertChecklistOtherCommand extends Command {
     execute( placeholder ) {
@@ -51,17 +52,24 @@ function createChecklistOther( writer, placeholder ) {
         'data-correctness': 'maybe',
     } );
     const checkboxLabel = writer.createElement( 'checkboxLabel' );
+    const textareaId = uid()
+    const textareaLabel = writer.createElement( 'textareaLabel', {
+        id: textareaId
+    } );
     const textArea = writer.createElement( 'textArea', {
         placeholder,
         'data-bz-optional-magic-field': true,
+        'aria-labelledby': textareaId
     } );
 
     writer.append( checkboxInput, checkboxDiv );
     writer.append( checkboxLabel, checkboxDiv );
     writer.append( textArea, checkboxDiv );
+    writer.append( textareaLabel, checkboxDiv );
 
     // Add text to empty editables where placeholders don't work.
     writer.insertText( 'Other:', checkboxLabel );
+    writer.insertText( 'Enter your answer:', textareaLabel );
 
     return checkboxDiv;
 }

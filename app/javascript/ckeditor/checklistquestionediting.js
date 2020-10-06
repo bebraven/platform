@@ -91,6 +91,14 @@ export default class ChecklistQuestionEditing extends Plugin {
             allowAttributes: [ 'for' ]
         } );
 
+        schema.register( 'textareaLabel', {
+            isObject: true,
+            isInline: true,
+            allowIn: 'checkboxDiv',
+            allowContentOf: '$block',
+            allowAttributes: [ 'id' ]
+        } );
+
         schema.register( 'checkboxInlineFeedback', {
             isObject: true,
             allowIn: 'checkboxDiv',
@@ -197,7 +205,6 @@ export default class ChecklistQuestionEditing extends Plugin {
             model: 'checkboxLabel',
             view: ( modelElement, viewWriter ) => {
                 return viewWriter.createEditableElement( 'label', {
-                    // HACK: Get the id of the checkbox this label corresponds to.
                     'for': modelElement.parent.getChild(0).getAttribute('id')
                 } );
             }
@@ -206,9 +213,53 @@ export default class ChecklistQuestionEditing extends Plugin {
             model: 'checkboxLabel',
             view: ( modelElement, viewWriter ) => {
                 const label = viewWriter.createEditableElement( 'label', {
-                    // NOTE: We don't set the 'for' attribute in the editing view, so that clicking in the label
-                    // editable to type doesn't also toggle the checkbox.
                 } );
+
+                enablePlaceholder( {
+                    view: editing.view,
+                    element: label,
+                    text: 'Answer text'
+                } );
+
+                return toWidgetEditable( label, viewWriter );
+            }
+        } );
+
+
+         // <textareaLabel> converters
+         conversion.for( 'upcast' ).elementToElement( {
+            view: {
+                name: 'div',
+                classes: ['text-area-label', 'sr-only']
+            },
+            model: ( viewElement, modelWriter ) => {
+                const id = viewElement.getAttribute('id') || this._nextRetainedDataId();
+                return modelWriter.createElement( 'textareaLabel', {
+                    'id': id,
+                } );
+            }
+        } );
+        conversion.for( 'dataDowncast' ).elementToElement( {
+            model: 'textareaLabel',
+            view: ( modelElement, viewWriter ) => {
+                const id = modelElement.getAttribute('id') || this._nextRetainedDataId();
+
+                return viewWriter.createEditableElement( 'div', {
+                    'id': id,
+                    'class': 'sr-only text-area-label'
+                } );
+            }
+        } );
+        conversion.for( 'editingDowncast' ).elementToElement( {
+            model: 'textareaLabel',
+            view: ( modelElement, viewWriter ) => {
+                const id = modelElement.getAttribute('id') || this._nextRetainedDataId();
+                const label = viewWriter.createEditableElement( 'div', {
+                    'id': id,
+                    'class': 'sr-only text-area-label'
+                } );
+
+                
 
                 enablePlaceholder( {
                     view: editing.view,

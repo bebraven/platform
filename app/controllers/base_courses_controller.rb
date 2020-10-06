@@ -1,25 +1,31 @@
 class BaseCoursesController < ApplicationController
+  layout 'admin'
 
   # GET /course_management
   def index
+    authorize BaseCourse
   end
 
   # GET /course{,template}s/1
   def show
+    authorize @base_course
   end
 
   # GET /course{,template}s/new
   def new
     @base_course = BaseCourse.new(new_params)
+    authorize @base_course
   end
 
   # GET /course{,template}s/1/edit
   def edit
+    authorize @base_course
   end
 
   # POST /course{,template}s
   def create
     @base_course = BaseCourse.new(base_course_params)
+    authorize @base_course
     respond_to do |format|
       if @base_course.save
         format.html { redirect_to base_courses_path, notice: "#{set_type.humanize} was successfully created." }
@@ -33,6 +39,7 @@ class BaseCoursesController < ApplicationController
 
   # PATCH/PUT /course{,template}s/1
   def update
+    authorize @base_course
     respond_to do |format|
       if @base_course.update(base_course_params)
         format.html { redirect_to base_courses_path, notice: "#{set_type.humanize} was successfully updated." }
@@ -46,6 +53,7 @@ class BaseCoursesController < ApplicationController
 
   # DELETE /course{,template}s/1
   def destroy
+    authorize @base_course
     @base_course.destroy
     respond_to do |format|
       format.html { redirect_to base_courses_url, notice: "#{set_type.humanize} was successfully deleted." }

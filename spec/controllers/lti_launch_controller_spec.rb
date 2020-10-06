@@ -57,11 +57,12 @@ RSpec.describe LtiLaunchController, type: :controller do
       before(:each) do
         public_jwks = { keys: [ Keypair.current.public_jwk_export ] }.to_json
         stub_request(:get, LtiIdToken::PUBLIC_JWKS_URL).to_return(body: public_jwks)
-        post :launch, params: lti_launch_params
       end
 
       it 'does not sign in the user' do
-        expect(controller.current_user).to eq nil
+        expect {
+          post :launch, params: lti_launch_params
+        }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
   end

@@ -4,7 +4,7 @@ RSpec.describe HoneycombJsController, type: :controller do
   let(:trace_id) { 'example-trace-id' }
   let(:serialized_trace) { "1;dataset=example-dataset,trace_id=#{trace_id},parent_id=example-parent-id,context=e30=" }
 
-  let(:user) { create :registered_user, admin: true } # TODO: bug where you have to be an admin. Remove admin once that's fixed.
+  let(:user) { create :registered_user }
   let!(:lti_launch) { create(:lti_launch_assignment, canvas_user_id: user.canvas_id) }
 
   let(:libhoney_client) { Libhoney::TestClient.new }

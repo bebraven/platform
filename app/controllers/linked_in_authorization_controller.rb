@@ -13,11 +13,14 @@ class LinkedInAuthorizationController < ApplicationController
 
   # iframe-able endpoint that renders a static LinkedIn button
   def login
+    authorize :LinkedInAuthorization
   end
 
   # Genereates and renders the LinkedIn authorization URL in the current
   # window after doing some server-side set-up
   def launch
+    authorize :LinkedInAuthorization
+
     state = SecureRandom.hex
     redirect_url = linked_in_auth_redirect_url
 
@@ -36,6 +39,8 @@ class LinkedInAuthorizationController < ApplicationController
 
   # Redirect endpoint for LinkedIn authorization flow
   def oauth_redirect
+    authorize :LinkedInAuthorization
+
     Honeycomb.add_field('params.code', params[:code]) if params[:code]
     Honeycomb.add_field('params.error', params[:error]) if params[:error]
     Honeycomb.add_field('params.state', params[:state])

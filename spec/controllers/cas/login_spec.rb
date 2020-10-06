@@ -38,7 +38,7 @@ RSpec.describe CasController, type: :routing do
     end
 
     describe "/cas/login with service url" do
-      let(:return_service) { 'http://braven/' }
+      let(:return_service) { 'http://braven/cas/login' }
       before(:each) do 
         VCR.use_cassette("sso_ticket_invalid", :match_requests_on => [:path]) do
           visit "/cas/login?service=#{url_encode(return_service)}"

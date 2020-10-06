@@ -5,13 +5,13 @@ export default class Sidebar extends React.Component {
     constructor( props ) {
         super( props );
 
-        this.courseContents = this.props.courseContents.map((courseContent) =>
+        this.customContents = this.props.customContents.map((customContent) =>
             <a
-                key={courseContent.id}
+                key={customContent.id}
                 className="menu-item"
-                href={"/course_contents/" + courseContent.id + "/edit"}
+                href={"/custom_contents/" + customContent.id + "/edit"}
             >
-                {courseContent.title || "unnamed"}
+                {customContent.title || "unnamed"}
             </a>
         );
 
@@ -22,7 +22,7 @@ export default class Sidebar extends React.Component {
             <Menu
                 bodyClass={"ck-inspector-body-collapsed"}
             >
-                {this.courseContents}
+                {this.customContents}
             </Menu>
         );
     }

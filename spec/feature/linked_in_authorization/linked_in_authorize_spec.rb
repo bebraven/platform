@@ -1,11 +1,10 @@
 require 'rails_helper'
 require 'capybara_helper'
-require 'platform_helper'
 
 require 'linked_in_api'
 
 RSpec.feature 'Authorize LinkedIn access to user data', :type => :feature do
-  let(:user) { create :linked_in_user, admin: true }
+  let(:user) { create :linked_in_user }
 
   describe "visit the signin page", js: true do
     before(:each) do

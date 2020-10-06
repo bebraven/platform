@@ -1,7 +1,7 @@
 require "rails_helper"
 require "capybara_helper"
-require "platform_helper"
 require "json"
+
 include ERB::Util
 include Rack::Utils
 

@@ -16,7 +16,6 @@ FactoryBot.define do
     sequence(:email) {|i| "test#{i}@example.com"}
     sequence(:first_name) { |i| names[i % names.size][0] }
     sequence(:last_name) { |i| names[i % names.size][1] }
-    admin { false }
     
     factory :registered_user do
       sequence(:password) { |i| "password#{i}" }
@@ -24,10 +23,21 @@ FactoryBot.define do
 
       factory :fellow_user do
         canvas_id { '1234' }
+        after :create do |user|
+          user.add_role :student
+        end
+      end
+
+      factory :ta_user do
+        after :create do |user|
+          user.add_role :ta
+        end
       end
 
       factory :admin_user do
-        admin { true }
+        after :create do |user|
+          user.add_role :admin
+        end
       end
 
       factory :linked_in_user do

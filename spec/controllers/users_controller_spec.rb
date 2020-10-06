@@ -31,7 +31,7 @@ RSpec.describe UsersController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) { attributes_for(:user) }
+  let(:valid_attributes) { attributes_for(:admin_user) }
 
   let(:invalid_attributes) {
     {name: user.name }
@@ -50,24 +50,6 @@ RSpec.describe UsersController, type: :controller do
     describe "GET #index" do
       it "returns a success response" do
         get :index, params: {}, session: valid_session
-        expect(response).to be_successful
-      end
-    end
-  end
-  
-  describe 'JSON requests' do
-    let(:access_token) { create :access_token }
-    
-    describe "GET #index" do
-      it "allows access token via params" do
-        get :index, params: {access_key: access_token.key}, session: valid_session, format: :json
-        expect(response).to be_successful
-      end
-
-      it "allows access token via headers" do
-        request.headers.merge!('Access-Key' => access_token.key)
-        
-        get :index, params: {}, session: valid_session, format: :json
         expect(response).to be_successful
       end
     end

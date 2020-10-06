@@ -209,7 +209,7 @@ class ContentEditor extends Component {
         this.state = {
             // The initial editor data. It is bound to the editor instance and will change as
             // the user types and modifies the content of the editor.
-            editorData: props.course_content['body'] || "",
+            editorData: props.custom_content['body'] || "",
             isPublished: false,
             enabledCommands: [],
             modelPath: [],
@@ -234,7 +234,7 @@ class ContentEditor extends Component {
             },
             // Custom config for retained data plugin.
             retainedData: {
-                pageId: props.course_content['id'],
+                pageId: props.custom_content['id'],
             },
         };
 
@@ -343,9 +343,9 @@ class ContentEditor extends Component {
     }
 
     handlePublish( evt ) {
-        fetch("/course_contents/1/publish.json", {
+        fetch("/custom_contents/1/publish.json", {
                 method: 'POST',
-                body: JSON.stringify(this.props.course_content), // data can be `string` or {object}!
+                body: JSON.stringify(this.props.custom_content), // data can be `string` or {object}!
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-Token': Rails.csrfToken()
@@ -430,27 +430,27 @@ class ContentEditor extends Component {
                                 <li className="active"><i className="fas fa-copy"></i></li>
                             </ul>
                             <h2>
-                                <input type="text" name="course_content[title]"
-                                       defaultValue={this.props.course_content['title']}
+                                <input type="text" name="custom_content[title]"
+                                       defaultValue={this.props.custom_content['title']}
                                        placeholder="Page Title"
                                 />
                             </h2>
                             <details>
                               <summary>Advanced</summary>
-                              <select name="course_content[content_type]"
-                                      defaultValue={this.props.course_content['content_type']}
+                              <select name="custom_content[content_type]"
+                                      defaultValue={this.props.custom_content['content_type']}
                                       placeholder="Content Type">
                                 <option value="">SELECT PAGE TYPE</option>
                                 <option value="wiki_page">Module</option>
                                 <option value="assignment">Project</option>
                               </select>
                               <br/>
-                              <input type="number" name="course_content[course_id]"
-                                     defaultValue={this.props.course_content['course_id']}
+                              <input type="number" name="custom_content[course_id]"
+                                     defaultValue={this.props.custom_content['course_id']}
                                      placeholder="Course ID"
                               />
-                              <input type="text" name="course_content[secondary_id]"
-                                     defaultValue={this.props.course_content['secondary_id']}
+                              <input type="text" name="custom_content[secondary_id]"
+                                     defaultValue={this.props.custom_content['secondary_id']}
                                      placeholder="Secondary ID"
                               />
                             </details>
@@ -922,14 +922,14 @@ class ContentEditor extends Component {
                                         value={this.state.editorData}
                                         className="secret-html"                                                                                                                                                                                                        
                                         readOnly={true}                                                                                                                                                                                                                
-                                        name="course_content[body]"></textarea> 
+                                        name="custom_content[body]"></textarea> 
                                 </div>
                             </TabPanel>
                             <TabPanel>
                                 <div id="raw-html-container">
                                     <textarea value={this.state.editorData}
                                               onChange={(evt) => this.handleHTMLEditorDataChange(evt)}
-                                              name="course_content[body]"></textarea>
+                                              name="custom_content[body]"></textarea>
                                 </div>
                             </TabPanel>
                         </div>

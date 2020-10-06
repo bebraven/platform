@@ -1,11 +1,14 @@
 class Role < ApplicationRecord
-  has_many :course_memberships
-  has_many :users, through: :course_memberships
-  has_many :courses, through: :course_memberships
+  has_and_belongs_to_many :users, :join_table => :users_roles
   
-  validates :name, presence: true, uniqueness: {case_sensitive: false}
+  belongs_to :resource,
+             :polymorphic => true,
+             :optional => true
   
-  def to_show
-    attributes.slice('name')
-  end
+
+  validates :resource_type,
+            :inclusion => { :in => Rolify.resource_types },
+            :allow_nil => true
+
+  scopify
 end

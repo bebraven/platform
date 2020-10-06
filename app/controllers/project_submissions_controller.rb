@@ -2,7 +2,7 @@ require 'lti_advantage_api'
 require 'lti_score'
 require 'uri'
 
-# Viewing and submitting a project is handled by CourseContentHistory
+# Viewing and submitting a project is handled by CustomContentVersion
 # TODO: Migrate when we can create the project model dependencies
 # TODO: https://app.asana.com/0/1174274412967132/1186960110311121
 class ProjectSubmissionsController < ApplicationController
@@ -23,12 +23,14 @@ class ProjectSubmissionsController < ApplicationController
   # The project responses entered by the student are recorded in the LRS and 
   # retrieved when we view the submission by xapi_assignment.js.
   def create
+    authorize ProjectSubmission
+    
     params.require([:state])
 
-    # We're using CourseContentHistoriesController to view and work on projects
+    # We're using CustomContentVersionsController to view and work on projects
     submission_url = Addressable::URI.parse(
-      course_content_course_content_history_url(
-        @project_version.course_content,
+      custom_content_custom_content_version_url(
+        @project_version.custom_content,
         @project_version.id,
       )
     )
@@ -46,6 +48,6 @@ class ProjectSubmissionsController < ApplicationController
   private
   def set_project_version
     params.require([:version])
-    @project_version = CourseContentHistory.find(params[:version])
+    @project_version = CustomContentVersion.find(params[:version])
   end
 end

@@ -14,7 +14,6 @@ First, we need to copy a couple of environment files in the app directory:
     cp .env.example .env
     cp .env.database.example .env.database
 
-
 Then you'll need to add your AWS credentials and the file upload bucket to your shell enviromnment (e.g. in `~/.bash_profile`):
 
     export AWS_ACCESS_KEY_ID=<your_key>
@@ -321,6 +320,10 @@ Rails routes:
 
     config/routes.rb
 
+Rails (Pundit) policies:
+
+    app/policies/*.rb
+
 React components (JS/JSX/HTML):
 
     app/javascript/components/*/
@@ -355,6 +358,74 @@ by creating our own generators. See [here](https://guides.rubyonrails.org/genera
 that matches how the data-central project was structured. See [USAGE here](lib/generators/dscaffold/USAGE)
 It is out of date and we're in the early stages of designing how the Braven Platform code will be structured
 and work together. Update it and add more generators that make it easy to add code properly to our codebase.
+
+#### Policies
+
+We use [Pundit](https://github.com/varvet/pundit) for authorization. Each new controller should have
+a corresponding policy with a matching name. For example, `controllers/new_things_controller.rb` would
+have a policy called `NewThingPolicy` in a file `policies/new_thing_policy.rb` (note pluralization).
+
+You can generate a new policy with:
+
+    rails g pundit:policy NewThing
+
+After creating a policy, you must explicitly call the `authorize` function in each action of the
+controller, passing in the object to authorize against. Be as specific as possible. For example, in
+a `show` action, you should have access to an instance of an object, so you should do:
+
+    authorize @new_thing
+
+Pundit will know to call `NewThingPolicy.show?`, passing in `@new_thing` as the scoped "record".
+In an `index` view, you don't have access to a specific object instance, so you should scope to
+the class itself:
+
+    autorize NewThing
+
+This will call `NewThingPolicy.index?` with the `NewThing` class as the scoped record. For more information,
+check the Pundit README and API docs.
+
+For an example policy for anonymous (no login) access, see `KeypairPolicy`. For an example controller
+with no authorization, see `CasController`. For an example admin-only policy, see `BaseCoursePolicy`.
+For an example policy allowing any logged-in user, see `HoneycombJsPolicy`.
+
+There is a global `after_action` callback in `ApplicationPolicy`, `verify_authorized` thats only purpose is
+to serve as a reminder to call `authorize` in each controller action. If you see
+`Pundit::AuthorizationNotPerformedError` while developing, it just means you haven't added an `authorize`
+call to that action. See the comment in application controller for more information.
+
+##### Policy specs
+
+You'll find some policy specs in `spec/policies` - Pundit has some helpers that make writing tests easier, and
+outside that you can just use regular ruby/rspec. An important note when writing policy specs - you **must** have
+an actual `user` and `section` in the database if you are adding scoped roles like `user.add_role :admin, section`.
+The roles code uses polymorphic relations in the `roles` table to associate these things, and will *seem to work,
+but not behave correctly* if you only have local objects. For example, this is bad:
+
+    # BAD - don't do this!
+    section = Section.new
+    user = User.new
+    user.add_role :student, section
+
+You must instead use:
+
+    # Good - do this instead!
+    section = create(:section)
+    user = create(:registered_user)
+    user.add_role :student, section
+
+The first code won't error, it will just let your tests pass even if they're wrong.
+
+##### Roles
+
+We use [Rolify](https://github.com/RolifyCommunity/rolify) alongside Pundit to grant permissions based on a user's
+"role". Roles are dynamic, stored in the `roles` table, so you won't find a list of valid roles anywhere in the
+code. We can assign roles globally, like `user.add_role :admin`, or scoped to a specific object, like
+`user.add_role :student, section`. The object relationship is polymorphic, and can point to any object that has
+the `resourcify` call in its class definition. (See `app/models/section.rb` for an example.) We "resourcify"
+sections rather than courses because we need to make decisions at a section level (see
+`app/policies/lrs_xapi_proxy_policy.rb` for an example), and since sections are tied to a course, we don't
+lose any information by doing so. It's also possible to assign roles scoped to a class, like
+`user.add_role :student, Section`. See the Rolify README for more information on scopes.
 
 ### Email
 In all environments other than production, we need to be careful not to email actual users. The following

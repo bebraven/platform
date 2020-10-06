@@ -5,10 +5,16 @@ Rails.application.routes.draw do
 
   resources :course_resources
 
-  resources :course_contents do
+  resources :custom_contents do
     post :publish
-    resources :course_content_histories, path: 'versions', only: [:index, :show]
+    resources :custom_content_versions, path: 'versions', only: [:index, :show]
   end
+
+  # Support public-facing legacy endpoints to course_contents
+  get 'course_contents/:id', to: 'custom_contents#show'
+  get 'course_contents/:custom_content_id/versions', to: 'custom_content_versions#index'
+  get 'course_contents/:custom_content_id/versions/:id', to: 'custom_content_versions#show'
+
   resources :file_upload, only: [:create]
 
   devise_for :users, controllers: { registrations: 'users/registrations', confirmations: 'users/confirmations', passwords: 'users/passwords' }
@@ -19,11 +25,6 @@ Rails.application.routes.draw do
   end
 
   get 'home/welcome'
-
-  resources :industries, except: [:show]
-  resources :interests, except: [:show]
-  resources :locations, only: [:index, :show]
-  resources :majors, except: [:show]
 
   resources :base_courses, only: [:index], path: 'course_management'
   resources :courses, controller: 'base_courses', type: 'Course'
@@ -53,15 +54,6 @@ Rails.application.routes.draw do
   end
 
   resources :lesson_contents, only: [:new, :show, :create]
-  resources :roles, except: [:show]
-  resources :users, only: [:index, :show]
-
-  resources :postal_codes, only: [:index, :show] do
-    collection do
-      get :distance
-      post :search
-    end
-  end
 
   resources :access_tokens, except: [:show]
 
@@ -69,28 +61,20 @@ Rails.application.routes.draw do
   # can decode them using our private key. E.g. JWK authentication flows.
   resources :keypairs, only: :index, format: :j, path: 'public_jwk'
 
-  resources :validations, only: [:index] do
-    collection do
-      get :report
-    end
-  end
-
   root to: "home#welcome"
 
-  # Admin stuff
-  namespace :admin do
-    resources :users do
-      member do
-        post 'confirm' => 'users#confirm'
-      end
+  resources :users do
+    member do
+      post 'confirm' => 'users#confirm'
     end
-    # Sync to LMS
-    post 'sync_to_lms', to: 'salesforce#sync_to_lms'
-    get 'sync_to_lms', to: 'salesforce#init_sync_to_lms'
-    # Sync to Join
-    post 'sync_to_join', to: 'join#sync_to_join'
-    get 'sync_to_join', to: 'join#init_sync_to_join'
   end
+
+  # Sync to LMS
+  post 'sync_to_lms', to: 'salesforce#sync_to_lms'
+  get 'sync_to_lms', to: 'salesforce#init_sync_to_lms'
+  # Sync to Join
+  post 'sync_to_join', to: 'join#sync_to_join'
+  get 'sync_to_join', to: 'join#init_sync_to_join'
 
   # RubyCAS Routes
   resources :cas, except: [:show]

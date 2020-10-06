@@ -6,7 +6,9 @@ require 'rubycas-server-core/tickets/generations'
 class CasController < ApplicationController
   layout 'accounts'
   skip_before_action :authenticate_user!
-  skip_before_action :ensure_admin!
+  # Skip the verify_authorized callback for this controller, since we won't be logged in
+  # and thus get no benefit from authorization.
+  skip_after_action :verify_authorized
   
   before_action :set_settings
   before_action :set_request_client
@@ -135,7 +137,8 @@ class CasController < ApplicationController
     # generate another login ticket to allow for re-submitting the form after a post
     @lt = LT.create!(@request_client).ticket
 
-    logger.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{@settings.inspect}")
+    # Don't log out the entire @settings variable, it has sensitive info.
+    logger.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}")
 
     credentials_are_valid = false
     extra_attributes = {}
@@ -371,7 +374,8 @@ class CasController < ApplicationController
   end
 
   def set_params
-    @service = Utils.clean_service_url(params['service']) if params['service']
+    safe_service_param = helpers.safe_service_url(params['service'])
+    @service = Utils.clean_service_url(safe_service_param) if safe_service_param
     @ticket = params['ticket'] || nil
     @renew = params['renew'] || nil
     @extra_attributes = {}

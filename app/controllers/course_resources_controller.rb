@@ -5,14 +5,17 @@ class CourseResourcesController < ApplicationController
   before_action :set_lti_launch, only: [:lti_show]
 
   def new
+    authorize @course_resource
   end
 
   def create
+    authorize CourseResource
     @course_resource = CourseResource.create!(name: create_params[:name], course_resource_zipfile: create_params[:course_resource_zipfile])
     redirect_to base_courses_path, notice: 'Course resource was successfully created.'
   end
 
   def lti_show
+    authorize CourseResource
     canvas_course_id = @lti_launch.request_message.custom['course_id']
     base_course = BaseCourse.find_by(canvas_course_id: canvas_course_id)
     if base_course&.course_resource

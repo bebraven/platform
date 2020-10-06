@@ -1,0 +1,40 @@
+<%= react_component('Sidebar', {
+    customContents: @custom_contents
+}) %>
+
+<%= form_with(model: custom_content, id: 'content-editor', local: true) do |form| %>
+
+  <% if custom_content.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(custom_content.errors.count, "error") %> prohibited this custom_content from being saved:</h2>
+
+      <ul>
+        <% custom_content.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field" >
+    <%= react_component('ContentEditor', { custom_content: custom_content,
+        contentParts: [
+            {
+                id: 1,
+                name: 'Question',
+                image: 'product1.jpg'
+            },
+            {
+                id: 2,
+                name: 'Answer',
+                image: 'product2.jpg'
+            },
+            {
+                id: 3,
+                name: 'Heading',
+                image: 'product3.jpg'
+            },
+        ]
+                    }) %>
+  </div>
+<% end %>

@@ -8,14 +8,17 @@ class LessonContentsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:create, :show], if: :is_sessionless_lti_launch?
 
   def new
+    authorize @lesson_content
   end
 
   def create
+    authorize LessonContent
     @lesson_content = LessonContent.create!(lesson_content_zipfile: create_params[:lesson_content_zipfile])
     @deep_link_return_url, @jwt_response = helpers.lti_deep_link_response_message(@lti_launch, lesson_content_url(@lesson_content))
   end
 
   def show
+    authorize @lesson_content
     # TODO: this may be while previewing the the Lesson before inserting it through the
     # assignment selection placement. Don't configure it to talk to the LRS in that case.
     # https://app.asana.com/0/search/1189124318759625/1187445581799823

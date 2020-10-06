@@ -1,0 +1,13 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Custom Content</h1>
+
+<ul>
+  <% @custom_contents.each do |custom_content| %>
+    <li><%= custom_content.title %> (<%= link_to 'Edit', edit_custom_content_path(custom_content) %> | <%= link_to 'Destroy', custom_content, method: :delete, data: { confirm: 'Are you sure?' } %>)</li>
+  <% end %>
+</ul>
+
+<br>
+
+<%= link_to 'New CustomContent', new_custom_content_path %>

@@ -10,7 +10,9 @@ class LtiAssignmentSelectionController < ApplicationController
 
   def new
     params.require([:state])
-    @assignments = CourseContent.where(content_type: 'assignment')
+    authorize @lti_launch
+
+    @assignments = CustomContent.where(content_type: 'assignment')
   end
 
   # TODO: this should be in the ProjectsController or a new ProjectContentsController create, not here.
@@ -19,11 +21,12 @@ class LtiAssignmentSelectionController < ApplicationController
   # https://app.asana.com/0/1174274412967132/1186960110311121
   def create
     params.require([:state, :assignment_id])
+    authorize @lti_launch
 
-    cc = CourseContent.find(params[:assignment_id])
+    cc = CustomContent.find(params[:assignment_id])
     cc.save_version!(current_user)
 
-    assignment_url = course_content_course_content_history_url(
+    assignment_url = custom_content_custom_content_version_url(
       params[:assignment_id],
       cc.last_version.id,
     )

@@ -41,6 +41,7 @@ class HoneycombJsController < ApplicationController
   # stuff from the browser console or a script, we're logging their user info so we can chat with them and worst case
   # is we have to ask Honeycomb to purge a bunch of fields that we don't want (or just let them go stale)
   def send_span
+    authorize :honeycomb_js
 
     existing_trace_to_add_to = request.headers[X_HONEYCOMB_TRACE_HEADER]
     raise ActionController::BadRequest, "Missing '#{X_HONEYCOMB_TRACE_HEADER}' header" unless existing_trace_to_add_to 

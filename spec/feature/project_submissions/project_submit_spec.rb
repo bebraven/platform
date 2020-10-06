@@ -5,8 +5,8 @@ require 'lti_advantage_api'
 require 'lti_score'
 
 RSpec.feature 'Submit a project', :type => :feature do
-  let!(:valid_user) { create(:fellow_user, admin: true) }
-  let!(:project) { create(:course_content_assignment_with_history) }
+  let!(:valid_user) { create(:fellow_user) }
+  let!(:project) { create(:custom_content_assignment_with_version) }
 
   let!(:lti_launch) { 
     create(
@@ -20,7 +20,7 @@ RSpec.feature 'Submit a project', :type => :feature do
   }
 
   let(:uri) {
-    path = Addressable::URI.parse(course_content_course_content_history_path(
+    path = Addressable::URI.parse(custom_content_custom_content_version_path(
       project.id,
       project.last_version.id,
     ))
@@ -56,7 +56,7 @@ RSpec.feature 'Submit a project', :type => :feature do
     context "viewed as TA" do
       it "does not show a submit button", js: true do
         uri_with_user_override = Addressable::URI.parse(
-          course_content_course_content_history_path(
+          custom_content_custom_content_version_path(
             project.id,
             project.last_version.id,
           ),

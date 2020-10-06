@@ -8,7 +8,6 @@
 # Step 4: Resource Display - We display the target resource
 class LtiLaunchController < ApplicationController
   skip_before_action :authenticate_user!
-  skip_before_action :ensure_admin!
   skip_before_action :verify_authenticity_token
 
   # Non-standard controller without normal CRUD methods. Disable the convenience module.
@@ -21,6 +20,7 @@ class LtiLaunchController < ApplicationController
   #
   # This is the OIDC url Canvas is calling in Step 1 above.
   def login
+    authorize LtiLaunch
     raise ActionController::BadRequest.new(), "Unexpected iss parameter: #{params[:iss]}" if params[:iss] != LTI_ISS
 
     @lti_launch = LtiLaunch.create!(params.except(:iss, :canvas_region).permit(:client_id, :login_hint, :target_link_uri, :lti_message_hint)
@@ -45,6 +45,8 @@ class LtiLaunchController < ApplicationController
     # browser this will have no effect and the LtiAuthentication::WardenStrategy will be used
     # for each request to authenticate them instead of using session.
     sign_in_from_lti(ll)
+
+    authorize ll
 
     # Step 4 in the flow, show the target resource now that we've saved the id_token payload that contains
     # user identifiers, course contextual data, custom data, etc.
