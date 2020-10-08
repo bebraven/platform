@@ -102,6 +102,7 @@ export default class ChecklistQuestionEditing extends Plugin {
         schema.register( 'checkboxInlineFeedback', {
             isObject: true,
             allowIn: 'checkboxDiv',
+            allowAttributes: ['aria-live' ],
             allowContentOf: '$block'
         } );
     }
@@ -278,7 +279,9 @@ export default class ChecklistQuestionEditing extends Plugin {
                 classes: ['inline', 'feedback']
             },
             model: ( viewElement, modelWriter ) => {
-                return modelWriter.createElement( 'checkboxInlineFeedback' );
+                return modelWriter.createElement( 'checkboxInlineFeedback', {
+                    'aria-live': 'polite',
+                } );
             }
 
         } );
@@ -287,6 +290,7 @@ export default class ChecklistQuestionEditing extends Plugin {
             view: ( modelElement, viewWriter ) => {
                 return viewWriter.createEditableElement( 'p', {
                     'class': 'feedback inline',
+                    'aria-live': 'polite',
                 } );
             }
         } );
@@ -295,6 +299,7 @@ export default class ChecklistQuestionEditing extends Plugin {
             view: ( modelElement, viewWriter ) => {
                 const p = viewWriter.createEditableElement( 'p', {
                     'class': 'feedback inline',
+                    'aria-live': 'polite',
                 } );
 
                 enablePlaceholder( {
