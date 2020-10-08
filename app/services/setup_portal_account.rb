@@ -40,8 +40,8 @@ class SetupPortalAccount
   end
 
   def update_user_references!(user, salesforce_id:, join_user_id:)
-    user.update!(canvas_id: portal_user.id, join_user_id: join_user_id)
-    sf_client.update_contact(salesforce_id, canvas_id: portal_user.id)
+    user.update!(canvas_user_id: portal_user.id, join_user_id: join_user_id)
+    sf_client.update_contact(salesforce_id, canvas_user_id: portal_user.id)
     user
   end
 

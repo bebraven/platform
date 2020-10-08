@@ -11,37 +11,9 @@ RSpec.describe Project, type: :model do
       end
     end
 
-    context 'when name is empty' do
+    context 'when custom_content_version is empty' do
       it 'disallows saving' do
-        project.name = nil
-        expect { project.save! }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'when points_possible is empty' do
-      it 'disallows saving' do
-        project.points_possible = nil
-        expect { project.save! }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'when percent_of_grade_category is empty' do
-      it 'disallows saving' do
-        project.percent_of_grade_category = nil
-        expect { project.save! }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'when percent_of_grade_category less than 0' do
-      it 'disallows saving' do
-        project.percent_of_grade_category = -0.5
-        expect { project.save! }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'when no associated grade_category' do
-      it 'disallows saving' do
-        project.grade_category = nil
+        project.custom_content_version = nil
         expect { project.save! }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end

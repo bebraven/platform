@@ -60,7 +60,7 @@ class HoneycombJsController < ApplicationController
 
       # Add some standard common server side accessible fields to make it easier to query for and analyze when troubleshooting.
       span.add_field('user.id', current_user.id)
-      span.add_field('user.canvas_id', current_user.canvas_id)
+      span.add_field('user.canvas_user_id', current_user.canvas_user_id)
       span.add_field('user.email', current_user.email)
       span.add_field('user.first_name', current_user.first_name)
       span.add_field('user.last_name', current_user.last_name)

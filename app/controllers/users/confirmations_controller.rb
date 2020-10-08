@@ -45,7 +45,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
   # auto-log them in there, otherwise do it here in the platform.
   def sign_in_and_get_redirect_path
      username = resource.email
-     if resource.canvas_id
+     if resource.canvas_user_id
        login_service_url = URI.join(CanvasAPI.client.canvas_url, "/login/cas").to_s
      else
        login_service_url = ::Devise.cas_service_url(request.url, devise_mapping) 

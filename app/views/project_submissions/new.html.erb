@@ -1,0 +1,11 @@
+<div class="bz-assignment">
+  <%= render 'project' %>
+
+  <!-- Submit -->
+  <%= react_component('Projects/ProjectSubmitButton', {
+    hasSubmission: @has_previous_submission,
+    ltiLaunchState: params[:state],
+    projectId: @project.id,
+  })%>
+</div>
+

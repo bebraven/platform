@@ -1,0 +1,10 @@
+  <%= form_tag projects_path do -%>
+    <select name="custom_content_id" id="custom_content_id">
+      <% @assignments.each do |assignment| %>
+        <option value="<%= assignment.id %>"><%= assignment.title %></option>
+      <% end %>
+    </select>
+    <input id="state" name='state' type='hidden' value="<%= params[:state] %>" />
+    <input type='submit' value='Preview' />
+  <% end -%>
+  

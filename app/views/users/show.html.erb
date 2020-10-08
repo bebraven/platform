@@ -15,7 +15,7 @@
     <li class="list-group-item">First Name: <%= @user.first_name %></li>
     <li class="list-group-item">Last Name: <%= @user.last_name %></li>
     <li class="list-group-item">Salesforce ID: <%= @user.salesforce_id %></li>
-    <li class="list-group-item">Canvas ID: <%= @user.canvas_id %></li>
+    <li class="list-group-item">Canvas ID: <%= @user.canvas_user_id %></li>
   </ul>
   <div class="card-body">
     <%= link_to "Edit", edit_user_path(@user), class: "card-link btn btn-warning" %>

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe LtiLaunchPolicy, type: :policy do
   let(:user) { create(:registered_user) }
   let(:canvas_user) { create(:fellow_user) }
-  let(:record) { create(:lti_launch_assignment, canvas_user_id: canvas_user.canvas_id) }
+  let(:record) { create(:lti_launch_assignment, canvas_user_id: canvas_user.canvas_user_id) }
 
   subject { described_class }
 

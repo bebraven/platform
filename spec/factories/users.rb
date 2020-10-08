@@ -22,7 +22,7 @@ FactoryBot.define do
       confirmed_at { DateTime.now }
 
       factory :fellow_user do
-        canvas_id { '1234' }
+        canvas_user_id { '1234' }
         after :create do |user|
           user.add_role :student
         end

@@ -151,12 +151,6 @@ class ProjectSubmitButton extends React.Component {
               type="hidden"
               value={this.props.ltiLaunchState}
             />
-            <input
-              id="version"
-              name="version"
-              type="hidden"
-              value={this.props.projectVersion}
-            />
             {this._renderSubmitButton()}
         </Form>
       </div>

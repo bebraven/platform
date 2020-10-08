@@ -187,13 +187,13 @@ class SalesforceAPI
                       participant['CohortName'], participant['CohortScheduleDayTime'])
   end
 
-  def update_contact(id, canvas_id:)
-    set_canvas_id(id, canvas_id)
+  def update_contact(id, canvas_user_id:)
+    set_canvas_user_id(id, canvas_user_id)
     true
   end
 
-  def set_canvas_id(contact_id, canvas_id)
-    body = { 'Canvas_User_ID__c' => canvas_id }
+  def set_canvas_user_id(contact_id, canvas_user_id)
+    body = { 'Canvas_User_ID__c' => canvas_user_id }
     response = patch("/services/data/v48.0/sobjects/Contact/#{contact_id}", body.to_json, JSON_HEADERS)
   end
 

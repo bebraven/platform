@@ -44,8 +44,8 @@ Rails.application.routes.draw do
     resources :lessons, only: [:index, :show]
   end
 
-  resources :projects, only: [:index, :show] do
-    resources :project_submissions, :path => 'submissions', only: [:create]
+  resources :projects, only: [:show, :create] do
+    resources :project_submissions, :path => 'submissions', only: [:show, :new, :create]
   end
 
   resources :lessons, only: [:index, :show] do
@@ -98,7 +98,6 @@ Rails.application.routes.draw do
   post '/lti/launch', to: 'lti_launch#launch'
 
   get '/lti/assignment_selection/new', to: 'lti_assignment_selection#new'     # https://canvas.instructure.com/doc/api/file.assignment_selection_placement.html
-  post '/lti/assignment_selection', to: 'lti_assignment_selection#create'     # https://canvas.instructure.com/doc/api/file.assignment_selection_placement.html
 
   get '/lti/link_selection/new', to: 'lesson_contents#new' # https://canvas.instructure.com/doc/api/file.link_selection_placement.html
   post '/lti/link_selection', to: 'lesson_contents#create' # https://canvas.instructure.com/doc/api/file.link_selection_placement.html

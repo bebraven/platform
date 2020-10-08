@@ -1,0 +1,14 @@
+<% content_for :title, 'Project' %>
+
+<% content_for :head do %>
+    <%= portal_stylesheet_link_tag %>
+    <%= javascript_pack_tag 'server_rendering' %>
+    <%= javascript_pack_tag 'project_submit_button' %>
+<% end %>
+
+<%# Add stuff to the body here %>
+<% content_for :content do %>
+  <%= yield %>
+<% end %>
+
+<%= render template: "layouts/application" %>

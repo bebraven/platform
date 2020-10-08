@@ -66,60 +66,18 @@ RSpec.describe CustomContentVersionsController, type: :controller do
   end
 
   describe 'GET #show' do
-    context "in platformweb" do
-      let(:user) { create :fellow_user }
+    let(:user) { create :fellow_user }
 
-      it 'returns a success response' do
-        get(
-          :show,
-          params: {
-            custom_content_id: custom_content.id,
-            id: custom_content_version.id,
-            # Note: we don't pass in state
-          },
-        )
-        expect(response).to be_successful
-      end
-    end
-
-    context "TA view in Canvas" do
-      let(:user) { create :ta_user }
-      let(:lti_launch) { create(:lti_launch_assignment) }
-
-      it 'returns a success response' do
-        allow(LtiLaunch).to receive(:current).and_return(lti_launch)
-        allow(lti_launch).to receive(:activity_id).and_return('some_activity_id')
-        get(
-          :show,
-          params: {
-            custom_content_id: custom_content.id,
-            id: custom_content_version.id,
-            state: lti_launch.state,
-            user_id: user.id,
-          },
-          session: valid_session,
-        )
-        expect(response).to be_successful
-      end
-    end
-
-    context "Student view in Canvas" do
-      let(:user) { create :fellow_user }
-      let(:lti_launch) { create(:lti_launch_assignment) }
-
-      it 'returns a success response' do
-        allow(LtiLaunch).to receive(:current).and_return(lti_launch)
-        allow(lti_launch).to receive(:activity_id).and_return('some_activity_id')
-        get(
-          :show,
-          params: {
-            custom_content_id: custom_content.id,
-            id: custom_content_version.id,
-            state: lti_launch.state,
-          },
-        )
-        expect(response).to be_successful
-      end
+    it 'returns a success response' do
+      get(
+        :show,
+        params: {
+          custom_content_id: custom_content.id,
+          id: custom_content_version.id,
+          # Note: we don't pass in state
+        },
+      )
+      expect(response).to be_successful
     end
   end
 end

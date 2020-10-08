@@ -57,7 +57,7 @@ class LtiLaunch < ApplicationRecord
 
   # The user that this launch is for.
   def user
-    User.find_by_canvas_id(request_message.canvas_user_id)
+    User.find_by(canvas_user_id: request_message.canvas_user_id)
   end
 
   # Each lesson or project has a single activity ID that ties together all the xAPI statements

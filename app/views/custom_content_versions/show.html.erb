@@ -1,22 +1,3 @@
 <div class="bz-assignment">
-  <!-- Project -->
   <%== @custom_content_version.body %>
-
-  <% unless @user_override_id %>
-    <!-- Submit -->
-    <%= react_component('Projects/ProjectSubmitButton', {
-      hasSubmission: @has_previous_submission,
-      ltiLaunchState: params[:state],
-      projectId: @custom_content.id,
-      projectVersion: @custom_content_version.id,
-    })%>
-  <% end %>
 </div>
-
-<% if @lti_launch && @project_lti_id %>
-  <!-- Load previous answers -->
-  <%= content_tag :div, '', id: "javascript_variables", data: {
-    user_override_id: @user_override_id,
-    project_lti_id: @project_lti_id } %>
-  <%= javascript_pack_tag 'xapi_assignment' %>
-<% end %>

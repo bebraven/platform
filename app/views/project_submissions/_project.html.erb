@@ -1,0 +1,8 @@
+<!-- Project -->
+<%== @custom_content_version.body %>
+
+<!-- Load previous answers -->
+<%= content_tag :div, '', id: "javascript_variables", data: {
+  user_override_id: @user_override_id,
+  project_lti_id: @project_lti_id } %>
+<%= javascript_pack_tag 'xapi_assignment' %>

@@ -5,7 +5,7 @@ RSpec.describe HoneycombJsController, type: :controller do
   let(:serialized_trace) { "1;dataset=example-dataset,trace_id=#{trace_id},parent_id=example-parent-id,context=e30=" }
 
   let(:user) { create :registered_user }
-  let!(:lti_launch) { create(:lti_launch_assignment, canvas_user_id: user.canvas_id) }
+  let!(:lti_launch) { create(:lti_launch_assignment, canvas_user_id: user.canvas_user_id) }
 
   let(:libhoney_client) { Libhoney::TestClient.new }
   let(:libhoney_event) { double(Libhoney::Event, add_field: nil, send: nil, writekey: 'fakekey') }
@@ -52,8 +52,8 @@ RSpec.describe HoneycombJsController, type: :controller do
         expect(libhoney_event).to have_received(:add_field).with('user.id', user.id).once
       end
 
-      it "sets the user.canvas_id" do
-        expect(libhoney_event).to have_received(:add_field).with('user.canvas_id', user.canvas_id).once
+      it "sets the user.canvas_user_id" do
+        expect(libhoney_event).to have_received(:add_field).with('user.canvas_user_id', user.canvas_user_id).once
       end
 
       it "sets the user.email" do

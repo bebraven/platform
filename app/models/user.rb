@@ -94,7 +94,7 @@ class User < ApplicationRecord
     if sync_salesforce_info # They can't register for Canvas access if they aren't Enrolled in Salesforce
       setup_canvas_access
       Rails.logger.info('Done setting up canvas access')
-      store_canvas_id_in_salesforce
+      store_canvas_user_id_in_salesforce
     end
   end
 
@@ -111,13 +111,13 @@ class User < ApplicationRecord
 
   # Looks up their Canvas account and sets the Id so that on login we can redirect them there.
   def setup_canvas_access
-    return if canvas_id
+    return if canvas_user_id
 
     Rails.logger.info("Setting up Canvas account and enrollments for user: #{inspect}")
-    self.canvas_id = SyncToLMS.new.for_contact(salesforce_id)
+    self.canvas_user_id = SyncToLMS.new.for_contact(salesforce_id)
   end
 
-  def store_canvas_id_in_salesforce
-    SalesforceAPI.client.set_canvas_id(salesforce_id, canvas_id)
+  def store_canvas_user_id_in_salesforce
+    SalesforceAPI.client.set_canvas_user_id(salesforce_id, canvas_user_id)
   end
 end
