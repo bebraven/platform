@@ -3,25 +3,30 @@ class AccessTokensController < ApplicationController
   # GET /access_tokens
   # GET /access_tokens.json
   def index
+    authorize AccessToken
   end
 
   # GET /access_tokens/1
   # GET /access_tokens/1.json
   def show
+    authorize @access_token
   end
 
   # GET /access_tokens/new
   def new
+    authorize @access_token
   end
 
   # GET /access_tokens/1/edit
   def edit
+    authorize @access_token
   end
 
   # POST /access_tokens
   # POST /access_tokens.json
   def create
     @access_token = AccessToken.new(access_token_params)
+    authorize @access_token
 
     respond_to do |format|
       if @access_token.save
@@ -37,6 +42,7 @@ class AccessTokensController < ApplicationController
   # PATCH/PUT /access_tokens/1
   # PATCH/PUT /access_tokens/1.json
   def update
+    authorize @access_token
     respond_to do |format|
       if @access_token.update(access_token_params)
         format.html { redirect_to access_tokens_path, notice: 'Access Token was successfully updated.' }
@@ -51,6 +57,7 @@ class AccessTokensController < ApplicationController
   # DELETE /access_tokens/1
   # DELETE /access_tokens/1.json
   def destroy
+    authorize @access_token
     @access_token.destroy
     respond_to do |format|
       format.html { redirect_to access_tokens_url, notice: 'Access Token was successfully deleted.' }

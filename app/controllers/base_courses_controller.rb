@@ -1,25 +1,31 @@
 class BaseCoursesController < ApplicationController
+  layout 'admin'
 
   # GET /course_management
   def index
+    authorize BaseCourse
   end
 
   # GET /course{,template}s/1
   def show
+    authorize @base_course
   end
 
   # GET /course{,template}s/new
   def new
     @base_course = BaseCourse.new(new_params)
+    authorize @base_course
   end
 
   # GET /course{,template}s/1/edit
   def edit
+    authorize @base_course
   end
 
   # POST /course{,template}s
   def create
     @base_course = BaseCourse.new(base_course_params)
+    authorize @base_course
     respond_to do |format|
       if @base_course.save
         format.html { redirect_to base_courses_path, notice: "#{set_type.humanize} was successfully created." }
@@ -33,6 +39,7 @@ class BaseCoursesController < ApplicationController
 
   # PATCH/PUT /course{,template}s/1
   def update
+    authorize @base_course
     respond_to do |format|
       if @base_course.update(base_course_params)
         format.html { redirect_to base_courses_path, notice: "#{set_type.humanize} was successfully updated." }
@@ -46,11 +53,56 @@ class BaseCoursesController < ApplicationController
 
   # DELETE /course{,template}s/1
   def destroy
+    authorize @base_course
     @base_course.destroy
     respond_to do |format|
       format.html { redirect_to base_courses_url, notice: "#{set_type.humanize} was successfully deleted." }
       format.json { head :no_content }
     end
+  end
+
+  # Nonstandard actions related to course management.
+
+  # GET /course_management/launch
+  def launch_new
+    authorize BaseCourse
+    @course_templates = CourseTemplate.where.not(canvas_course_id: nil)
+  end
+
+  # POST /course_management/launch
+  def launch_create
+    authorize BaseCourse
+
+    # Validate form.
+    begin
+      salesforce_program_id, lc_course_template_id, lc_course_name, fellow_course_template_id, fellow_course_name = params.require([
+        :salesforce_program_id,
+        :fellow_course_template_id,
+        :fellow_course_name,
+        :lc_course_template_id,
+        :lc_course_name,
+      ])
+      raise ActionController::BadRequest.new("Can't use the same template for Fellow and LC course") if fellow_course_template_id == lc_course_template_id
+    rescue ActionController::ParameterMissing, ActionController::BadRequest => e
+      redirect_to course_management_launch_path, alert: "Error: #{e.message}" and return
+    end
+
+    # Launch courses.
+    begin
+      LaunchProgram.new(
+          salesforce_program_id: salesforce_program_id,
+          fellow_course_template_id: fellow_course_template_id,
+          fellow_course_name: fellow_course_name,
+          lc_course_template_id: lc_course_template_id,
+          lc_course_name: lc_course_name,
+      ).run
+    rescue RestClient::Exception => e
+      redirect_to course_management_launch_path, alert: "Canvas API error: #{e.message}" and return
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+      redirect_to course_management_launch_path, alert: "Error creating course: #{e.message}" and return
+    end
+
+    redirect_to base_courses_path, notice: "Program successfully launched. Courses should be ready to use in a few minutes."
   end
 
   private

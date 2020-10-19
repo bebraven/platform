@@ -15,6 +15,14 @@ class LrsXapiProxyController < ApplicationController
     # submission for a Student/Fellow. The current_user would be the TA but we really
     # want to be querying the LRS as the Student.
     user = params[:user_override_id] ? User.find(params[:user_override_id]) : current_user
+
+    # Only allow if `current_user` should have access to `user`'s data.
+    if request.method == 'GET'
+      authorize user, :xAPI_read?, policy_class: LrsXapiProxyPolicy
+    else
+      authorize user, :xAPI_write?, policy_class: LrsXapiProxyPolicy
+    end
+
     response = LrsXapiProxy.request(request, request.params['endpoint'], user)
     response_body = response.body
     if response_body

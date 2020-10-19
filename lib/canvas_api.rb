@@ -7,9 +7,6 @@ class CanvasAPI
   LMSEnrollment = Struct.new(:id, :course_id, :type, :section_id)
   LMSSection = Struct.new(:id, :name)
 
-  TA_ENROLLMENT = :TaEnrollment
-  STUDENT_ENROLLMENT = :StudentEnrollment
-
   attr_reader :canvas_url
 
   # Custom HTML to prepend to each body.
@@ -29,6 +26,9 @@ class CanvasAPI
 
   # Canvas course ID for the Braven Content Library.
   ContentLibraryCourseID = 1
+  # For calls that need an account ID, default to account 1.
+  # In our case, this currently means the "Braven" account.
+  DefaultAccountID = 1
 
   # Use this to get an instance of the API client with authentication info setup.
   def self.client
@@ -57,7 +57,7 @@ class CanvasAPI
 
   def delete(path, body={}, headers={})
     # Delete helper method doesn't accept a payload. Have to drop down lower level.
-    RestClient::Request.execute(method: :delete, 
+    RestClient::Request.execute(method: :delete,
       url: "#{@api_url}#{path}", payload: body, headers: @global_headers.merge(headers))
   end
 
@@ -110,7 +110,7 @@ class CanvasAPI
         'pseudonym[sis_user_id]' => format_to_sis_id(salesforce_id, student_id),
         'enable_sis_reactivation' => true
     }
-    response = post('/accounts/1/users', body)
+    response = post("/accounts/#{DefaultAccountID}/users", body)
     JSON.parse(response.body)
   end
 
@@ -134,12 +134,16 @@ class CanvasAPI
     LMSUser.new(user['id'], user['email'])
   end
 
-
   def find_user_in_canvas(search_term)
-    response = get("/accounts/1/users?search_term=#{CGI.escape(search_term)}")
+    # Note: Don't use CGI.escape on search_term bc RestClient handles this internally.
+    response = get("/accounts/#{DefaultAccountID}/users", {
+      'search_term': search_term,
+      'include[]': 'email'
+    })
     users = JSON.parse(response.body)
+    # Only return an object if one and only one user matches the query.
     users.length == 1 ? users[0] : nil
-  end 
+  end
 
   # Returns an array of enrollments objects for the course.
   # See: https://canvas.instructure.com/doc/api/enrollments.html
@@ -278,6 +282,43 @@ class CanvasAPI
     info = JSON.parse(response.body)
     {url: "#{canvas_url}/courses/#{course_id}/files/#{info['id']}/preview"}
 
+  end
+
+  # See: https://canvas.instructure.com/doc/api/courses.html#method.courses.create
+  # Returns course Hash on success: https://canvas.instructure.com/doc/api/courses.html#Course
+  # Set publish:false to leave the course in the unpublished state.
+  def create_course(name, account_id=DefaultAccountID, publish=true)
+    response = post("/accounts/#{account_id}/courses", {
+      'course[name]': name,
+      'offer': publish,
+    })
+
+    JSON.parse(response.body)
+  end
+
+  # See: https://canvas.instructure.com/doc/api/content_migrations.html#method.content_migrations.create
+  # You probably don't want to call this directly; consider using copy_course or another appropriate
+  # method instead.
+  # Returns a ContentMigration Hash on success: https://canvas.instructure.com/doc/api/content_migrations.html#ContentMigration
+  # Progress URL will be in migration['progress_url'].
+  def content_migration(object_type, object_id, body)
+    # Basic validation.
+    raise ArgumentError.new('object_type is invalid') unless ['accounts', 'courses', 'groups', 'users'].include? object_type
+    Integer(object_id) rescue raise ArgumentError.new('object_id must be an integer')
+
+    response = post("/#{object_type}/#{object_id}/content_migrations", body)
+    JSON.parse(response.body)
+  end
+
+  # Note this uses the content_migration API, not the deprecated course copy API.
+  # Example usage:
+  #   course_data = create_course('Course Name')
+  #   migration_data = copy_course(course_template.canvas_course_id, course_data['id'])
+  def copy_course(source_course_id, destination_course_id)
+    content_migration('courses', destination_course_id, {
+      'migration_type': 'course_copy_importer',
+      'settings[source_course_id]': source_course_id,
+    })
   end
 
   private

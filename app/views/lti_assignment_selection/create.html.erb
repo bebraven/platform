@@ -4,5 +4,5 @@
     <input type='submit' value='Confirm' />
   </form>
 
-  <iframe src="<%= course_content_path(id: params[:assignment_id], state: params[:state]) %>"></iframe>
+  <iframe src="<%= custom_content_path(id: params[:assignment_id], state: params[:state]) %>"></iframe>
 </div>

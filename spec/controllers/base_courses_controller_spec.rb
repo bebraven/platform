@@ -25,7 +25,7 @@ require 'rails_helper'
 
 RSpec.describe BaseCoursesController, type: :controller do
   render_views
-  
+
   let(:user) { create :admin_user }
   let(:course) { create(:course, course_attributes) }
   let(:course_template) { create(:course_template, course_template_attributes) }
@@ -42,7 +42,7 @@ RSpec.describe BaseCoursesController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # BaseCoursesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  
+
   describe 'when logged in' do
     before do
       sign_in user
@@ -77,7 +77,7 @@ RSpec.describe BaseCoursesController, type: :controller do
             params: {
               course: course_attributes,
               type: 'Course',
-              session: valid_session 
+              session: valid_session
             }
           )
         end
@@ -135,7 +135,7 @@ RSpec.describe BaseCoursesController, type: :controller do
           let(:put_attributes) { invalid_attributes }
           before(:each) { put_update }
 
-          it "returns a success response (i.e. to display the 'edit' template)" do          
+          it "returns a success response (i.e. to display the 'edit' template)" do
             expect(response).to be_successful
           end
         end
@@ -156,10 +156,10 @@ RSpec.describe BaseCoursesController, type: :controller do
         end
       end
     end
-    
+
     describe 'JSON requests' do
       let(:access_token) { create :access_token }
-      
+
       describe "GET #index" do
         it "allows access token via params" do
           get :index, params: {access_key: access_token.key, type: 'Course'}, session: valid_session, format: :json
@@ -168,7 +168,7 @@ RSpec.describe BaseCoursesController, type: :controller do
 
         it "allows access token via headers" do
           request.headers.merge!('Access-Key' => access_token.key)
-          
+
           get :index, params: {type: 'Course'}, session: valid_session, format: :json
           expect(response).to be_successful
         end
@@ -197,7 +197,7 @@ RSpec.describe BaseCoursesController, type: :controller do
             params: {
               course_template: course_template_attributes,
               type: 'CourseTemplate',
-              session: valid_session 
+              session: valid_session
             }
           )
         end
@@ -255,7 +255,7 @@ RSpec.describe BaseCoursesController, type: :controller do
           let(:put_attributes) { invalid_attributes }
           before(:each) { put_update }
 
-          it "returns a success response (i.e. to display the 'edit' template)" do          
+          it "returns a success response (i.e. to display the 'edit' template)" do
             expect(response).to be_successful
           end
         end
@@ -276,10 +276,10 @@ RSpec.describe BaseCoursesController, type: :controller do
         end
       end
     end
-    
+
     describe 'JSON requests' do
       let(:access_token) { create :access_token }
-      
+
       describe "GET #index" do
         it "allows access token via params" do
           get :index, params: {access_key: access_token.key, type: 'CourseTemplate'}, session: valid_session, format: :json
@@ -288,9 +288,87 @@ RSpec.describe BaseCoursesController, type: :controller do
 
         it "allows access token via headers" do
           request.headers.merge!('Access-Key' => access_token.key)
-          
+
           get :index, params: {type: 'CourseTemplate'}, session: valid_session, format: :json
           expect(response).to be_successful
+        end
+      end
+    end
+
+    describe "GET #launch_new" do
+      it "returns a success response" do
+        get :launch_new, session: valid_session
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST #launch_create" do
+      let(:fellow_course_template) { create(:course_template, attributes_for(:course_template_with_resource)) }
+      let(:lc_course_template) { create(:course_template_with_canvas_id) }
+      let(:canvas_create_course) { build(:canvas_course) }
+      let(:canvas_copy_course) { build(:canvas_content_migration) }
+      let(:canvas_client) { double('CanvasAPI', create_course: canvas_create_course, copy_course: canvas_copy_course) }
+
+      subject(:post_launch_create) do
+        post(
+          :launch_create,
+          params: {
+            salesforce_program_id: 'TestSalesforceProgramID',
+            fellow_course_template_id: fellow_course_template.id,
+            fellow_course_name: 'Test Fellow Course Name',
+            lc_course_template_id: lc_course_template.id,
+            lc_course_name: 'Test LC Course Name',
+            session: valid_session
+          }
+        )
+      end
+
+      context "with valid params and canvas API success" do
+        before(:each) do
+          allow(CanvasAPI).to receive(:client).and_return(canvas_client)
+        end
+
+        it "creates new courses" do
+          expect { post_launch_create }.to change(Course, :count).by(2)
+          fellow_course = Course.find_by(name: 'Test Fellow Course Name')
+          expect(fellow_course.canvas_course_id).to eq canvas_create_course['id']
+          expect(fellow_course.course_resource_id).to eq fellow_course_template.course_resource_id
+          lc_course = Course.find_by(name: 'Test LC Course Name')
+          expect(lc_course.canvas_course_id).to eq canvas_create_course['id']
+          expect(lc_course.course_resource_id).to eq lc_course_template.course_resource_id
+        end
+
+        it "redirects to the newly created course" do
+          post_launch_create
+          expect(response).to redirect_to(base_courses_path)
+        end
+      end
+
+      context "with invalid params" do
+        it "redirects to launch_new with error message, before calling into canvas" do
+          post(
+            :launch_create,
+            params: {
+              salesforce_program_id: 'TestSalesforceProgramID',
+              # missing params!
+              session: valid_session
+            }
+          )
+          expect(response).to redirect_to(course_management_launch_path)
+          expect(flash[:alert]).to match /Error:/
+        end
+      end
+
+      context "with valid params and canvas API failure" do
+        before(:each) do
+          allow(canvas_client).to receive(:copy_course).and_raise(RestClient::NotFound)
+          allow(CanvasAPI).to receive(:client).and_return(canvas_client)
+        end
+
+        it "redirects to launch_new with error message" do
+          post_launch_create
+          expect(response).to redirect_to(course_management_launch_path)
+          expect(flash[:alert]).to match /Canvas API error/
         end
       end
     end

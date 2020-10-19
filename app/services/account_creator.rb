@@ -11,8 +11,10 @@ class AccountCreator
   end
 
   def run
-    setup_portal_user!
+    # Create the platform user synchronously, so we're guaranteed to have it
+    # during Canvas user setup.
     create_platform_user!
+    setup_portal_user!
   end
 
   private

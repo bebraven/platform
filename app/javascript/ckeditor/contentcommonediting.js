@@ -17,6 +17,7 @@ import InsertSliderCommand from './insertslidercommand';
 import InsertTableContentCommand from './inserttablecontentcommand';
 import { ALLOWED_ATTRIBUTES, filterAllowedAttributes } from './customelementattributepreservation';
 import * as Slider from '../constants/sliderquestionconstants';
+import { getNamedChildOrSibling } from './utils';
 
 export default class ContentCommonEditing extends Plugin {
     static get requires() {
@@ -178,7 +179,7 @@ export default class ContentCommonEditing extends Plugin {
 
         schema.register( 'textArea', {
             isObject: true,
-            allowAttributes: [ 'placeholder' ].concat(ALLOWED_ATTRIBUTES),
+            allowAttributes: [ 'placeholder' , 'aria-labelledby'].concat(ALLOWED_ATTRIBUTES),
             allowIn: [ '$root', '$block', 'checkboxDiv', 'radioDiv', 'tableCell', 'questionFieldset' ],
         } );
 
@@ -700,20 +701,33 @@ export default class ContentCommonEditing extends Plugin {
                 name: 'textarea',
             },
             model: ( viewElement, modelWriter ) => {
+                let arialLabelledBy = ''
+                const textareaLabel =  getNamedChildOrSibling('div', viewElement.parent)
+                if(textareaLabel) {
+                    arialLabelledBy = textareaLabel.getAttribute('id');
+                }
+                
                 return modelWriter.createElement( 'textArea', new Map( [
                     ...filterAllowedAttributes(viewElement.getAttributes()),
                     [ 'data-bz-retained', viewElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'placeholder', viewElement.getAttribute('placeholder') || '' ],
+                    [ 'aria-labelledby', arialLabelledBy ]
                 ] ) );
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
             model: 'textArea',
             view: ( modelElement, viewWriter ) => {
+                let arialLabelledBy = ''
+                const textareaLabel =  getNamedChildOrSibling('textareaLabel', modelElement.parent)
+                if(textareaLabel) {
+                    arialLabelledBy = textareaLabel.getAttribute('id');
+                }
                 const textarea = viewWriter.createEmptyElement( 'textarea', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'placeholder', modelElement.getAttribute('placeholder') || '' ],
+                    [ 'aria-labelledby', arialLabelledBy ]
                 ] ) );
                 return textarea;
             }
@@ -721,10 +735,16 @@ export default class ContentCommonEditing extends Plugin {
         conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'textArea',
             view: ( modelElement, viewWriter ) => {
+                let arialLabelledBy = ''
+                const textareaLabel =  getNamedChildOrSibling('textareaLabel', modelElement.parent)
+                if(textareaLabel) {
+                    arialLabelledBy = textareaLabel.getAttribute('id');
+                }
                 const textarea = viewWriter.createEmptyElement( 'textarea', new Map( [
                     ...filterAllowedAttributes(modelElement.getAttributes()),
                     [ 'data-bz-retained', modelElement.getAttribute('data-bz-retained') || this._nextRetainedDataId() ],
                     [ 'placeholder', modelElement.getAttribute('placeholder') || '' ],
+                    [ 'aria-labelledby', arialLabelledBy ]
                 ] ) );
                 return toWidget( textarea, viewWriter );
             }

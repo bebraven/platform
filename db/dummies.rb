@@ -8,21 +8,21 @@ User.find_or_create_by email: 'admin@beyondz.org' do |u|
   u.last_name = 'Admin(BZ)'
   u.password = "#{ENV['DEV_ENV_USER_PASSWORD']}"
   u.confirmed_at = DateTime.now
-  u.admin = true
+  u.add_role :admin
 end
 User.find_or_create_by email: 'admin@bebraven.org' do |u|
   u.first_name = 'Dev'
   u.last_name = 'Admin(BV)'
   u.password = "#{ENV['DEV_ENV_USER_PASSWORD']}"
   u.confirmed_at = DateTime.now
-  u.admin = true
+  u.add_role :admin
 end
 User.find_or_create_by email: 'booster.admin@bebraven.org' do |u|
- u.first_name = 'Dev'
- u.last_name = 'Admin(Booster)'
- u.password = "#{ENV['DEV_ENV_USER_PASSWORD']}"
- u.confirmed_at = DateTime.now
- u.admin = true
+  u.first_name = 'Dev'
+  u.last_name = 'Admin(Booster)'
+  u.password = "#{ENV['DEV_ENV_USER_PASSWORD']}"
+  u.confirmed_at = DateTime.now
+  u.add_role :admin
 end
 
 user_count = User.count
@@ -31,9 +31,6 @@ puts "Created #{User.count - user_count} users"
 
 course = Course.find_or_create_by! name: 'SJSU'
 course_template = CourseTemplate.find_or_create_by! name: 'Accelerator Template'
-role = Role.find_or_create_by! name: 'Participant'
-
-User.all.each{|p| p.start_membership(course.id, role.id) if p.program_memberships.empty?}
 
 ######
 # TODO: this is just quick and dirty for testing the grading related models I'm working on. Clean it up
@@ -58,4 +55,3 @@ LessonSubmission.find_or_create_by! user: User.first, lesson: lesson1, points_re
 LessonSubmission.find_or_create_by! user: User.first, lesson: lesson2, points_received: 100, submitted_at: DateTime.now
 LessonSubmission.find_or_create_by! user: User.second, lesson: lesson1, points_received: 25, submitted_at: DateTime.now
 LessonSubmission.find_or_create_by! user: User.second, lesson: lesson2, points_received: 50, submitted_at: DateTime.now
-

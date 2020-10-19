@@ -60,7 +60,7 @@ RSpec.describe CanvasAPI do
     let(:section_id) { 50 }
 
     it 'hits the Canvas API correctly' do
-      request_url = "#{CANVAS_API_URL}/accounts/1/users?search_term=#{CGI.escape(email)}"
+      request_url = "#{CANVAS_API_URL}/accounts/1/users?search_term=#{CGI.escape(email)}&include[]=email"
       response_user = FactoryBot.json(:canvas_user)
       response_json = "[#{response_user}]"
       stub_request(:get, request_url).to_return( body: response_json ) 
@@ -70,6 +70,16 @@ RSpec.describe CanvasAPI do
       expect(WebMock).to have_requested(:get, request_url)
         .with(headers: {'Authorization'=>'Bearer test-token'}).once
       expect(response).to eq(JSON.parse(response_user))
+    end
+
+    it 'correctly escapes special characters' do
+      request_url = "#{CANVAS_API_URL}/accounts/1/users?include[]=email&search_term=test%2Bterm"
+      stub_request(:get, request_url).to_return( body: "[]" ) 
+
+      response = canvas.find_user_in_canvas('test+term')
+
+      expect(WebMock).to have_requested(:get, request_url)
+        .with(headers: {'Authorization'=>'Bearer test-token'}).once
     end
   end
 
@@ -132,6 +142,54 @@ RSpec.describe CanvasAPI do
       expect(WebMock)
         .to have_requested(:post, url)
         .once
+    end
+  end
+
+  describe '#create_course' do
+    let(:name) { 'Test Course Name' }
+    it 'hits the Canvas API correctly' do
+      request_url = "#{CANVAS_API_URL}/accounts/1/courses"
+      stub_request(:post, request_url).to_return( body: FactoryBot.json(:canvas_course) )
+
+      course_data = canvas.create_course(name)
+
+      expect(WebMock).to have_requested(:post, request_url)
+        .with(body: "course%5Bname%5D=Test+Course+Name&offer=true").once
+      expect(course_data).to have_key('id')
+    end
+  end
+
+  describe '#content_migration' do
+    let(:object_type) { 'courses' }
+    let(:object_id) { 42 }
+    let(:body) { {
+      'migration_type': 'course_copy_importer',
+      'settings[source_course_id]': 1,
+    } }
+    it 'hits the Canvas API correctly' do
+      request_url = "#{CANVAS_API_URL}/#{object_type}/#{object_id}/content_migrations"
+      stub_request(:post, request_url).to_return( body: FactoryBot.json(:canvas_content_migration) )
+
+      content_migration = canvas.content_migration(object_type, object_id, body)
+
+      expect(WebMock).to have_requested(:post, request_url)
+        .with(body: "migration_type=course_copy_importer&settings%5Bsource_course_id%5D=1").once
+      expect(content_migration).to have_key('id')
+    end
+  end
+
+  describe '#copy_course' do
+    let(:source_course_id) { 1 }
+    let(:destination_course_id) { 42 }
+    it 'hits the Canvas API correctly' do
+      request_url = "#{CANVAS_API_URL}/courses/#{destination_course_id}/content_migrations"
+      stub_request(:post, request_url).to_return( body: FactoryBot.json(:canvas_content_migration) )
+
+      content_migration = canvas.copy_course(source_course_id, destination_course_id)
+
+      expect(WebMock).to have_requested(:post, request_url)
+        .with(body: "migration_type=course_copy_importer&settings%5Bsource_course_id%5D=#{source_course_id}").once
+      expect(content_migration).to have_key('progress_url')
     end
   end
 

@@ -4,6 +4,7 @@ import { HoneycombSpan } from './honeycomb'
 
 const INPUT_ID_ATTR = 'data-bz-retained';
 const USER_OVERRIDE_ID_ATTR = 'data-user-override-id';
+const CREATED_AT_ATTR= 'data-created-at';
 const XAPI_CONTROLLER_HONEYCOMB_NAME = 'xapi.assignment'; // TODO: rename this file and all references to xapi_project.
 
 export var lrs;
@@ -32,12 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const javascript_variables = document.getElementById('javascript_variables').attributes;
 
     const modifyInputElementForViewer = javascript_variables[USER_OVERRIDE_ID_ATTR]
-        // TA view
+        // project_submissions_controller#show
         ? function(input) {
             input.disabled = true;
             input.classList.add('highlighted-user-input');
         }
-        // Student view
+        // project_submissions_controller#new
         : function(input) { input.onblur = sendStatement };
 
     inputs.forEach(input => modifyInputElementForViewer(input));
@@ -48,11 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function sendStatement(e) {
     const input = e.target;
     const text = input.value;
-
-    // If the input is empty, return early.
-    if (!text) {
-        return;
-    }
 
     const project_lti_id = document.getElementById('javascript_variables').attributes['data-project-lti-id'].value;
     const activity_id = project_lti_id; // e.g. https://braven.instructure.com/courses/48/assignments/158
@@ -128,6 +124,7 @@ function populatePreviousAnswers() {
 
     const honey_span = new HoneycombXhrSpan(XAPI_CONTROLLER_HONEYCOMB_NAME, 'populatePreviousAnswers', {
                                          'statement.query.activity_id': activity_id});
+    let filledInDataInputIDs = new Set();
 
     // Callback for populatePreviousAnswers, called recursively.
     // `sr` is a `TinCan.StatementsResult`.
@@ -141,13 +138,14 @@ function populatePreviousAnswers() {
         }
     
         // Fill empty fields with the first (most recent) response.
-        // Ignore all previous responses once a field is non-empty.
-        // Note: If you empty a field after filling it, this will populate the last non-empty result.
+        // Ignore all previous responses once a field is filled.
         sr.statements.forEach(statement => {
             const data_input_id = statement.target.definition.name.und;
+
             document.querySelectorAll(`[${INPUT_ID_ATTR}="${data_input_id}"]`).forEach(input => {
-                if (!input.value) {
+                if (!filledInDataInputIDs.has(data_input_id)) {
                     input.value = statement.result.response;
+                    filledInDataInputIDs.add(data_input_id);
                 }
             });
         });
@@ -166,7 +164,7 @@ function populatePreviousAnswers() {
     }
 
     if (javascript_variables[USER_OVERRIDE_ID_ATTR]) {
-        // This is the TA view.
+        // project_submissions_controller#show
         // lrs.extended is an undocumented member variable that lets us pass in extra parameters to the LRS.
         // See http://rusticisoftware.github.io/TinCanJS/doc/api/latest/files/src_LRS.js.html#l270
         // We remove this param in our proxy before passing the request upstream.
@@ -188,7 +186,10 @@ function populatePreviousAnswers() {
                 name: "JS_ACTOR_NAME_REPLACE",
                 mbox: "JS_ACTOR_MBOX_REPLACE"
             }),
-            activity: activity_id
+            activity: activity_id,
+            until: javascript_variables[CREATED_AT_ATTR]
+                ? javascript_variables[CREATED_AT_ATTR].value
+                : null,
         },
         callback: populateAnswersCallback
     });

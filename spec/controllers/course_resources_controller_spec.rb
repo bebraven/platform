@@ -64,7 +64,7 @@ RSpec.describe CourseResourcesController, type: :controller do
     let(:canvas_course_id) { '54321' }
     let(:launch_path) { '/lessons/somekey/index.html' }
     let(:lti_launch) { create(:lti_launch_resource_link_request, target_link_uri: 'https://target/link', course_id: canvas_course_id, state: state) }
-    let!(:user) { create :registered_user, admin: true, canvas_id: lti_launch.request_message.canvas_user_id } # TODO: bug where you have to be an admin. Remove admin once that's fixed.
+    let!(:user) { create :registered_user, canvas_user_id: lti_launch.request_message.canvas_user_id }
 
     describe "GET #lti_show" do
 

@@ -11,7 +11,11 @@
   <tbody>
     <tr>
       <td>Name</td>
-      <td><%= @project.name %></td>
+      <td><%= @project.name || @project.custom_content_version.title %></td>
+    </tr>
+    <tr>
+      <td>Custom Content Version</td>
+      <td><%= link_to @project.custom_content_version.id, custom_content_custom_content_version_path(@project.custom_content_version.custom_content, @project.custom_content_version) %></td>
     </tr>
     <tr>
       <td>Submissions</td>
@@ -20,4 +24,3 @@
   </tbody>
 </table>
 <br/>
-<%= link_to 'Back To All Projects', grade_category_projects_path(@project.grade_category) %>

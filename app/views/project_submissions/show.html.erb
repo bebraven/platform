@@ -1,29 +1,4 @@
-<h1>Project Submission</h1>
-<br/>
-<br/>
-<table>
-  <thead>
-    <tr>
-      <th>Attribute</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>User Id</td>
-      <td><%= @project_submission.user_id %></td>
-    </tr>
-    <tr>
-      <td>User Name</td>
-      <td><%= link_to @project_submission.user.full_name, user_path(@project_submission.user)  %></td>
-    </tr>
-    <tr>
-      <td>Project</td>
-      <td><%= link_to @project_submission.project.name, project_path(@project_submission.project) %></td>
-    </tr>
-    <tr>
-      <td>Grade</td>
-       <td><%= as_percent(@project_submission.points_received / @project_submission.project.points_possible) %></td>
-    </tr>
-  </tbody>
-</table>
+<div class="bz-assignment">
+  <%= render 'project' %>
+</div>
+

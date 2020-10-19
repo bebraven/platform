@@ -5,14 +5,14 @@ module DryCrud
   module Controllers
     extend ActiveSupport::Concern
 
-    # DRY's up the index, show, edit, update, destroy, new, create and publish methods
+    # DRY's up the index, show, edit, update, destroy, new, and create methods
     # by setting the appropriate instance variables for the corresponding model
     #
     # NOTE: you can alway override this behavior by defining whatever you want in the 
     # associated controller's index, show, edit, etc methods.
     included do
       before_action :set_models_instance, only: [:index]
-      before_action :set_model_instance, only: [:show, :edit, :update, :destroy, :publish]
+      before_action :set_model_instance, only: [:show, :edit, :update, :destroy]
       before_action :new_model_instance, only: [:new]
     end 
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rest-client'
 
 # Allows you to call into the Salesforce API and retrieve information.
@@ -7,6 +9,8 @@ class SalesforceAPI
 
   # Pass these into any POST or PUT request where the body is json.
   JSON_HEADERS = {content_type: :json, accept: :json}
+
+  DATA_SERVICE_PATH = '/services/data/v49.0'
 
   SFContact = Struct.new(:id, :email, :first_name, :last_name)
   SFParticipant = Struct.new(:first_name, :last_name, :email, :role,
@@ -100,7 +104,7 @@ class SalesforceAPI
         "LC_DocuSign_Template_ID__c " \
       "FROM Program__c WHERE Id = '#{program_id}'"
 
-    response = get("/services/data/v48.0/query?q=#{CGI.escape(soql_query)}")
+    response = get("#{DATA_SERVICE_PATH}/query?q=#{CGI.escape(soql_query)}")
     JSON.parse(response.body)['records'][0]
   end
 
@@ -133,11 +137,39 @@ class SalesforceAPI
 
   # Get information about a Contact record
   def get_contact_info(contact_id)
-    response = get("/services/data/v48.0/sobjects/Contact/#{contact_id}" \
+    response = get("#{DATA_SERVICE_PATH}/sobjects/Contact/#{contact_id}" \
       "?fields=Id,FirstName,LastName,Email,Phone,BZ_Region__c,Preferred_First_Name__c,CreatedDate,Signup_Date__c," \
       "IsEmailBounced,BZ_Geographical_Region__c,Current_Employer__c,Career__c,Title,Job_Function__c,Current_Major__c," \
       "High_School_Graduation_Date__c,Anticipated_Graduation__c,Graduate_Year__c")
     JSON.parse(response.body)
+  end
+
+  # Gets a list of all CohortSchedule's for a Program. The names returned are what the Canvas section
+  # should be called when setting up placeholder sections until the actual cohorts are mapped.
+  def get_cohort_schedule_section_names(program_id)
+    initial_api_path = "#{DATA_SERVICE_PATH}/query/?q=SELECT+DayTime__c+FROM+CohortSchedule__c+WHERE+Program__r.Id='#{program_id}'"
+    recursively_map_soql_column_to_array('DayTime__c', [], initial_api_path)
+  end
+
+  # Gets a list of the names of all Cohorts available for the specified Program.
+  def get_cohort_names(program_id)
+    initial_api_path = "#{DATA_SERVICE_PATH}/query/?q=SELECT+Name+FROM+Cohort__c+WHERE+Program__r.Id='#{program_id}'"
+    recursively_map_soql_column_to_array('Name', [], initial_api_path)
+  end
+
+  # Recursively pages the API in a SOQL query for a particular column 
+  # builds up an array of the results. The initial call to this should be with the query path
+  # and then this calls itself with the next path if necessary.
+  #
+  # See: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_query.htm
+  def recursively_map_soql_column_to_array(column_name, existing_array, api_path)
+    result = existing_array
+    if api_path
+      response_json = JSON.parse(get(api_path).body)
+      new_array = result + response_json['records'].map { |rs| rs[column_name] }
+      result = recursively_map_soql_column_to_array(column_name, new_array, response_json['nextRecordsUrl'])
+    end
+    result
   end
 
   def find_program(id:)
@@ -187,14 +219,14 @@ class SalesforceAPI
                       participant['CohortName'], participant['CohortScheduleDayTime'])
   end
 
-  def update_contact(id, canvas_id:)
-    set_canvas_id(id, canvas_id)
+  def update_contact(id, canvas_user_id:)
+    set_canvas_user_id(id, canvas_user_id)
     true
   end
 
-  def set_canvas_id(contact_id, canvas_id)
-    body = { 'Canvas_User_ID__c' => canvas_id }
-    response = patch("/services/data/v48.0/sobjects/Contact/#{contact_id}", body.to_json, JSON_HEADERS)
+  def set_canvas_user_id(contact_id, canvas_user_id)
+    body = { 'Canvas_User_ID__c' => canvas_user_id }
+    response = patch("#{DATA_SERVICE_PATH}/sobjects/Contact/#{contact_id}", body.to_json, JSON_HEADERS)
   end
 
 # TODO: delete me if we don't need to use a POST for any reason. I figured out how to accept query params in the get after I had implement this.

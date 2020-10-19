@@ -15,6 +15,7 @@ Rails.application.config.assets.paths << Rails.root.join('app', 'assets', 'fonts
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
 Rails.application.config.assets.precompile += %w( accounts.css )
 Rails.application.config.assets.precompile += %w( content_editor.css )
+Rails.application.config.assets.precompile += %w( custom_contents.css )
 Rails.application.config.assets.precompile += %w( lti_placement.css )
 
 # Add fonts to precompile

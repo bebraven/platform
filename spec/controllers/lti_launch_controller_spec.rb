@@ -30,8 +30,8 @@ RSpec.describe LtiLaunchController, type: :controller do
     let!(:id_token) { Keypair.jwt_encode(JSON.parse(id_token_payload, symbolize_names: true)) }
     let!(:lti_launch_params) { { :id_token => id_token, :state => state } }
 
-    context 'user in the launch payload matches a local user by canvas_id' do
-      let!(:lti_user) { create(:registered_user, canvas_id: canvas_user_id) }
+    context 'user in the launch payload matches a local user by canvas_user_id' do
+      let!(:lti_user) { create(:registered_user, canvas_user_id: canvas_user_id) }
 
       before(:each) do
         public_jwks = { keys: [ Keypair.current.public_jwk_export ] }.to_json
@@ -48,7 +48,7 @@ RSpec.describe LtiLaunchController, type: :controller do
         expect(response).to redirect_to(target_link_uri + "?state=#{state}")
       end
 
-      it 'signs in the user with matching canvas_id' do
+      it 'signs in the user with matching canvas_user_id' do
         expect(controller.current_user).to eq lti_user
       end
     end
@@ -57,11 +57,12 @@ RSpec.describe LtiLaunchController, type: :controller do
       before(:each) do
         public_jwks = { keys: [ Keypair.current.public_jwk_export ] }.to_json
         stub_request(:get, LtiIdToken::PUBLIC_JWKS_URL).to_return(body: public_jwks)
-        post :launch, params: lti_launch_params
       end
 
       it 'does not sign in the user' do
-        expect(controller.current_user).to eq nil
+        expect {
+          post :launch, params: lti_launch_params
+        }.to raise_error(Pundit::NotAuthorizedError)
       end
     end
   end

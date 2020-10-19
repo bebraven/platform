@@ -16,7 +16,7 @@
         { "url": "heroku/ruby" }
       ],
       "scripts": {
-        "postdeploy": "DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:schema:load db:seed"
+        "postdeploy": "DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:schema:load db:seed db:production_dummies"
       }
     }
   }

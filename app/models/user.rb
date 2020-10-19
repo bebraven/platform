@@ -4,9 +4,8 @@ require 'canvas_api'
 require 'sync_to_lms'
 
 class User < ApplicationRecord
+  rolify
   include Devise::Models::DatabaseAuthenticatable
-
-  ADMIN_DOMAIN_WHITELIST = ['bebraven.org', 'beyondz.org']
 
   # We're making the user model cas_authenticable, meaning that you need to go through the SSO CAS
   # server configured in config/initializers/devise.rb. However, "that" SSO server is "this" server
@@ -28,27 +27,7 @@ class User < ApplicationRecord
   has_many :projects, :through => :project_submissions
   has_many :lesson_submissions
   has_many :lessons, :through => :lesson_submissions
-  has_many :course_memberships
-  has_many :courses, through: :course_memberships
-  has_many :roles, through: :course_memberships
 
-  has_many :user_sections
-  has_many :sections, through: :user_sections do
-    def as_fellow
-      merge(UserSection.enrolled)
-    end
-
-    def as_lc
-      merge(UserSection.facillitates)
-    end
-
-    def as_ta
-      merge(UserSection.assists)
-    end
-  end
-
-  before_create :attempt_admin_set, unless: :admin?
-  
   validates :email, uniqueness: true
   validates :email, :first_name, :last_name, presence: true
   validates :email, presence: true
@@ -57,37 +36,32 @@ class User < ApplicationRecord
     [first_name, last_name].join(' ')
   end
 
+  # All sections where this user has any role.
+  # This is a function just because I don't know how to write it as an association.
+  def sections
+    Section.with_roles(roles.distinct.map { |r| r.name }, self).distinct
+  end
+
+  # All sections with a specific role.
+  def sections_with_role(role_name)
+    Section.with_roles(role_name, self).distinct
+  end
+
   # True if the user has confirmed their account and can login.  
   def confirmed?
     !!confirmed_at
   end
 
-  def start_membership(base_course_id, role_id)
-    find_membership(base_course_id, role_id) ||
-      course_memberships.create(base_course_id: base_course_id, role_id: role_id, start_date: Date.today)
+  def admin?
+    has_role? :admin
   end
-  
-  def end_membership(base_course_id, role_id)
-    if course_membership = find_membership(base_course_id, role_id)
-      course_membership.update! end_date: Date.yesterday
-    else
-      return false
+
+  # True if this user is a TA in the same section where target_user is a student.
+  def ta_for?(target_user)
+    sections_with_role(RoleConstants::TA_ENROLLMENT).each do |section|
+      return true if target_user.has_role? RoleConstants::STUDENT_ENROLLMENT, section
     end
-  end
-  
-  def update_membership(base_course_id, old_role_id, new_role_id)
-    return if old_role_id == new_role_id
-    
-    end_membership(base_course_id, old_role_id)
-    start_membership(base_course_id, new_role_id)
-  end
-  
-  def find_membership(base_course_id, role_id)
-    course_memberships.current.find_by(base_course_id: base_course_id, role_id: role_id)
-  end
-  
-  def current_membership(base_course_id)
-    course_memberships.current.find_by base_course_id: base_course_id
+    false
   end
 
   def total_grade(base_course)
@@ -113,13 +87,6 @@ class User < ApplicationRecord
 
   private
   
-  def attempt_admin_set
-    return if email.nil?
-    
-    domain = email.split('@').last
-    self.admin = ADMIN_DOMAIN_WHITELIST.include?(domain)
-  end
-
   # Handles anything that should happen when a new account is being registered
   # using the new_user_registration route
   def do_account_registration
@@ -127,7 +94,7 @@ class User < ApplicationRecord
     if sync_salesforce_info # They can't register for Canvas access if they aren't Enrolled in Salesforce
       setup_canvas_access
       Rails.logger.info('Done setting up canvas access')
-      store_canvas_id_in_salesforce
+      store_canvas_user_id_in_salesforce
     end
   end
 
@@ -144,13 +111,13 @@ class User < ApplicationRecord
 
   # Looks up their Canvas account and sets the Id so that on login we can redirect them there.
   def setup_canvas_access
-    return if canvas_id
+    return if canvas_user_id
 
     Rails.logger.info("Setting up Canvas account and enrollments for user: #{inspect}")
-    self.canvas_id = SyncToLMS.new.for_contact(salesforce_id)
+    self.canvas_user_id = SyncToLMS.new.for_contact(salesforce_id)
   end
 
-  def store_canvas_id_in_salesforce
-    SalesforceAPI.client.set_canvas_id(salesforce_id, canvas_id)
+  def store_canvas_user_id_in_salesforce
+    SalesforceAPI.client.set_canvas_user_id(salesforce_id, canvas_user_id)
   end
 end

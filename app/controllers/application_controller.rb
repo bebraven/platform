@@ -5,10 +5,17 @@ require 'canvas_api'
 class ApplicationController < ActionController::Base
   include RubyCAS::Server::Core::Tickets
   include DryCrud::Controllers
+  include Pundit
 
   before_action :authenticate_user!
-  before_action :ensure_admin!
   after_action :remove_x_frame_options
+
+  # This callback is a development helper that complains if an action has not explicitly
+  # called `authorize`. It is *not* a fallback mechanism, and should not be relied upon
+  # for added security. Its only purpose is to remind us to call `authorize` in each action.
+  # The `unless` param excludes CasSessionsController from this check, since we have no
+  # reason to call authorize in devise or CAS controller acitons.
+  after_action :verify_authorized, unless: :devise_controller?
 
   private
   
@@ -16,13 +23,6 @@ class ApplicationController < ActionController::Base
     super unless authorized_by_token? || cas_ticket?
   end
 
-  def ensure_admin!
-    if current_user
-      return redirect_to(CanvasAPI.client.canvas_url) if current_user.canvas_id && !current_user.admin?
-      return redirect_to('/unauthorized') unless current_user.admin?
-    end
-  end
-  
   def authorized_by_token?
     return false unless request.format.symbol == :json
 

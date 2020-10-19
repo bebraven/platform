@@ -122,3 +122,7 @@ gem 'aws-sdk-s3'
 gem 'rubyzip'
 
 gem 'rails_same_site_cookie'
+
+# authorization
+gem "pundit"
+gem "rolify"

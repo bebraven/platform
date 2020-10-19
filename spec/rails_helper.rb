@@ -113,3 +113,6 @@ require 'api_helper'
 # Note: we "load" here b/c it was already "required" before the Rack stuff loaded
 # so it seemed to be getting clobbered.
 load 'support/http_streaming_response_patch'
+
+# Pundit authorization.
+require "pundit/rspec"

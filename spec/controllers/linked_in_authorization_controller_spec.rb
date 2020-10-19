@@ -3,7 +3,7 @@ require 'linked_in_api'
 
 RSpec.describe LinkedInAuthorizationController, type: :controller do
   render_views
-  let(:user) { create :fellow_user, admin: true }
+  let(:user) { create :fellow_user }
   let(:valid_session) { {} }
 
   before do

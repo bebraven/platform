@@ -1,16 +1,20 @@
 require "rails_helper"
 require "capybara_helper"
 require "json"
+
 include ERB::Util
 include Rack::Utils
 
 unless ENV['BZ_AUTH_SERVER'] # Only run these specs if on a server with local database authentication enabled
 
-RSpec.describe CasController, type: :routing do
+RSpec.describe CasController, type: :controller do
+  render_views
+
   describe "RubyCAS routing" do
     let!(:valid_user) { create(:registered_user) }
     let(:valid_user_creds) {{ email: valid_user.email, password: valid_user.password }}
-    let(:return_service) { 'http://braven/' }
+    # Must be a page a non-admin user can access. The host is *ignored*, even if explicitly set.
+    let(:return_service) { 'http://braven/cas/login' }
 
     it "fails validate a service ticket because no ticket specified" do
       # Attempt to validate the ticket

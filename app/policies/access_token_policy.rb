@@ -1,0 +1,2 @@
+class AccessTokenPolicy < ApplicationPolicy
+end

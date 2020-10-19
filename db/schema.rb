@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_15_173814) do
+ActiveRecord::Schema.define(version: 2020_10_06_180732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,14 +45,12 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "addresses", force: :cascade do |t|
-    t.string "line1", null: false
-    t.string "line2"
-    t.string "city", null: false
-    t.string "state", null: false
-    t.string "zip", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "base_course_projects", force: :cascade do |t|
+    t.bigint "base_course_id", null: false
+    t.bigint "project_id", null: false
+    t.integer "canvas_assignment_id"
+    t.index ["base_course_id"], name: "index_base_course_projects_on_base_course_id"
+    t.index ["project_id"], name: "index_base_course_projects_on_project_id"
   end
 
   create_table "base_courses", force: :cascade do |t|
@@ -66,18 +64,24 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.index ["name"], name: "index_base_courses_on_name", unique: true
   end
 
-  create_table "course_content_histories", force: :cascade do |t|
-    t.bigint "course_content_id", null: false
+  create_table "course_resources", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "custom_content_versions", force: :cascade do |t|
+    t.bigint "custom_content_id", null: false
     t.string "title"
     t.text "body"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id"
-    t.index ["course_content_id"], name: "index_course_content_histories_on_course_content_id"
-    t.index ["user_id"], name: "index_course_content_histories_on_user_id"
+    t.index ["custom_content_id"], name: "index_custom_content_versions_on_custom_content_id"
+    t.index ["user_id"], name: "index_custom_content_versions_on_user_id"
   end
 
-  create_table "course_contents", force: :cascade do |t|
+  create_table "custom_contents", force: :cascade do |t|
     t.string "title"
     t.text "body"
     t.datetime "published_at"
@@ -89,33 +93,6 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.string "course_name"
   end
 
-  create_table "course_memberships", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "base_course_id", null: false
-    t.integer "role_id", null: false
-    t.date "start_date"
-    t.date "end_date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["base_course_id"], name: "index_course_memberships_on_base_course_id"
-    t.index ["role_id"], name: "index_course_memberships_on_role_id"
-    t.index ["user_id", "base_course_id", "role_id"], name: "program_memberships_index"
-    t.index ["user_id"], name: "index_course_memberships_on_user_id"
-  end
-
-  create_table "course_resources", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "emails", force: :cascade do |t|
-    t.string "value", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["value"], name: "index_emails_on_value"
-  end
-
   create_table "grade_categories", force: :cascade do |t|
     t.bigint "base_course_id", null: false
     t.string "name", null: false
@@ -123,20 +100,6 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["base_course_id"], name: "index_grade_categories_on_base_course_id"
-  end
-
-  create_table "industries", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_industries_on_name"
-  end
-
-  create_table "interests", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_interests_on_name"
   end
 
   create_table "keypairs", force: :cascade do |t|
@@ -201,30 +164,12 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.index ["parent_id"], name: "index_location_relationships_on_parent_id"
   end
 
-  create_table "locations", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["code"], name: "index_locations_on_code", unique: true
-    t.index ["name"], name: "index_locations_on_name", unique: true
-  end
-
   create_table "login_tickets", force: :cascade do |t|
     t.string "ticket", null: false
     t.datetime "created_on", null: false
     t.datetime "created_at", null: false
     t.datetime "consumed"
     t.string "client_hostname", null: false
-  end
-
-  create_table "logistics", force: :cascade do |t|
-    t.string "day_of_week", null: false
-    t.string "time_of_day", null: false
-    t.integer "base_course_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["day_of_week", "time_of_day", "base_course_id"], name: "index_logistics_on_day_time_course", unique: true
   end
 
   create_table "lti_launches", force: :cascade do |t|
@@ -241,35 +186,6 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.index ["state"], name: "index_lti_launches_on_state", unique: true
   end
 
-  create_table "majors", force: :cascade do |t|
-    t.string "name"
-    t.integer "parent_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_majors_on_name"
-    t.index ["parent_id"], name: "index_majors_on_parent_id"
-  end
-
-  create_table "phones", force: :cascade do |t|
-    t.string "value", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["value"], name: "index_phones_on_value", unique: true
-  end
-
-  create_table "postal_codes", force: :cascade do |t|
-    t.string "code"
-    t.decimal "latitude", precision: 10, scale: 6
-    t.decimal "longitude", precision: 10, scale: 6
-    t.string "msa_code"
-    t.string "state"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "city"
-    t.index ["code"], name: "index_postal_codes_on_code", unique: true
-    t.index ["state"], name: "index_postal_codes_on_state"
-  end
-
   create_table "project_submissions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "project_id", null: false
@@ -283,14 +199,16 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
   end
 
   create_table "projects", force: :cascade do |t|
-    t.bigint "grade_category_id", null: false
-    t.string "name", null: false
-    t.integer "points_possible", null: false
-    t.float "percent_of_grade_category", null: false
-    t.boolean "grades_muted", default: false, null: false
+    t.string "name"
+    t.integer "points_possible"
+    t.float "percent_of_grade_category"
+    t.boolean "grades_muted", default: false
     t.datetime "grades_published_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "grade_category_id"
+    t.bigint "custom_content_version_id"
+    t.index ["custom_content_version_id"], name: "index_projects_on_custom_content_version_id"
     t.index ["grade_category_id"], name: "index_projects_on_grade_category_id"
   end
 
@@ -305,10 +223,13 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
   end
 
   create_table "roles", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_roles_on_name", unique: true
+    t.string "name"
+    t.string "resource_type"
+    t.bigint "resource_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
   end
 
   create_table "rubric_grades", force: :cascade do |t|
@@ -369,10 +290,10 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
 
   create_table "sections", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "logistic_id", null: false
     t.integer "base_course_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "canvas_section_id"
     t.index ["name", "base_course_id"], name: "index_sections_on_name_and_base_course_id", unique: true
   end
 
@@ -411,7 +332,6 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
 
   create_table "users", force: :cascade do |t|
     t.string "email"
-    t.boolean "admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "encrypted_password", default: "", null: false
@@ -431,29 +351,38 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.string "salesforce_id"
-    t.integer "canvas_id"
+    t.integer "canvas_user_id"
     t.integer "join_user_id"
     t.string "linked_in_access_token"
     t.string "linked_in_state"
-    t.index ["admin"], name: "index_users_on_admin"
-    t.index ["canvas_id"], name: "index_users_on_canvas_id", unique: true
+    t.index ["canvas_user_id"], name: "index_users_on_canvas_user_id", unique: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "users_roles", id: false, force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "role_id"
+    t.index ["role_id"], name: "index_users_roles_on_role_id"
+    t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
+    t.index ["user_id"], name: "index_users_roles_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "base_course_projects", "base_courses"
+  add_foreign_key "base_course_projects", "projects"
   add_foreign_key "base_courses", "course_resources"
-  add_foreign_key "course_content_histories", "course_contents"
-  add_foreign_key "course_content_histories", "users"
+  add_foreign_key "custom_content_versions", "custom_contents"
+  add_foreign_key "custom_content_versions", "users"
   add_foreign_key "grade_categories", "base_courses"
   add_foreign_key "lesson_interactions", "users"
   add_foreign_key "lesson_submissions", "lessons"
   add_foreign_key "lesson_submissions", "users"
   add_foreign_key "lessons", "grade_categories"
-  add_foreign_key "logistics", "base_courses"
   add_foreign_key "project_submissions", "projects"
   add_foreign_key "project_submissions", "users"
+  add_foreign_key "projects", "custom_content_versions"
   add_foreign_key "projects", "grade_categories"
   add_foreign_key "rubric_grades", "project_submissions"
   add_foreign_key "rubric_grades", "rubrics"
@@ -464,7 +393,6 @@ ActiveRecord::Schema.define(version: 2020_09_15_173814) do
   add_foreign_key "rubric_rows", "rubric_row_categories"
   add_foreign_key "rubrics", "projects"
   add_foreign_key "sections", "base_courses"
-  add_foreign_key "sections", "logistics"
   add_foreign_key "user_sections", "sections"
   add_foreign_key "user_sections", "users"
 end

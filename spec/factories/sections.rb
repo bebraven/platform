@@ -3,6 +3,5 @@ FactoryBot.define do
     sequence(:name) { |i| "Section Name #{i}" }
 
     association :course, factory: :course
-    association :logistic, factory: :logistic
   end
 end

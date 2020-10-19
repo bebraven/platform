@@ -44,7 +44,7 @@ export default class SliderQuestionEditing extends Plugin {
         schema.register( 'sliderFeedback', {
             isObject: true,
             allowIn: [ '$root', 'tableCell' ],
-            allowAttributes: [ 'data-bz-range-flr', 'data-bz-range-clg' ],
+            allowAttributes: [ 'data-bz-range-flr', 'data-bz-range-clg', 'aria-live' ],
             allowContentOf: [ '$block' ],
         } );
     }
@@ -98,6 +98,7 @@ export default class SliderQuestionEditing extends Plugin {
                 return modelWriter.createElement( 'sliderFeedback', {
                     'data-bz-range-flr': viewElement.getAttribute('data-bz-range-flr') || 0,
                     'data-bz-range-clg': viewElement.getAttribute('data-bz-range-clg') || 100,
+                    'aria-live': 'polite',
                 } );
             }
         } );
@@ -108,6 +109,7 @@ export default class SliderQuestionEditing extends Plugin {
                     'class': 'feedback',
                     'data-bz-range-flr': modelElement.getAttribute('data-bz-range-flr') || 0,
                     'data-bz-range-clg': modelElement.getAttribute('data-bz-range-clg') || 100,
+                    'aria-live': 'polite',
                 } );
             }
         } );
@@ -118,6 +120,7 @@ export default class SliderQuestionEditing extends Plugin {
                     'class': 'feedback',
                     'data-bz-range-flr': modelElement.getAttribute('data-bz-range-flr') || 0,
                     'data-bz-range-clg': modelElement.getAttribute('data-bz-range-clg') || 100,
+                    'aria-live': 'polite',
                 } );
 
                 return toWidgetEditable( div, viewWriter );

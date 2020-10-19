@@ -2,7 +2,9 @@
   Course Management
 <% end %>
 
-<%= success(notice) %>
+<% content_for(:headline_buttons) do %>
+  <%= link_to 'Launch new program', course_management_launch_path, class: 'btn btn-sm btn-outline-secondary' %>
+<% end %>
 
 <h3>Course Templates</h3>
 <%= link_to 'New course template', new_course_template_path, class: 'btn btn-sm btn-outline-secondary' %>

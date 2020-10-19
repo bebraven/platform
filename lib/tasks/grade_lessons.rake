@@ -43,7 +43,7 @@ namespace :grade do
         user = User.find(record.user_id)
         grades[record.canvas_course_id] ||= Hash.new
         grades[record.canvas_course_id][record.canvas_assignment_id] ||= Hash.new
-        grades[record.canvas_course_id][record.canvas_assignment_id][user.canvas_id] = "#{LessonGradeCalculator.compute_grade(user.id, record.root_activity_id)}%"
+        grades[record.canvas_course_id][record.canvas_assignment_id][user.canvas_user_id] = "#{LessonGradeCalculator.compute_grade(user.id, record.root_activity_id)}%"
       end
     end
 

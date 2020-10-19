@@ -6,9 +6,10 @@ RSpec.describe LessonContentsController, type: :controller do
 
   let(:state) { LtiLaunchController.generate_state }
   let!(:lti_launch) { create(:lti_launch_assignment_selection, target_link_uri: 'https://target/link', state: state) }
-  let!(:user) { create :registered_user, admin: true, canvas_id: lti_launch.request_message.canvas_user_id} # TODO: bug where you have to be an admin. Remove admin once that's fixed.
 
   describe "GET #new" do
+    let!(:user) { create :admin_user, canvas_user_id: lti_launch.request_message.canvas_user_id }
+
     it "returns a success response" do
       get :new, params: {state: state}
       expect(response).to be_successful
@@ -21,7 +22,9 @@ RSpec.describe LessonContentsController, type: :controller do
   end
 
   describe "GET #show" do
+    let!(:user) { create :registered_user, canvas_user_id: lti_launch.request_message.canvas_user_id }
     let(:lesson_content_with_zipfile) { create(:lesson_content_with_zipfile) }
+
     context 'existing lesson content' do
       it 'redirects to public url with LRS query parameters' do
         launch_path = '/lessons/somekey/index.html'
@@ -41,6 +44,7 @@ RSpec.describe LessonContentsController, type: :controller do
   end
 
   describe "POST #create" do
+    let!(:user) { create :admin_user, canvas_user_id: lti_launch.request_message.canvas_user_id }
     let(:file_upload) { fixture_file_upload(Rails.root.join('spec/fixtures', 'example_rise360_package.zip'), 'application/zip') }
 
     context "with invalid params" do
