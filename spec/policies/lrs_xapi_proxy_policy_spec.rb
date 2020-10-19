@@ -19,8 +19,8 @@ RSpec.describe LrsXapiProxyPolicy, type: :policy do
       user1 = create(:registered_user)
       user2 = create(:registered_user)
       section = create(:section)
-      user1.add_role :student, section
-      user2.add_role :student, section
+      user1.add_role RoleConstants::STUDENT_ENROLLMENT, section
+      user2.add_role RoleConstants::STUDENT_ENROLLMENT, section
       expect(subject).not_to permit(user1, user2)
     end
 
@@ -28,8 +28,8 @@ RSpec.describe LrsXapiProxyPolicy, type: :policy do
       user1 = create(:registered_user)
       user2 = create(:registered_user)
       section = create(:section)
-      user1.add_role :ta, section
-      user2.add_role :student, section
+      user1.add_role RoleConstants::TA_ENROLLMENT, section
+      user2.add_role RoleConstants::STUDENT_ENROLLMENT, section
       expect(subject).to permit(user1, user2)
     end
 
@@ -38,8 +38,8 @@ RSpec.describe LrsXapiProxyPolicy, type: :policy do
       user2 = create(:registered_user)
       section1 = create(:section)
       section2 = create(:section)
-      user1.add_role :ta, section1
-      user2.add_role :student, section2
+      user1.add_role RoleConstants::TA_ENROLLMENT, section1
+      user2.add_role RoleConstants::STUDENT_ENROLLMENT, section2
       expect(subject).not_to permit(user1, user2)
     end
   end

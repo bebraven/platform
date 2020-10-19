@@ -22,15 +22,22 @@ FactoryBot.define do
       confirmed_at { DateTime.now }
 
       factory :fellow_user do
+        transient do
+          section { build(:section) }
+        end
         canvas_user_id { '1234' }
-        after :create do |user|
-          user.add_role :student
+        after :create do |user, options|
+          user.add_role RoleConstants::STUDENT_ENROLLMENT, options.section
         end
       end
 
       factory :ta_user do
-        after :create do |user|
-          user.add_role :ta
+        transient do
+          section { build(:section) }
+        end
+        canvas_user_id { '1235' }
+        after :create do |user, options|
+          user.add_role RoleConstants::TA_ENROLLMENT, options.section
         end
       end
 

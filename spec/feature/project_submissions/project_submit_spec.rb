@@ -5,7 +5,11 @@ require 'lti_advantage_api'
 require 'lti_score'
 
 RSpec.feature 'Submit a project', :type => :feature do
-  let!(:project_submission) { create :project_submission }
+  let(:project) { create :project }
+  let(:course_project) { create :course_project, project_id: project.id }
+  let(:section) { create :section, base_course_id: course_project.base_course_id }
+  let(:user) { create :fellow_user, section: section }
+  let!(:project_submission) { create :project_submission, project_id: project.id, user: user }
   let!(:lti_launch) { 
     create(
       :lti_launch_assignment, 

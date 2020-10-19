@@ -60,7 +60,7 @@ RSpec.describe CanvasAPI do
     let(:section_id) { 50 }
 
     it 'hits the Canvas API correctly' do
-      request_url = "#{CANVAS_API_URL}/accounts/1/users?search_term=#{CGI.escape(email)}"
+      request_url = "#{CANVAS_API_URL}/accounts/1/users?search_term=#{CGI.escape(email)}&include[]=email"
       response_user = FactoryBot.json(:canvas_user)
       response_json = "[#{response_user}]"
       stub_request(:get, request_url).to_return( body: response_json ) 
@@ -70,6 +70,16 @@ RSpec.describe CanvasAPI do
       expect(WebMock).to have_requested(:get, request_url)
         .with(headers: {'Authorization'=>'Bearer test-token'}).once
       expect(response).to eq(JSON.parse(response_user))
+    end
+
+    it 'correctly escapes special characters' do
+      request_url = "#{CANVAS_API_URL}/accounts/1/users?include[]=email&search_term=test%2Bterm"
+      stub_request(:get, request_url).to_return( body: "[]" ) 
+
+      response = canvas.find_user_in_canvas('test+term')
+
+      expect(WebMock).to have_requested(:get, request_url)
+        .with(headers: {'Authorization'=>'Bearer test-token'}).once
     end
   end
 

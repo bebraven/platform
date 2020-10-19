@@ -14,7 +14,7 @@ class SyncPortalEnrollmentsForProgram
         student_id: participant.student_id
       )
       if portal_user.nil?
-        # log skip no account yet
+        Rails.logger.debug("no portal account yet for '#{participant.email}'; skipping")
         next
       end
 

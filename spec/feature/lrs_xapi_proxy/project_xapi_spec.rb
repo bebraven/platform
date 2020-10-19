@@ -8,7 +8,11 @@ include Rack::Utils
 unless ENV['BZ_AUTH_SERVER'] # Only run these specs if on a server with local database authentication enabled
 
 RSpec.describe ProjectSubmissionsController, type: :feature do
-  let(:project_submission) { create :project_submission }
+  let(:project) { create :project }
+  let(:course_project) { create :course_project, project_id: project.id }
+  let(:section) { create :section, base_course_id: course_project.base_course_id }
+  let(:user) { create :fellow_user, section: section }
+  let(:project_submission) { create :project_submission, project_id: project.id, user: user }
   let!(:lti_launch) {
     create(
       :lti_launch_assignment,
@@ -67,7 +71,7 @@ RSpec.describe ProjectSubmissionsController, type: :feature do
     # "sends data to the LRS". 
     # It might be that the shared LRS and reusing the question_id is causing 
     # the value to get overwritten?
-    it "fetches data from the lrs", ci_exclude: true do
+    it "fetches the most recent data from the lrs", ci_exclude: true do
       question_id = "h2c2-0600-next-steps"
       unique_string = SecureRandom.uuid
       lrs_variables = {
@@ -77,46 +81,53 @@ RSpec.describe ProjectSubmissionsController, type: :feature do
         id: 'test',
       }
 
+      # Check that data is fetched
       VCR.use_cassette('lrs_xapi_proxy_load_previous', :match_requests_on => [:path, :method], :erb => lrs_variables) do
         visit url
         expect(page).to have_selector("[data-bz-retained=\"#{question_id}\"]")
         expect(page).to have_field('test-question-id')
         expect(page).to have_field('test-question-id', with: unique_string)
       end
+
+      # Check that we called the endpoint in lrs_xapi_proxy_load_previous
+      # without specifying the until query parameter
+      expect(WebMock)
+        .to have_requested(:get, 'https://lrs.braven.org/data/xAPI/statements')
+        .with(query: hash_excluding({until: nil}))
+        .at_least_once
     end
 
-    it "sends data to the LRS" do
-      # Answer a question.
-      unique_string = SecureRandom.uuid
+    ['', SecureRandom.uuid].each do |answer|
+      it "sends '#{answer}' to the LRS" do  
+        VCR.use_cassette(
+          'lrs_xapi_proxy_load_send',
+          :match_requests_on => [:path, :method],
+        ) do
+          find("textarea").fill_in with: answer
+          # The xAPI code runs on blur, so click off the textarea.
+          find("p").click
+          # Wait for the async JS to finish and update the DOM.
+          expect(page).to have_selector("textarea[data-xapi-statement-id]")
+        end
 
-      VCR.use_cassette(
-        'lrs_xapi_proxy_load_send',
-        :match_requests_on => [:path, :method],
-      ) do
-        find("textarea").fill_in with: unique_string
-        # The xAPI code runs on blur, so click off the textarea.
-        find("p").click
-        # Wait for the async JS to finish and update the DOM.
-        expect(page).to have_selector("textarea[data-xapi-statement-id]")
-      end
+        # Check the LRS to make sure the answer actually got there.
+        question_id = "h2c2-0600-next-steps"
+        statement_id = find("textarea")['data-xapi-statement-id']
 
-      # Check the LRS to make sure the answer actually got there.
-      question_id = "h2c2-0600-next-steps"
-      statement_id = find("textarea")['data-xapi-statement-id']
+        lrs_variables = {
+          response: answer,
+          lrs_url: Rails.application.secrets.lrs_url,
+          id: statement_id,
+        }
 
-      lrs_variables = {
-        response: unique_string,
-        lrs_url: Rails.application.secrets.lrs_url,
-        id: statement_id,
-      }
-
-      VCR.use_cassette('lrs_xapi_proxy_fetch', :match_requests_on => [:path, :method], :erb => lrs_variables) do
-        lrs_query = "/statements?statementId=#{statement_id}&format=exact&attachments=false"
-        visit "/data/xAPI/#{lrs_query}"
-        xapi_response = JSON.parse page.text
-        expect(xapi_response['id']).to eq statement_id
-        expect(xapi_response['object']['definition']['name']['und']).to eq question_id
-        expect(xapi_response['result']['response']).to eq unique_string
+        VCR.use_cassette('lrs_xapi_proxy_fetch', :match_requests_on => [:path, :method], :erb => lrs_variables) do
+          lrs_query = "/statements?statementId=#{statement_id}&format=exact&attachments=false"
+          visit "/data/xAPI/#{lrs_query}"
+          xapi_response = JSON.parse page.text
+          expect(xapi_response['id']).to eq statement_id
+          expect(xapi_response['object']['definition']['name']['und']).to eq question_id
+          expect(xapi_response['result']['response']).to eq answer
+        end
       end
     end
   end
@@ -138,6 +149,38 @@ RSpec.describe ProjectSubmissionsController, type: :feature do
         uri.query = { state: lti_launch.state }.to_query
         uri.to_s
       }
+
+      it "fetches only the data for the submission", ci_exclude: true do
+        question_id = "h2c2-0600-next-steps"
+        unique_string = SecureRandom.uuid
+        lrs_variables = {
+          response: unique_string,
+          lrs_url: Rails.application.secrets.lrs_url,
+          name: question_id,
+          id: 'test',
+        }
+
+        # Add in created_at time
+        project_submission.created_at = Time.now
+        project_submission.save!
+
+        # Check that data is fetched
+        VCR.use_cassette('lrs_xapi_proxy_load_previous', :match_requests_on => [:path, :method], :erb => lrs_variables) do
+          visit url
+          expect(page).to have_selector("[data-bz-retained=\"#{question_id}\"]")
+          expect(page).to have_field('test-question-id', disabled: true)
+          # We can't test this because the field is disabled and we're not
+          # able to actually fill it in with the recording
+          #expect(page).to have_field('test-question-id', disabled: true, with: unique_string)
+        end
+
+        # Check that we called the endpoint in lrs_xapi_proxy_load_previous
+        # with the "until" parameter
+        expect(WebMock)
+          .to have_requested(:get, 'https://lrs.braven.org/data/xAPI/statements')
+          .with(query: hash_including({until: project_submission.created_at.iso8601}))
+          .at_least_once
+      end
 
       it "shows the submission" do
         # Do some basic tests first to give a little more granularity if this fails.

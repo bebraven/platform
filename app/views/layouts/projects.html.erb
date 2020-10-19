@@ -2,6 +2,8 @@
 
 <% content_for :head do %>
     <%= portal_stylesheet_link_tag %>
+    <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag 'custom_contents', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'server_rendering' %>
     <%= javascript_pack_tag 'project_submit_button' %>
 <% end %>

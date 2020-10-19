@@ -58,8 +58,8 @@ class User < ApplicationRecord
 
   # True if this user is a TA in the same section where target_user is a student.
   def ta_for?(target_user)
-    sections_with_role(:ta).each do |section|
-      return true if target_user.has_role? :student, section
+    sections_with_role(RoleConstants::TA_ENROLLMENT).each do |section|
+      return true if target_user.has_role? RoleConstants::STUDENT_ENROLLMENT, section
     end
     false
   end

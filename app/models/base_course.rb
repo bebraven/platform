@@ -1,8 +1,10 @@
 class BaseCourse < ApplicationRecord
   belongs_to :course_resource, optional: true
 
+  has_many :base_course_projects
+  has_many :projects, :through => :base_course_projects
+
   has_many :grade_categories
-  has_many :projects, :through => :grade_categories
   has_many :lessons, :through => :grade_categories
 
   before_validation do
@@ -28,6 +30,9 @@ class BaseCourse < ApplicationRecord
   # executing for a given semester at a given school.
 
   validates :name, :type, presence: true
+
+  scope :courses, -> { where type: 'Course' }
+  scope :course_templates, -> { where type: 'CourseTemplate' }
 
   def to_show
     attributes.slice('name')

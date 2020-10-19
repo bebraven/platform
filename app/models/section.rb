@@ -1,10 +1,7 @@
 class Section < ApplicationRecord
   resourcify
 
-  belongs_to :logistic
-  belongs_to :course, -> {
-    where(base_courses: { type: 'Course' })
-  }, foreign_key: :base_course_id
+  belongs_to :course, -> { courses }, foreign_key: :base_course_id
 
   before_validation { name.try(:strip!) }
 

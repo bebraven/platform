@@ -14,6 +14,12 @@ class Project < ApplicationRecord
 
   has_many :project_submissions
   has_many :users, :through => :project_submissions
+
+  has_many :base_course_projects
+  has_many :base_courses, through: :base_course_projects
+  has_many :courses, -> { courses }, through: :base_course_projects, source: :base_course, class_name: 'Course'
+  has_many :course_templates, -> { course_templates }, through: :base_course_projects, source: :base_course, class_name: 'CourseTemplate'
+ 
   alias_attribute :submissions, :project_submissions
 
   # TODO: group projects? A project where there is one submission for

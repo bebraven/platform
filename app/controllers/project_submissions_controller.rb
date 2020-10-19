@@ -10,35 +10,38 @@ class ProjectSubmissionsController < ApplicationController
 
   nested_resource_of Project
 
-  before_action :set_project
   before_action :set_lti_launch
+  before_action :set_project
   skip_before_action :verify_authenticity_token, only: [:create], if: :is_sessionless_lti_launch?
 
   def show
     authorize @project_submission
 
     @user_override_id = @project_submission.user.id
-    @custom_content_version = @project.custom_content_version
     @project_lti_id = @lti_launch.activity_id
   end
 
   def new
-    @project_submission = ProjectSubmission.new
+    @project_submission = ProjectSubmission.new(
+      user: current_user,
+      project: @project,
+    )
     authorize @project_submission
 
-    @custom_content_version = @project.custom_content_version
-    @has_previous_submission = LtiAdvantageAPI
-      .new(@lti_launch)
-      .get_line_item_for_user(current_user.canvas_user_id)
-      .present?
+    @has_previous_submission = ProjectSubmission.for_projects_and_user(
+      @project_submission.project,
+      @project_submission.user,
+    ).exists?
+
     @project_lti_id = @lti_launch.activity_id
   end
 
-  # Project submissions aren't recorded in our DB yet.
-  # The fact that a student has submitted a project (e.g., clicked the "Submit"
-  # button) is recorded in Canvas as an LTIScore.
-  # The project responses entered by the student are recorded in the LRS and 
-  # retrieved when we view the submission by xapi_assignment.js.
+  # Eventually, we'll store the responses in the ProjectSubmission itself.
+  # TODO: https://app.asana.com/0/1174274412967132/1197477442813577
+  # For now, we use the ProjectSubmission's created_at time to query the LRS
+  # when we view the submission. (See xapi_assignment.js.)
+  # We also record an LTIScore in Canvas so the submission is visible through
+  # the SpeedGrader.
   def create
     # Create a submission for this user and project
     @project_submission = ProjectSubmission.new(

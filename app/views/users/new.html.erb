@@ -8,7 +8,15 @@
 <div class="container">
   <div class="row">
     <div class="col-sm">
-      <%= form_for(@user, url: users_path) do |f| %>
+      <%#
+        Note: This uses admin_users_path, **not** users_path.
+        This lets bypass Devise's redirect to RegistrationsController#create
+        and post to our intended endpoint, UsersControllers#create.
+        See routes.rb for how this is configured.
+        TODO: https://app.asana.com/0/1174274412967132/1198306929320757
+        Write a spec for this.
+      %>
+      <%= form_for(@user, url: admin_users_path) do |f| %>
         <legend>Add a user to platform</legend>
 
         <div class="row">
