@@ -24,6 +24,8 @@
       </div>
     <% end %>
     <%= render 'layouts/admin_navbar' %>
+    <h2><%= content_for?(:headline) ? yield(:headline) : '' %></h2>
+    <%= content_for?(:headline_buttons) ? yield(:headline_buttons) : '' %>
 
     <%= yield %>
   </body>

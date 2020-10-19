@@ -22,8 +22,6 @@
   </head>
 
   <body>
-    <%= content_for?(:headline) ? yield(:headline) : '' %>
-    <%= content_for?(:headline_buttons) ? yield(:headline_buttons) : '' %>
     <%= content_for?(:content) ? yield(:content) : yield %>
   </body>
 </html>

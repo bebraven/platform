@@ -18,16 +18,14 @@
         <%= form.text_field :name, class: 'form-control' %>
       </div>
 
-      <% if base_course.type == 'Course' %>
-        <div class="form-group">
-            <%= form.label :canvas_course_id %>
-            <%= form.number_field :canvas_course_id, class: 'form-control' %>
-        </div>
-      <% end %>
+      <div class="form-group">
+          <%= form.label :canvas_course_id, 'Canvas course ID' %>
+          <%= form.number_field :canvas_course_id, class: 'form-control' %>
+      </div>
 
       <div class="form-group">
-        <%= form.label :course_resource %>
-        <%= form.collection_select :course_resource_id, CourseResource.all, :id, :name, {}, class: 'form-control' %>
+        <%= form.label :course_resource_id, 'Course resource' %>
+        <%= form.collection_select :course_resource_id, CourseResource.all, :id, :name, {include_blank: true}, class: 'form-control' %>
         <%= link_to 'Add new', :new_course_resource, class: 'btn btn-secondary' %>
       </div>
 

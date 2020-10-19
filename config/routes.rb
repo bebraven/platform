@@ -28,6 +28,8 @@ Rails.application.routes.draw do
   get 'home/welcome'
 
   resources :base_courses, only: [:index], path: 'course_management'
+  get 'course_management/launch', to: 'base_courses#launch_new'
+  post 'course_management/launch', to: 'base_courses#launch_create'
   resources :courses, controller: 'base_courses', type: 'Course'
   resources :course_templates, controller: 'base_courses', type: 'CourseTemplate'
 
