@@ -172,6 +172,15 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
     t.string "client_hostname", null: false
   end
 
+  create_table "logistics", force: :cascade do |t|
+    t.string "day_of_week", null: false
+    t.string "time_of_day", null: false
+    t.integer "base_course_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["day_of_week", "time_of_day", "base_course_id"], name: "index_logistics_on_day_time_course", unique: true
+  end
+
   create_table "lti_launches", force: :cascade do |t|
     t.string "client_id", null: false
     t.string "login_hint", null: false

@@ -72,6 +72,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'zoom_admin', to: 'zoom#home'
+
   # Sync to LMS
   post 'sync_to_lms', to: 'salesforce#sync_to_lms'
   get 'sync_to_lms', to: 'salesforce#init_sync_to_lms'
