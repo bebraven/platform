@@ -47,9 +47,11 @@ Rails.application.routes.draw do
     resources :lessons, only: [:index, :show]
   end
 
-  resources :projects, only: [:show, :create] do
+  resources :base_course_custom_content_versions, only: [:create] do
     resources :project_submissions, :path => 'submissions', only: [:show, :new, :create]
   end
+
+  resources :project_submissions, only: [:show]
 
   resources :lessons, only: [:index, :show] do
     resources :lesson_submissions, only: [:index, :show], :path => 'submissions'

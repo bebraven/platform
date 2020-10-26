@@ -5,11 +5,10 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
   render_views
 
   describe 'GET #show' do
-    let(:project) { create :project }
+    let(:base_course_custom_content_version) { create :course_project_version }
+    let(:section) { create :section, course: base_course_custom_content_version.base_course }
     let(:user) { create :fellow_user, section: section }
-    let(:project_submission) { create :project_submission, project_id: project.id, user: user }
-    let(:course_project) { create :course_project, project_id: project.id }
-    let(:section) { create :section, base_course_id: course_project.base_course_id }
+    let(:project_submission) { create :project_submission, user: user, base_course_custom_content_version: base_course_custom_content_version }
 
     context "as a Fellow" do
       let(:lti_launch) {
@@ -25,7 +24,7 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
         get(
           :show,
           params: {
-            project_id: project_submission.project.id,
+            base_course_custom_content_version_id: project_submission.base_course_custom_content_version.id,
             id: project_submission.id,
             state: lti_launch.state,
           },
@@ -47,7 +46,7 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
         get(
           :show,
           params: {
-            project_id: project_submission.project.id,
+            base_course_custom_content_version_id: project_submission.base_course_custom_content_version.id,
             id: project_submission.id,
             state: lti_launch.state,
           },
@@ -67,7 +66,7 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
         get(
           :show,
           params: {
-            project_id: project_submission.project.id,
+            base_course_custom_content_version_id: project_submission.base_course_custom_content_version.id,
             id: project_submission.id,
             state: lti_launch.state,
           },
@@ -85,7 +84,7 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
         get(
           :show,
           params: {
-            project_id: project_submission.project_id,
+            base_course_custom_content_version_id: project_submission.base_course_custom_content_version.id,
             id: project_submission.id,
             # state: not passed in, will redirect to login
           },
@@ -96,7 +95,7 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
   end
 
   describe 'GET #new' do
-    let(:project) { create :project }
+    let(:base_course_custom_content_version) { create :course_project_version }
     let(:lti_launch) { create :lti_launch_assignment }
 
     it 'returns a success response' do
@@ -105,7 +104,7 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
       get(
         :new,
         params: {
-          project_id: project.id,
+          base_course_custom_content_version_id: base_course_custom_content_version.id,
           state: lti_launch.state,
         },
       )
@@ -118,7 +117,7 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
       get(
         :new,
         params: {
-          project_id: project.id,
+          base_course_custom_content_version_id: base_course_custom_content_version.id,
           # state: not passed in, will redirect to login
         },
       )
@@ -127,9 +126,8 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:project) { create(:project) }
-    let(:course_project) { create :course_project, project_id: project.id }
-    let(:section) { create :section, base_course_id: course_project.base_course_id }
+    let(:base_course_custom_content_version) { create :course_project_version }
+    let(:section) { create :section, base_course_id: base_course_custom_content_version.base_course.id  }
     let(:user) { create :fellow_user, section: section }
 
     let(:lti_launch) {
@@ -147,13 +145,13 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
         post(
           :create,
           params: {
-            project_id: project.id,
+            base_course_custom_content_version_id: base_course_custom_content_version.id,
             state: lti_launch.state,
           },
         )
       }.to change {ProjectSubmission.count}.by(1)
       ps = ProjectSubmission.last
-      submission_url = project_project_submission_url(ps.project, ps)
+      submission_url = project_submission_url(ps)
 
       expect(WebMock)
         .to have_requested(
@@ -162,8 +160,8 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
         )
         .with { |req|
           body = JSON.parse(req.body)
-          body['userId'].to_i == user.canvas_user_id.to_i \
-          && body[LtiScore::LTI_SCORE_SUBMISSION_URL_KEY]['submission_data'] == submission_url
+          return false if user.canvas_user_id.to_s != body['userId'].to_s
+          submission_url == body[LtiScore::LTI_SCORE_SUBMISSION_URL_KEY]['submission_data']
         }
         .once
     end
@@ -174,7 +172,7 @@ RSpec.describe ProjectSubmissionsController, type: :controller do
       post(
         :new,
         params: {
-          project_id: project.id,
+          base_course_custom_content_version_id: base_course_custom_content_version.id,
           # state: not passed in, will redirect to login
         },
       )

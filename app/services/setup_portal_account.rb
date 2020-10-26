@@ -41,7 +41,11 @@ class SetupPortalAccount
 
   def update_user_references!(user, salesforce_id:, join_user_id:)
     user.update!(canvas_user_id: portal_user.id, join_user_id: join_user_id)
-    sf_client.update_contact(salesforce_id, canvas_user_id: portal_user.id)
+    sf_client.update_contact(
+      salesforce_id,
+      canvas_user_id: portal_user.id,
+      is_booster_instance: booster_instance?
+    )
     user
   end
 
@@ -51,6 +55,10 @@ class SetupPortalAccount
 
   def should_create_join_user?
     ENV['CREATE_JOIN_USER_ON_SIGN_UP'].present?
+  end
+
+  def booster_instance?
+    ENV['BOOSTER_INSTANCE'].present?
   end
 
   def find_or_create_portal_user!

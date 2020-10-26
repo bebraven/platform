@@ -1,8 +1,9 @@
 class BaseCourse < ApplicationRecord
   belongs_to :course_resource, optional: true
 
-  has_many :base_course_projects
-  has_many :projects, :through => :base_course_projects
+  has_many :base_course_custom_content_versions
+  has_many :custom_content_versions, :through => :base_course_custom_content_versions
+  has_many :project_versions, -> { project_versions }, through: :base_course_custom_content_versions, source: :custom_content_version, class_name: 'ProjectVersion'
 
   has_many :grade_categories
   has_many :lessons, :through => :grade_categories
@@ -36,5 +37,13 @@ class BaseCourse < ApplicationRecord
 
   def to_show
     attributes.slice('name')
+  end
+
+  def custom_contents
+    custom_content_versions.map { |v| v.custom_content }
+  end
+
+  def projects
+    project_versions.map { |v| v.project }
   end
 end

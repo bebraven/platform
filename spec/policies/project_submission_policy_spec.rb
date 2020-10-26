@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe ProjectSubmissionPolicy, type: :policy do
   let(:user) { create(:registered_user) }
   let(:course) { create(:course) }
-  let(:project) { create(:project) }
-  let(:course_project) { create(:course_project, base_course_id: course.id, project_id: project.id) }
-  let(:section) { create(:section, base_course_id: course.id) }
-  let(:project_submission) { create(:project_submission, project_id: project.id) }
+  let(:project_version) { create(:project_version) }
+  let(:section) { create(:section, course: course) }
+  let(:project_submission) { create(:project_submission, project_version: project_version) }
+  let(:base_course_custom_content_version) { create(:base_course_custom_content_version, base_course: course, custom_content_version: project_version) }
 
   subject { described_class }
 
@@ -17,7 +17,7 @@ RSpec.describe ProjectSubmissionPolicy, type: :policy do
     end
 
     it "allows a non-admin user to show a project submission attached to a course where this user is enrolled" do
-      course_project
+      base_course_custom_content_version
       user.add_role RoleConstants::STUDENT_ENROLLMENT, section
       expect(subject).to permit user, project_submission
     end
@@ -34,7 +34,7 @@ RSpec.describe ProjectSubmissionPolicy, type: :policy do
     end
 
     it "allows a non-admin user to show a project submission attached to a course where this user is enrolled" do
-      course_project
+      base_course_custom_content_version
       user.add_role RoleConstants::STUDENT_ENROLLMENT, section
       expect(subject).to permit user, project_submission
     end
@@ -51,7 +51,7 @@ RSpec.describe ProjectSubmissionPolicy, type: :policy do
     end
 
     it "allows a non-admin user to show a project submission attached to a course where this user is enrolled" do
-      course_project
+      base_course_custom_content_version
       user.add_role RoleConstants::STUDENT_ENROLLMENT, section
       expect(subject).to permit user, project_submission
     end

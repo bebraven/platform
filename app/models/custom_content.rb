@@ -2,6 +2,21 @@ require 'canvas_api'
 
 class CustomContent < ApplicationRecord
   has_many :custom_content_versions
+  alias_attribute :versions, :custom_content_versions
+
+  scope :projects, -> { where type: 'Project' }
+
+  def base_courses
+    custom_content_versions.map { |v| v.base_courses or [] }.reduce(:+) or []
+  end
+
+  def courses
+    custom_content_versions.map { |v| v.courses }.reduce(:+) or []
+  end
+
+  def course_templates
+    custom_content_versions.map { |v| v.course_templates }.reduce(:+) or []
+  end
 
   def publish(params)
     response = CanvasAPI.client.update_course_page(params[:course_id], params[:secondary_id], params[:body])
@@ -21,7 +36,8 @@ class CustomContent < ApplicationRecord
         custom_content_id: id,
         title: title,
         body: body,
-        user: user
+        user: user,
+        type: set_version_type,
       })
 
     transaction do
@@ -30,4 +46,12 @@ class CustomContent < ApplicationRecord
     end
   end
 
+  private
+
+  def set_version_type
+    case type
+    when 'Project'
+      'ProjectVersion'
+    end
+  end
 end

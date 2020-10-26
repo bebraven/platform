@@ -33,9 +33,7 @@ RSpec.describe UsersController, type: :controller do
   # adjust the attributes here as well.
   let(:valid_attributes) { attributes_for(:admin_user) }
 
-  let(:invalid_attributes) {
-    {name: user.name }
-  }
+  let(:invalid_attributes) { { name: user.first_name } }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -51,6 +49,80 @@ RSpec.describe UsersController, type: :controller do
       it "returns a success response" do
         get :index, params: {}, session: valid_session
         expect(response).to be_successful
+      end
+    end
+
+    describe "GET #show" do
+      it "returns a success response" do
+        get :show, params: { id: user.id }
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET #new" do
+      it "returns a success response" do
+        get :new, params: { id: user.id } 
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET #edit" do
+      it "returns a success response" do
+        get :edit, params: { id: user.id }
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST #create" do
+      context "with valid parameters" do
+        it "creates a new user" do
+          expect {
+            post :create, params: { user: valid_attributes }
+          }.to change(User, :count).by(1)
+        end
+
+        it "automatically confirms the user" do
+          post :create, params: { user: valid_attributes }
+          expect(User.last.confirmed_at).not_to be(nil)
+        end
+      end
+
+      context "with invalid parameters" do
+        it "does not create a user" do
+          expect {
+            post :create, params: { user: invalid_attributes }
+          }.not_to change { User.count }
+        end
+      end
+    end
+
+    describe "POST #confirm" do
+      let(:user_attributes) { attributes_for(:fellow_user) }
+      it "sets the user confirmation time" do
+        user_attributes.delete('confirmed_at')
+        post :create, params: { user: user_attributes }
+        post :confirm, params: { id: User.last.id }
+        expect(User.last.confirmed_at).not_to be(nil)
+      end
+    end
+
+    describe "PUT #update" do
+      it "returns a success response" do
+        put :update, params: { id: user.to_param, user: valid_attributes }
+        expect(response).to redirect_to(user_path(user))
+      end
+    end
+
+    describe "POST #delete" do
+      it "deletes the user" do
+        expect {
+          delete :destroy, params: { id: user.id }
+        }.to change(User, :count).by(-1)
+      end
+
+      it "redirects to index" do
+        delete :destroy, params: { id: user.id }
+        expect(response).to redirect_to(users_path)
       end
     end
   end

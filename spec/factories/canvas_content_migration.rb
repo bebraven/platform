@@ -3,6 +3,11 @@ FactoryBot.define do
   factory :canvas_content_migration, class: Hash do
     skip_create # This isn't stored in the DB.
 
+    transient do
+      sequence(:source_course_id)
+      sequence(:target_course_id)
+    end
+
     sequence(:id) 
     sequence(:user_id)  # the user who started the migration
     workflow_state { "running" }
@@ -11,12 +16,12 @@ FactoryBot.define do
     migration_type { "course_copy_importer" }
     created_at { "2020-10-14T16:25:09Z" }
     # Course ID below is the desination for the migration.
-    migration_issues_url { "https://braven.instructure.com/api/v1/courses/212/content_migrations/#{id}/migration_issues" }
+    migration_issues_url { "https://braven.instructure.com/api/v1/courses/#{target_course_id}/content_migrations/#{id}/migration_issues" }
     migration_issues_count { 0 }
-    sequence(:settings) { |i| {
-      "source_course_id": i,
-      "source_course_name": "Source Course #{i}",
-      "source_course_html_url": "https://braven.instructure.com/courses/#{i}",
+    settings { {
+      "source_course_id": source_course_id,
+      "source_course_name": "Source Course #{source_course_id}",
+      "source_course_html_url": "https://braven.instructure.com/courses/#{source_course_id}",
     } }
     sequence(:progress_url) { |i| "https://braven.instructure.com/api/v1/progress/#{i}" }
     migration_type_title { "Course Copy" }  # matches the migration_type

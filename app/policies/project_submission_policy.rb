@@ -1,5 +1,5 @@
 # This policy always checks to see whether the user is logged-in.
-# Authentication is deligated to LrsXApiProxyPolicy and ProjectPolicy.
+# Authentication is deligated to LrsXApiProxyPolicy and ProjectVersionPolicy.
 class ProjectSubmissionPolicy < ApplicationPolicy
   attr_reader :user, :record
 
@@ -13,22 +13,22 @@ class ProjectSubmissionPolicy < ApplicationPolicy
   # Access to responses submitted is handled by LrsXApiProxyPolicy.xAPI_read?.
   # If you aren't authorized, you will see a blank project form.
   # When showing a submission, you also must have permission to show the
-  # associated Project, so we check that too.
+  # associated ProjectVersion, so we check that too.
   def show?
-    ProjectPolicy.new(user, Project.find(record.project_id)).show?
+    ProjectVersionPolicy.new(user, record.project_version).show?
   end
 
   # Access to previous responses is handled by LrsXApiProxyPolicy.xAPI_read?,
   # whether you can change edit answers by LrsXApiProxyPolicy.xAPI_write?.
   # When viewing the submission create form, you also must have permission to
-  # show the associated Project, so we check that too.
+  # show the associated ProjectVersion, so we check that too.
   def new?
-    ProjectPolicy.new(user, Project.find(record.project_id)).show?
+    ProjectVersionPolicy.new(user, record.project_version).show?
   end
 
   # It doesn't really make sense to allow people to submit answers to projects
-  # they aren't allowed to see, so we check the Project show policy too.
+  # they aren't allowed to see, so we check the ProjectVersion show policy too.
   def create?
-    ProjectPolicy.new(user, Project.find(record.project_id)).show?
+    ProjectVersionPolicy.new(user, record.project_version).show?
   end
 end

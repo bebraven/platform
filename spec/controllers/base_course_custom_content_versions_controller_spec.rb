@@ -1,24 +1,25 @@
 require 'rails_helper'
 
-RSpec.describe ProjectsController, type: :controller do
+RSpec.describe BaseCourseCustomContentVersionsController, type: :controller do
   render_views
 
-  let!(:project) { create :project }
+  let(:base_course_custom_content_version) { create :course_project_version }
   let(:state) { LtiLaunchController.generate_state }
   let(:target_link_uri) { 'https://target/link' }
-  let!(:lti_launch) { create(:lti_launch_assignment_selection, target_link_uri: target_link_uri, state: state) }
+  let(:course) { create :course_with_canvas_id }
+  let!(:lti_launch) {
+    create(
+      :lti_launch_assignment_selection,
+      target_link_uri: target_link_uri,
+      state: state,
+      course_id: course.canvas_course_id,
+    )
+  }
   let!(:user) { create :admin_user, canvas_user_id: lti_launch.request_message.canvas_user_id}
-
-  describe "GET #show" do
-    it "returns a success response" do
-      get :show, params: { id: project.id, state: state }
-      expect(response).to be_successful
-    end
-  end
 
   describe "POST #create" do
     context "with valid params" do
-      let(:custom_content) { create :custom_content_assignment }
+      let(:custom_content) { create :project }
 
       it "shows the confirmation form and preview iframe" do
         expected_url = LtiDeepLinkingRequestMessage.new(lti_launch.id_token_payload).deep_link_return_url
@@ -41,7 +42,7 @@ RSpec.describe ProjectsController, type: :controller do
     end
 
     context "with invalid params" do
-      let(:custom_content) { create :custom_content_assignment }
+      let(:custom_content) { create :project }
 
       it "redirects to login when state param is missing" do
         post :create, params: {custom_content_id: custom_content.id}

@@ -30,8 +30,13 @@
         <%= form.text_field :lc_course_name, class: 'form-control', placeholder: 'Ex: 2020 Fall LC Playbook - SJSU' %>
       </div>
 
+      <div class="form-group">
+        <%= form.label :notification_email, 'Email to notify when done' %>
+        <%= form.text_field :notification_email, class: 'form-control', placeholder: 'your_email@bebraven.org' %>
+      </div>
+
       <div class="actions">
-        <%= form.submit 'Launch program', class: 'btn btn-primary' %>
+        <%= form.submit 'Start program launch', class: 'btn btn-primary' %>
         <%= link_to 'Cancel', base_courses_path, class: 'btn btn-secondary'%>
       </div>
     </div>

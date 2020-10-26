@@ -231,6 +231,40 @@ class CanvasAPI
     JSON.parse(response.body)
   end
 
+  def get_assignment(course_id, assignment_id)
+    JSON.parse(get("/courses/#{course_id}/assignments/#{assignment_id}").body)
+  end
+
+  # Gets a list of all assignments for a course.
+  def get_assignments(course_id)
+    response = get("/courses/#{course_id}/assignments")
+    get_all_from_pagination(response)
+  end
+
+  def update_assignment_lti_launch_url(course_id, assignment_id, new_url)
+    body = { :assignment => { :external_tool_tag_attributes => { :url => new_url } } }
+    response = put("/courses/#{course_id}/assignments/#{assignment_id}", body)
+    JSON.parse(response.body)
+  end
+
+  # Associates an AssignmentOverride for each section to each assignment. This causes the
+  # Edit Assignment Dates UI to show all the sections so that you can bulk edit the due dates for
+  # each section in the UI.
+  #
+  # See: https://canvas.instructure.com/doc/api/assignments.html#method.assignments_api.index
+  def create_assignment_overrides(course_id, assignment_ids, section_ids)
+    overrides = [] 
+    assignment_ids.each { |aid|
+      section_ids.each { |sid| 
+        overrides << { :due_at => nil, :assignment_id => aid, :course_section_id => sid }
+      }
+    }
+    body = { :assignment_overrides => overrides }
+
+    response = post("/courses/#{course_id}/assignments/overrides", body) 
+    JSON.parse(response.body)
+  end
+
   # See: https://canvas.instructure.com/doc/api/file.pagination.html
   def get_all_from_pagination(response)
     info = JSON.parse(response.body)
@@ -307,6 +341,13 @@ class CanvasAPI
     Integer(object_id) rescue raise ArgumentError.new('object_id must be an integer')
 
     response = post("/#{object_type}/#{object_id}/content_migrations", body)
+    JSON.parse(response.body)
+  end
+
+  # Gets the progress status of a ContentMigration resulting from calling the above content_migration() method.
+  def get_copy_course_status(progress_url)
+    # Bypass the helper b/c the progress URL is the full URL returned in content_migration['progress_url']
+    response = RestClient.get(progress_url, @global_headers)
     JSON.parse(response.body)
   end
 

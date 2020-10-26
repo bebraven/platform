@@ -6,7 +6,7 @@ RSpec.describe LtiAssignmentSelectionController, type: :controller do
   let(:state) { LtiLaunchController.generate_state }
   let(:target_link_uri) { 'https://target/link' }
   let!(:lti_launch) { create(:lti_launch_assignment_selection, target_link_uri: target_link_uri, state: state) }
-  let!(:assignment) { create(:custom_content_assignment) }
+  let!(:project) { create(:project) }
   let!(:user) { create :admin_user, canvas_user_id: lti_launch.request_message.canvas_user_id}
 
   describe "GET #new" do
@@ -17,7 +17,7 @@ RSpec.describe LtiAssignmentSelectionController, type: :controller do
 
     it "includes the existing assignment as an option" do
       get :new, params: {state: state}
-      expect(response.body).to match /<option value="#{assignment.id}"/
+      expect(response.body).to match /<option value="#{project.id}"/
     end
   end
 
