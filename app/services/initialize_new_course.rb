@@ -53,9 +53,12 @@ private
       canvas_assignment_id = ca['id']
       canvas_assignment_ids << canvas_assignment_id
 
+      integration_id = ca['integration_id']
       lti_launch_url = parse_lti_launch_url(ca)
-      if lti_launch_url
-        initialize_lti_launch_resource(lti_launch_url, canvas_assignment_id)
+
+      # Only for assignments we created, that have an integration ID.
+      if integration_id and lti_launch_url.contain? Rails.application.secrets.application_host
+        initialize_lti_launch_resource(integration_id, canvas_assignment_id)
       else
         Rails.logger.debug("Skipping Canvas Assignment[#{canvas_assignment_id}] - not an LTI linked assignment")
       end
@@ -64,18 +67,21 @@ private
     canvas_assignment_ids
   end
 
-  def initialize_lti_launch_resource(lti_launch_url, canvas_assignment_id)
+  def initialize_lti_launch_resource(integration_id, canvas_assignment_id)
     new_launch_url = nil
 
     # TODO: Instead of going this route of parsing the URL, the plan is to move LTI selection linking to a platform UI 
     # and do it programatically, linking everything up using a resourceId in the LineItem API.
     # See: https://app.asana.com/0/1174274412967132/1198900743766613
-    course_template_content_version = BaseCourseCustomContentVersion.find_by_url(lti_launch_url) 
+    course_template_content_version = BaseCourseCustomContentVersion.find(integration_id)
+
     if course_template_content_version
       if course_template_content_version.base_course.is_a? CourseTemplate
         new_launch_url = create_new_custom_content_resource(course_template_content_version, canvas_assignment_id)
+
         Rails.logger.debug("Updating Canvas Assignment[#{canvas_assignment_id}] - changing LTI launch URL to: #{new_launch_url}")
         CanvasAPI.client.update_assignment_lti_launch_url(@new_course.canvas_course_id, canvas_assignment_id, new_launch_url)
+
       else
         raise InitializeNewCourseError, "BaseCourseCustomContentVersion #{course_template_content_version.inspect} is not a CourseTemplate. " \
                                         "Only initializing from cloned templates is supported"

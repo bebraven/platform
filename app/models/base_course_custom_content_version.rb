@@ -11,11 +11,4 @@ class BaseCourseCustomContentVersion < ApplicationRecord
   has_many :project_submissions
   has_many :users, :through => :project_submissions
   alias_attribute :submissions, :project_submissions
-
-  # Finds an existing BaseCourseCustomContentVersion by parsing the URL for one.
-  def self.find_by_url(url)
-    id = url[/.*\/base_course_custom_content_versions\/(\d+)/, 1]
-    BaseCourseCustomContentVersion.find(id) if id
-  end
-
 end
