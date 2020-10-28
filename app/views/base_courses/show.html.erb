@@ -2,8 +2,73 @@
   <%= @base_course.name %>
 <% end %>
 
-<%= link_to 'View on Canvas', "#{Rails.application.secrets.canvas_url}/courses/#{@base_course.canvas_course_id}" %>
+<p><%= link_to 'View on Canvas', "#{Rails.application.secrets.canvas_url}/courses/#{@base_course.canvas_course_id}" %></p>
+<p><%= link_to 'Back To Course Management', base_courses_path %></p>
+<p><%= link_to 'Edit', edit_polymorphic_path(@base_course), class: 'btn btn-secondary' %></p>
 
-<br>
+<h3>Settings</h3>
+<div class="row">
+  <div class="col-sm-6">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Canvas Course ID</th>
+          <th>Course Resources</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= @base_course.name %></td>
+          <td><%= @base_course.canvas_course_id %></td>
+          <td><%= @base_course.course_resource&.name %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-<%= link_to 'Back To Course Management', base_courses_path %>
+<br/>
+
+<!-- TODO: abstract this into a partial and pass in the list of bcccv's -->
+<h3>Projects</h3>
+<div class="row">
+  <div class="col-sm-6">
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+        </tr>
+      </thead>
+    
+      <tbody>
+      <% @base_course.base_course_project_versions.each do |bcpv| %>
+        <tr>
+          <td><%= bcpv.custom_content_version.title %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<h3>Impact Surveys</h3>
+<div class="row">
+  <div class="col-sm-6">
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+        </tr>
+      </thead>
+    
+      <tbody>
+      <% @base_course.base_course_survey_versions.each do |bcpv| %>
+        <tr>
+          <td><%= bcpv.custom_content_version.title %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
