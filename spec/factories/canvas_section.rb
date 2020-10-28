@@ -1,5 +1,7 @@
 FactoryBot.define do
   # Represents a section returned from the canvas API
+  #
+  # Important: this is meant to be built with FactoryBot.json(:canvas_section)
   factory :canvas_section, class: Hash do
     skip_create # This isn't stored in the DB.
     sequence(:course_id) 

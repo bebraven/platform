@@ -5,22 +5,24 @@ require 'lti_advantage_api'
 require 'lti_score'
 
 RSpec.feature 'Submit a project', :type => :feature do
-  let(:project) { create :project }
-  let(:course_project) { create :course_project, project_id: project.id }
-  let(:section) { create :section, base_course_id: course_project.base_course_id }
+  let(:base_course_custom_content_version) { create :course_project_version }
+  let(:section) { create :section, course: base_course_custom_content_version.base_course }
   let(:user) { create :fellow_user, section: section }
-  let!(:project_submission) { create :project_submission, project_id: project.id, user: user }
+  let(:project_submission) { create :project_submission, user: user, base_course_custom_content_version: base_course_custom_content_version }
+  
   let!(:lti_launch) { 
     create(
       :lti_launch_assignment, 
       canvas_user_id: project_submission.user.canvas_user_id,
-      course_id: project_submission.project.id,
+      course_id: project_submission.base_course_custom_content_version.base_course.id,
     )
   }
   let(:uri) {
-    path = Addressable::URI.parse(new_project_project_submission_path(
-      project_submission.project,
-    ))
+    path = Addressable::URI.parse(
+      new_base_course_custom_content_version_project_submission_path(
+        project_submission.base_course_custom_content_version,
+      ),
+    )
     # To let us bypass login using the state query parameter
     path.query = { state: lti_launch.state }.to_query
     path.to_s
@@ -45,9 +47,6 @@ RSpec.feature 'Submit a project', :type => :feature do
       .to receive(:get_access_token)
       .and_return(lti_advantage_access_token)
     allow_any_instance_of(LtiAdvantageAPI)
-      .to receive(:get_line_item_for_user)
-      .and_return({})
-    allow_any_instance_of(LtiAdvantageAPI)
       .to receive(:create_score)
       .and_return({body: '{}'})
   end
@@ -60,9 +59,9 @@ RSpec.feature 'Submit a project', :type => :feature do
     end
 
     it "shows a re-submit button", js: true do
-      allow_any_instance_of(LtiAdvantageAPI)
-        .to receive(:get_line_item_for_user)
-        .and_return({key: 'val'})
+      allow(ProjectSubmission)
+        .to receive(:for_custom_content_version_and_user)
+        .and_return(ProjectSubmission.all)
 
       visit uri
       expect(page).to have_button('project-submit-button')
@@ -78,10 +77,6 @@ RSpec.feature 'Submit a project', :type => :feature do
     end
 
     it "updates button text after submission", js: true do
-      allow_any_instance_of(LtiAdvantageAPI)
-        .to receive(:get_line_item_for_user)
-        .and_return({key: 'val'})
-
       visit uri
       click_button 'project-submit-button'
 
@@ -98,9 +93,9 @@ RSpec.feature 'Submit a project', :type => :feature do
   describe "invalid project submission" do
     context "with previous submission" do
       it "still shows re-submit button text", js: true do
-        allow_any_instance_of(LtiAdvantageAPI)
-          .to receive(:get_line_item_for_user)
-          .and_return({key: 'val'})
+        allow(ProjectSubmission)
+          .to receive(:for_custom_content_version_and_user)
+          .and_return(ProjectSubmission.all)
 
         # Generate an error when we're trying to create the submission
         allow_any_instance_of(LtiAdvantageAPI)

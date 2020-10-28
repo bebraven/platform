@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_06_180732) do
+ActiveRecord::Schema.define(version: 2020_10_23_203123) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,12 +45,13 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "base_course_projects", force: :cascade do |t|
+  create_table "base_course_custom_content_versions", force: :cascade do |t|
     t.bigint "base_course_id", null: false
-    t.bigint "project_id", null: false
+    t.bigint "custom_content_version_id", null: false
     t.integer "canvas_assignment_id"
-    t.index ["base_course_id"], name: "index_base_course_projects_on_base_course_id"
-    t.index ["project_id"], name: "index_base_course_projects_on_project_id"
+    t.index ["base_course_id", "custom_content_version_id"], name: "index_bcccv_unique_version_ids", unique: true
+    t.index ["base_course_id"], name: "index_base_course_custom_content_versions_on_base_course_id"
+    t.index ["custom_content_version_id"], name: "index_base_course_custom_content_versions_on_version_id"
   end
 
   create_table "base_courses", force: :cascade do |t|
@@ -77,6 +78,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id"
+    t.string "type"
     t.index ["custom_content_id"], name: "index_custom_content_versions_on_custom_content_id"
     t.index ["user_id"], name: "index_custom_content_versions_on_user_id"
   end
@@ -91,6 +93,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
     t.integer "course_id"
     t.string "secondary_id"
     t.string "course_name"
+    t.string "type"
   end
 
   create_table "grade_categories", force: :cascade do |t|
@@ -188,28 +191,14 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
 
   create_table "project_submissions", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "project_id", null: false
     t.float "points_received"
     t.datetime "submitted_at"
     t.datetime "graded_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["project_id"], name: "index_project_submissions_on_project_id"
+    t.bigint "base_course_custom_content_version_id", null: false
+    t.index ["base_course_custom_content_version_id"], name: "index_submissions_on_base_course_custom_content_version_id"
     t.index ["user_id"], name: "index_project_submissions_on_user_id"
-  end
-
-  create_table "projects", force: :cascade do |t|
-    t.string "name"
-    t.integer "points_possible"
-    t.float "percent_of_grade_category"
-    t.boolean "grades_muted", default: false
-    t.datetime "grades_published_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.bigint "grade_category_id"
-    t.bigint "custom_content_version_id"
-    t.index ["custom_content_version_id"], name: "index_projects_on_custom_content_version_id"
-    t.index ["grade_category_id"], name: "index_projects_on_grade_category_id"
   end
 
   create_table "proxy_granting_tickets", force: :cascade do |t|
@@ -280,12 +269,10 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
   end
 
   create_table "rubrics", force: :cascade do |t|
-    t.bigint "project_id", null: false
     t.string "name"
     t.integer "points_possible", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["project_id"], name: "index_rubrics_on_project_id", unique: true
   end
 
   create_table "sections", force: :cascade do |t|
@@ -370,8 +357,8 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "base_course_projects", "base_courses"
-  add_foreign_key "base_course_projects", "projects"
+  add_foreign_key "base_course_custom_content_versions", "base_courses"
+  add_foreign_key "base_course_custom_content_versions", "custom_content_versions"
   add_foreign_key "base_courses", "course_resources"
   add_foreign_key "custom_content_versions", "custom_contents"
   add_foreign_key "custom_content_versions", "users"
@@ -380,10 +367,8 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
   add_foreign_key "lesson_submissions", "lessons"
   add_foreign_key "lesson_submissions", "users"
   add_foreign_key "lessons", "grade_categories"
-  add_foreign_key "project_submissions", "projects"
+  add_foreign_key "project_submissions", "base_course_custom_content_versions"
   add_foreign_key "project_submissions", "users"
-  add_foreign_key "projects", "custom_content_versions"
-  add_foreign_key "projects", "grade_categories"
   add_foreign_key "rubric_grades", "project_submissions"
   add_foreign_key "rubric_grades", "rubrics"
   add_foreign_key "rubric_row_categories", "rubrics"
@@ -391,7 +376,6 @@ ActiveRecord::Schema.define(version: 2020_10_06_180732) do
   add_foreign_key "rubric_row_grades", "rubric_rows"
   add_foreign_key "rubric_row_ratings", "rubric_rows"
   add_foreign_key "rubric_rows", "rubric_row_categories"
-  add_foreign_key "rubrics", "projects"
   add_foreign_key "sections", "base_courses"
   add_foreign_key "user_sections", "sections"
   add_foreign_key "user_sections", "users"

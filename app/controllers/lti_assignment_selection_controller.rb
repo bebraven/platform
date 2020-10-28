@@ -12,6 +12,6 @@ class LtiAssignmentSelectionController < ApplicationController
     params.require([:state])
     authorize @lti_launch
 
-    @assignments = CustomContent.where(content_type: 'assignment')
+    @assignments = Project.all
   end
 end

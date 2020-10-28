@@ -38,7 +38,7 @@ class ProjectSubmitButton extends React.Component {
     const data = new FormData(form);
 
     fetch(
-      `/projects/${this.props.projectId}/submissions`,
+      `/base_course_custom_content_versions/${this.props.courseContentVersionId}/submissions`,
       {
         method: 'POST',
         body: data,

@@ -193,4 +193,57 @@ RSpec.describe CanvasAPI do
     end
   end
 
+  describe '#get_copy_course_status' do
+    let(:progress_url) { "https://braven.instructure.com/api/v1/progress/321" }
+    let(:progress_response) { FactoryBot.json(:canvas_content_migration_progress, url: progress_url) }
+
+    it 'hits the Canvas API correctly' do
+      stub_request(:get, progress_url).to_return( body: progress_response)
+
+      progress = canvas.get_copy_course_status(progress_url)
+
+      expect(WebMock).to have_requested(:get, progress_url).once
+      expect(progress).to have_key('workflow_state')
+    end
+  end
+
+  describe '#get_assignments' do
+    let(:course_id) { 123456 }
+    let(:assignment1) { FactoryBot.json(:canvas_assignment, course_id: course_id) }
+    let(:assignment2) { FactoryBot.json(:canvas_assignment, course_id: course_id) }
+
+    it 'hits the Canvas API correctly' do
+      request_url = "#{CANVAS_API_URL}/courses/#{course_id}/assignments"
+      stub_request(:get, request_url).to_return( body: [assignment1, assignment2].to_json )
+
+      assignments = canvas.get_assignments(course_id)
+
+      expect(WebMock).to have_requested(:get, request_url).once
+      expect(assignments.count).to eq(2)
+    end
+  end
+
+  describe '#create_assignment_overrides' do
+    let(:course_id) { 123457 }
+    let(:assignemnt_id1) { 1 }
+    let(:assignemnt_id2) { 2 }
+    let(:section_id1) { 3 }
+    let(:section_id2) { 4 }
+    let(:override1) { FactoryBot.json(:canvas_assignment_override_section, assignment_id: assignemnt_id1, course_section_id: section_id1) }
+    let(:override2) { FactoryBot.json(:canvas_assignment_override_section, assignment_id: assignemnt_id1, course_section_id: section_id2) }
+    let(:override3) { FactoryBot.json(:canvas_assignment_override_section, assignment_id: assignemnt_id2, course_section_id: section_id1) }
+    let(:override4) { FactoryBot.json(:canvas_assignment_override_section, assignment_id: assignemnt_id2, course_section_id: section_id2) }
+
+    it 'hits the Canvas API correctly' do
+      request_url = "#{CANVAS_API_URL}/courses/#{course_id}/assignments/overrides"
+      stub_request(:post, request_url).to_return( body: [override1, override2, override3, override4].to_json )
+
+      overrides = canvas.create_assignment_overrides(course_id, [assignemnt_id1, assignemnt_id2], [section_id1, section_id2])
+
+      expect(WebMock).to have_requested(:post, request_url).once
+      expect(WebMock).to have_requested(:post, request_url).with(body: "assignment_overrides[][due_at]&assignment_overrides[][assignment_id]=1&assignment_overrides[][course_section_id]=3&assignment_overrides[][due_at]&assignment_overrides[][assignment_id]=1&assignment_overrides[][course_section_id]=4&assignment_overrides[][due_at]&assignment_overrides[][assignment_id]=2&assignment_overrides[][course_section_id]=3&assignment_overrides[][due_at]&assignment_overrides[][assignment_id]=2&assignment_overrides[][course_section_id]=4")
+
+      expect(overrides.count).to eq(4)
+    end
+  end
 end

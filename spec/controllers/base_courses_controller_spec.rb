@@ -303,49 +303,45 @@ RSpec.describe BaseCoursesController, type: :controller do
     end
 
     describe "POST #launch_create" do
-      let(:fellow_course_template) { create(:course_template, attributes_for(:course_template_with_resource)) }
-      let(:lc_course_template) { create(:course_template_with_canvas_id) }
-      let(:canvas_create_course) { build(:canvas_course) }
-      let(:canvas_copy_course) { build(:canvas_content_migration) }
-      let(:canvas_client) { double('CanvasAPI', create_course: canvas_create_course, copy_course: canvas_copy_course) }
 
-      subject(:post_launch_create) do
-        post(
-          :launch_create,
-          params: {
-            salesforce_program_id: 'TestSalesforceProgramID',
-            fellow_course_template_id: fellow_course_template.id,
-            fellow_course_name: 'Test Fellow Course Name',
-            lc_course_template_id: lc_course_template.id,
-            lc_course_name: 'Test LC Course Name',
-            session: valid_session
-          }
-        )
-      end
+      context "with valid params" do
+        let(:sf_program_id) { 'TestSalesforceProgramID' }
+        let(:email) { 'test@email.com' }
+        let(:fellow_template_id) { '24' }
+        let(:fellow_course_name) { 'Test Fellow Course Name' }
+        let(:lc_template_id) { '25' }
+        let(:lc_course_name) { 'Test LC Course Name' }
 
-      context "with valid params and canvas API success" do
-        before(:each) do
-          allow(CanvasAPI).to receive(:client).and_return(canvas_client)
+        subject(:post_launch_create) do
+          post(
+            :launch_create,
+            params: {
+              salesforce_program_id: sf_program_id,
+              notification_email: email,
+              fellow_course_template_id: fellow_template_id,
+              fellow_course_name: fellow_course_name,
+              lc_course_template_id: lc_template_id,
+              lc_course_name: lc_course_name,
+              session: valid_session
+            }
+          )
         end
 
-        it "creates new courses" do
-          expect { post_launch_create }.to change(Course, :count).by(2)
-          fellow_course = Course.find_by(name: 'Test Fellow Course Name')
-          expect(fellow_course.canvas_course_id).to eq canvas_create_course['id']
-          expect(fellow_course.course_resource_id).to eq fellow_course_template.course_resource_id
-          lc_course = Course.find_by(name: 'Test LC Course Name')
-          expect(lc_course.canvas_course_id).to eq canvas_create_course['id']
-          expect(lc_course.course_resource_id).to eq lc_course_template.course_resource_id
+        it "starts the launch job" do
+          expect(LaunchProgramJob).to receive(:perform_later).with(sf_program_id, email, fellow_template_id, fellow_course_name, lc_template_id, lc_course_name).once
+          post_launch_create
         end
 
-        it "redirects to the newly created course" do
+        it "redirects to the course management page" do
+          allow(LaunchProgramJob).to receive(:perform_later).and_return(nil)
           post_launch_create
           expect(response).to redirect_to(base_courses_path)
+          expect(flash[:notice]).to match /Program launch started/
         end
       end
 
       context "with invalid params" do
-        it "redirects to launch_new with error message, before calling into canvas" do
+        it "redirects to launch_new with error message, before calling launch job" do
           post(
             :launch_create,
             params: {
@@ -354,23 +350,12 @@ RSpec.describe BaseCoursesController, type: :controller do
               session: valid_session
             }
           )
+          expect(LaunchProgramJob).not_to receive(:perform_later)
           expect(response).to redirect_to(course_management_launch_path)
           expect(flash[:alert]).to match /Error:/
         end
       end
 
-      context "with valid params and canvas API failure" do
-        before(:each) do
-          allow(canvas_client).to receive(:copy_course).and_raise(RestClient::NotFound)
-          allow(CanvasAPI).to receive(:client).and_return(canvas_client)
-        end
-
-        it "redirects to launch_new with error message" do
-          post_launch_create
-          expect(response).to redirect_to(course_management_launch_path)
-          expect(flash[:alert]).to match /Canvas API error/
-        end
-      end
     end
   end
 end

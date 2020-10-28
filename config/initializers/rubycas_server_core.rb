@@ -30,9 +30,7 @@ end
 
 auth.zip(cas_config[:authenticator]).each_with_index{ |auth_conf, index|
   authenticator, conf = auth_conf
-  $LOG.debug "About to setup #{authenticator} with #{conf.inspect}..."
   authenticator.setup(conf.merge('auth_index' => index)) if authenticator.respond_to?(:setup)
-  $LOG.debug "Done setting up #{authenticator}."
 }
 
 RubyCAS::Server::Core::Settings._settings[:auth] = auth

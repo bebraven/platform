@@ -8,11 +8,10 @@ include Rack::Utils
 unless ENV['BZ_AUTH_SERVER'] # Only run these specs if on a server with local database authentication enabled
 
 RSpec.describe ProjectSubmissionsController, type: :feature do
-  let(:project) { create :project }
-  let(:course_project) { create :course_project, project_id: project.id }
-  let(:section) { create :section, base_course_id: course_project.base_course_id }
+  let(:base_course_custom_content_version) { create :course_project_version }
+  let(:section) { create :section, course: base_course_custom_content_version.base_course }
   let(:user) { create :fellow_user, section: section }
-  let(:project_submission) { create :project_submission, project_id: project.id, user: user }
+  let(:project_submission) { create :project_submission, user: user, base_course_custom_content_version: base_course_custom_content_version }
   let!(:lti_launch) {
     create(
       :lti_launch_assignment,
@@ -54,8 +53,8 @@ RSpec.describe ProjectSubmissionsController, type: :feature do
     :match_requests_on => [:path, :method],
   } do
     let(:url) {
-      uri = Addressable::URI.parse(new_project_project_submission_path(
-        project_submission.project,
+      uri = Addressable::URI.parse(new_base_course_custom_content_version_project_submission_path(
+        project_submission.base_course_custom_content_version,
       ))
       uri.query = { state: lti_launch.state }.to_query
       uri.to_s
@@ -143,8 +142,8 @@ RSpec.describe ProjectSubmissionsController, type: :feature do
 
     context "when valid LtiLaunch" do
       let(:url) {
-        uri = Addressable::URI.parse(project_project_submission_path(
-          project_submission.project, project_submission,
+        uri = Addressable::URI.parse(project_submission_path(
+          project_submission,
         ))
         uri.query = { state: lti_launch.state }.to_query
         uri.to_s
@@ -206,8 +205,8 @@ RSpec.describe ProjectSubmissionsController, type: :feature do
     # so we rely on the page title instead. 
     context "when LtiLaunch isn't found" do
       let(:url) {
-        uri = Addressable::URI.parse(project_project_submission_path(
-          project_submission.project, project_submission,
+        uri = Addressable::URI.parse(project_submission_path(
+          project_submission,
         ))
         uri.query = { state: "invalidltilaunchstate" }.to_query
         uri.to_s
@@ -227,8 +226,8 @@ RSpec.describe ProjectSubmissionsController, type: :feature do
         )
       }
       let(:url) {
-        uri = Addressable::URI.parse(project_project_submission_path(
-          project_submission.project, project_submission,
+        uri = Addressable::URI.parse(project_submission_path(
+          project_submission,
         ))
         uri.query = { state: lti_launch_with_invalid_user.state }.to_query
         uri.to_s

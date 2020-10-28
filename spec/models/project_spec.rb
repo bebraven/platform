@@ -10,13 +10,5 @@ RSpec.describe Project, type: :model do
         expect { project.save! }.to_not raise_error
       end
     end
-
-    context 'when custom_content_version is empty' do
-      it 'disallows saving' do
-        project.custom_content_version = nil
-        expect { project.save! }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
   end
 end

@@ -219,13 +219,18 @@ class SalesforceAPI
                       participant['CohortName'], participant['CohortScheduleDayTime'])
   end
 
-  def update_contact(id, canvas_user_id:)
-    set_canvas_user_id(id, canvas_user_id)
+  def update_contact(id, canvas_user_id:, is_booster_instance:)
+    set_canvas_user_id(id, canvas_user_id,
+                       is_booster_instance: is_booster_instance)
     true
   end
 
-  def set_canvas_user_id(contact_id, canvas_user_id)
-    body = { 'Canvas_User_ID__c' => canvas_user_id }
+  def set_canvas_user_id(contact_id, canvas_user_id, is_booster_instance: false)
+    body = if is_booster_instance
+             { 'Canvas_User_ID_Booster__c' => canvas_user_id }
+           else
+             { 'Canvas_User_ID__c' => canvas_user_id }
+           end
     response = patch("#{DATA_SERVICE_PATH}/sobjects/Contact/#{contact_id}", body.to_json, JSON_HEADERS)
   end
 
