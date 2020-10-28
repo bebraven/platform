@@ -22,7 +22,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><%= link_to @base_course.name, "#{Rails.application.secrets.canvas_url}/courses/#{@base_course.canvas_course_id}" %></td>
+          <td><%= link_to @base_course.name, @base_course.canvas_url %></td>
           <td><%= @base_course.canvas_course_id %></td>
           <td><%= @base_course.course_resource&.name %></td>
         </tr>

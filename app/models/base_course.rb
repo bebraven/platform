@@ -57,6 +57,10 @@ class BaseCourse < ApplicationRecord
     base_course_custom_content_versions.surveys_only
   end
 
+  def canvas_url
+    "#{Rails.application.secrets.canvas_url}/courses/#{canvas_course_id}"
+  end
+
   def verify_can_edit!
     unless can_edit?
       raise NotImplementedError, "Only editing Course Templates is currently supported, not an already launched Course[#{inspect}]"
