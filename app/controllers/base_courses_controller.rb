@@ -20,6 +20,7 @@ class BaseCoursesController < ApplicationController
   # GET /course{,template}s/1/edit
   def edit
     authorize @base_course
+    @base_course.verify_can_edit!
   end
 
   # POST /course{,template}s
@@ -116,4 +117,5 @@ class BaseCoursesController < ApplicationController
   def new_params
     params.permit(:type)
   end
+
 end

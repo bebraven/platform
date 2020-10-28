@@ -56,4 +56,14 @@ class BaseCourse < ApplicationRecord
   def base_course_survey_versions
     base_course_custom_content_versions.surveys_only
   end
+
+  def verify_can_edit!
+    unless can_edit?
+      raise NotImplementedError, "Only editing Course Templates is currently supported, not an already launched Course[#{inspect}]"
+    end
+  end
+
+  def can_edit?
+    !!self.is_a?(CourseTemplate)
+  end
 end

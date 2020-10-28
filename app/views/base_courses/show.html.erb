@@ -2,9 +2,12 @@
   <%= @base_course.name %>
 <% end %>
 
-<p><%= link_to 'View on Canvas', "#{Rails.application.secrets.canvas_url}/courses/#{@base_course.canvas_course_id}" %></p>
 <p><%= link_to 'Back To Course Management', base_courses_path %></p>
-<p><%= link_to 'Edit', edit_polymorphic_path(@base_course), class: 'btn btn-secondary' %></p>
+<% if @base_course.can_edit? %>
+  <p><%= link_to 'Edit', edit_polymorphic_path(@base_course), class: 'btn btn-secondary' %></p>
+<% else %>
+  <p><em>Note: Courses aren't editable. Only CourseTemplates.</em></p>
+<% end %>
 
 <h3>Settings</h3>
 <div class="row">
@@ -19,7 +22,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><%= @base_course.name %></td>
+          <td><%= link_to @base_course.name, "#{Rails.application.secrets.canvas_url}/courses/#{@base_course.canvas_course_id}" %></td>
           <td><%= @base_course.canvas_course_id %></td>
           <td><%= @base_course.course_resource&.name %></td>
         </tr>
@@ -44,7 +47,7 @@
       <tbody>
       <% @base_course.base_course_project_versions.each do |bcpv| %>
         <tr>
-          <td><%= bcpv.custom_content_version.title %></td>
+          <td><%= link_to bcpv.custom_content_version.title, bcpv.canvas_url  %></td>
         </tr>
       <% end %>
       </tbody>
@@ -65,7 +68,7 @@
       <tbody>
       <% @base_course.base_course_survey_versions.each do |bcpv| %>
         <tr>
-          <td><%= bcpv.custom_content_version.title %></td>
+          <td><%= link_to bcpv.custom_content_version.title, bcpv.canvas_url  %></td>
         </tr>
       <% end %>
       </tbody>

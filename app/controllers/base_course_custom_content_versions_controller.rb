@@ -9,7 +9,7 @@ class BaseCourseCustomContentVersionsController < ApplicationController
   nested_resource_of BaseCourse
 
   before_action :set_custom_content, only: [:create]
-  before_action :set_base_course, only: [:create, :new, :update]
+  before_action :set_base_course # TODO: shouldn't DryCrud handle this?
 
   skip_before_action :verify_authenticity_token, only: [:create], if: :is_sessionless_lti_launch?
 
@@ -77,5 +77,7 @@ class BaseCourseCustomContentVersionsController < ApplicationController
 
   def set_base_course
     @base_course = BaseCourse.find(params.require(:base_course_id))
+    @base_course.verify_can_edit!
   end
+
 end
