@@ -33,7 +33,7 @@ class ProjectSubmissionsController < ApplicationController
       @project_submission.user,
     ).exists?
 
-    @project_lti_id = @lti_launch.activity_id
+    @project_lti_id = @lti_launch.activity_id if @lti_launch
   end
 
   # Eventually, we'll store the responses in the ProjectSubmission itself.

@@ -3,6 +3,8 @@ class BaseCourse < ApplicationRecord
 
   has_many :base_course_custom_content_versions
   has_many :custom_content_versions, :through => :base_course_custom_content_versions
+
+  # These are the published project content versions associated, but not the actual join table from BaseCourse to ProjectVersion
   has_many :project_versions, -> { project_versions }, through: :base_course_custom_content_versions, source: :custom_content_version, class_name: 'ProjectVersion'
 
   has_many :grade_categories
@@ -45,5 +47,13 @@ class BaseCourse < ApplicationRecord
 
   def projects
     project_versions.map { |v| v.project }
+  end
+
+  def base_course_project_versions
+    base_course_custom_content_versions.projects_only
+  end
+
+  def base_course_survey_versions
+    base_course_custom_content_versions.surveys_only
   end
 end
