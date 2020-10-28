@@ -175,10 +175,10 @@ and then swapped it out for this after inlining:
       }
         .btn a {
           background-color: #ffffff;
-          border: solid 1px #eb3b45;
+          border: solid 1px #DB2B36;
           border-radius: 5px;
           box-sizing: border-box;
-          color: #eb3b45;
+          color: #DB2B36;
           cursor: pointer;
           display: inline-block;
           font-family: 'Open Sans Condensed', sans-serif;
@@ -197,12 +197,12 @@ and then swapped it out for this after inlining:
 /*          //font-family: "TradeGothicNo.20-Cond", Impact, sans-serif; */
 
       .btn-primary table td {
-        background-color: #eb3b45; 
+        background-color: #DB2B36; 
       }
 
       .btn-primary a {
-        background-color: #eb3b45;
-        border-color: #eb3b45;
+        background-color: #DB2B36;
+        border-color: #DB2B36;
         color: #ffffff; 
       }
 
