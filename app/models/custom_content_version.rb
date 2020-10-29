@@ -1,5 +1,6 @@
 class CustomContentVersion < ApplicationRecord
   belongs_to :custom_content
+  alias_attribute :parent, :custom_content
   belongs_to :user
 
   has_many :base_course_custom_content_versions

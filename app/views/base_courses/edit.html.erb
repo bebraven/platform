@@ -1,5 +1,7 @@
 <% content_for :headline do %>
   Editing <%= humanized_type(@base_course) %>
 <% end %>
+<%= link_to 'Back To Course Management', base_courses_path %>
 
 <%= render 'form', base_course: @base_course %>
+

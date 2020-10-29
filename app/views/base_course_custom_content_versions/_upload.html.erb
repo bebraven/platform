@@ -1,10 +1,10 @@
-  <%= form_tag base_course_custom_content_versions_path do -%>
+  <%= form_tag base_course_base_course_custom_content_versions_path do -%>
     <select name="custom_content_id" id="custom_content_id">
-      <% @assignments.each do |assignment| %>
-        <option value="<%= assignment.id %>"><%= assignment.title %></option>
+      <% @projects.each do |project| %>
+        <option value="<%= project.id %>"><%= project.title %></option>
       <% end %>
     </select>
-    <input id="state" name='state' type='hidden' value="<%= params[:state] %>" />
-    <input type='submit' value='Preview' />
+    <input type='hidden' id="base_course_id" name='base_course_id' value='<%= @base_course.id %>' />
+    <input type='submit' value='Create' />
   <% end -%>
   

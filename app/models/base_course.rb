@@ -1,8 +1,11 @@
 class BaseCourse < ApplicationRecord
+  BaseCourseEditError = Class.new(StandardError)
   belongs_to :course_resource, optional: true
 
   has_many :base_course_custom_content_versions
   has_many :custom_content_versions, :through => :base_course_custom_content_versions
+
+  # These are the published project content versions associated, but not the actual join table from BaseCourse to ProjectVersion
   has_many :project_versions, -> { project_versions }, through: :base_course_custom_content_versions, source: :custom_content_version, class_name: 'ProjectVersion'
 
   has_many :grade_categories
@@ -45,5 +48,27 @@ class BaseCourse < ApplicationRecord
 
   def projects
     project_versions.map { |v| v.project }
+  end
+
+  def base_course_project_versions
+    base_course_custom_content_versions.projects_only
+  end
+
+  def base_course_survey_versions
+    base_course_custom_content_versions.surveys_only
+  end
+
+  def canvas_url
+    "#{Rails.application.secrets.canvas_url}/courses/#{canvas_course_id}"
+  end
+
+  def verify_can_edit!
+    unless can_edit?
+      raise BaseCourseEditError, "Only editing Course Templates is currently supported, not an already launched Course[#{inspect}]"
+    end
+  end
+
+  def can_edit?
+    !!self.is_a?(CourseTemplate)
   end
 end

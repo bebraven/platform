@@ -30,14 +30,22 @@ Rails.application.routes.draw do
 
   get 'home/welcome'
 
-  resources :base_courses, only: [:index], path: 'course_management'
+  # See this for why we nest things only 1 deep:
+  # http://weblog.jamisbuck.org/2007/2/5/nesting-resources
+
   get 'course_management/launch', to: 'base_courses#launch_new'
   post 'course_management/launch', to: 'base_courses#launch_create'
+
   resources :courses, controller: 'base_courses', type: 'Course'
   resources :course_templates, controller: 'base_courses', type: 'CourseTemplate'
 
-  # See this for why we nest things only 1 deep:
-  # http://weblog.jamisbuck.org/2007/2/5/nesting-resources
+  resources :base_courses, only: [:index], path: 'course_management' do
+    resources :base_course_custom_content_versions, only: [:new, :create, :update, :destroy]
+  end
+
+  resources :base_course_custom_content_versions, only: [:new] do
+    resources :project_submissions, :path => 'submissions', only: [:show, :new, :create]
+  end
 
   resources :courses, only: [:index, :show] do
     resources :grade_categories, only: [:index, :show]
