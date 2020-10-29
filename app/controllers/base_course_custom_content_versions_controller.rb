@@ -19,6 +19,7 @@ class BaseCourseCustomContentVersionsController < ApplicationController
     authorize @base_course_custom_content_version
 
     # TODO: exclude those already on this BaseCourse.
+    # https://app.asana.com/0/1174274412967132/1198965066699369
     @projects = Project.all
   end
 
