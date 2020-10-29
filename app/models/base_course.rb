@@ -1,4 +1,5 @@
 class BaseCourse < ApplicationRecord
+  BaseCourseEditError = Class.new(StandardError)
   belongs_to :course_resource, optional: true
 
   has_many :base_course_custom_content_versions
@@ -63,7 +64,7 @@ class BaseCourse < ApplicationRecord
 
   def verify_can_edit!
     unless can_edit?
-      raise NotImplementedError, "Only editing Course Templates is currently supported, not an already launched Course[#{inspect}]"
+      raise BaseCourseEditError, "Only editing Course Templates is currently supported, not an already launched Course[#{inspect}]"
     end
   end
 

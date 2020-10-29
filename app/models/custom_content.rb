@@ -44,6 +44,7 @@ class CustomContent < ApplicationRecord
       new_version.save!
       save!
     end
+    new_version
   end
 
   private

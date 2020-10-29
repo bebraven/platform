@@ -11,6 +11,7 @@ class BaseCourseCustomContentVersionsController < ApplicationController
   before_action :set_custom_content, only: [:create]
   before_action :set_base_course # TODO: shouldn't DryCrud handle this?
 
+# TODO: remove me?
   skip_before_action :verify_authenticity_token, only: [:create], if: :is_sessionless_lti_launch?
 
   # Show form to select new Project to create as an LTI linked Canvas assignment
@@ -52,16 +53,17 @@ class BaseCourseCustomContentVersionsController < ApplicationController
     
   end
 
-  # Update a Project for an LTI assignment placement with latest version
+  # Publish the latest Project, Survey, etc (aka CustomContent) so that the Canvas assignment this
+  # BaseCourseCustomContentVersion represents shows the latest content.
   def update
     authorize @base_course_custom_content_version
-    raise NotImplementedError, "TODO: save a new custom_content_version and update this BaseCourseCustomContentVersion[#{@base_course_custom_content_version.inspect}] with it"
 
-#    new_custom_content_version = @base_course_custom_content_version.custom_content.save_version!(current_user)
-## TODO: don't think we need to adjust canvas URL b/c we're just updating this record with a new custom content version...
-##    ca = CanvasAPI.client.get_assignment(@base_course.canvas_course_id, @base_course_custom_content_version.canvas_assignment_id)
-#    @base_course_custom_content_version.custom_content_version = new_custom_content_version
-#    @base_course_custom_content_version.save!
+    custom_content = @base_course_custom_content_version.custom_content_version.parent
+    new_custom_content_version = custom_content.save_version!(current_user)
+    @base_course_custom_content_version.custom_content_version = new_custom_content_version
+    @base_course_custom_content_version.save!
+
+    redirect_to edit_polymorphic_path(@base_course), notice: "Latest version successfully published to Canvas." 
   end
 
   def destroy
