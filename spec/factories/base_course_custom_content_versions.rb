@@ -1,7 +1,9 @@
 FactoryBot.define do
   factory :base_course_custom_content_version do
-    # This parent factory intentionally left blank.
+    # This parent factory's associations intentionally left blank.
     # Pass in base_course and custom_content_version to use it directly.
+
+    sequence(:canvas_assignment_id)
 
     factory :course_project_version do
       association :base_course, factory: :course

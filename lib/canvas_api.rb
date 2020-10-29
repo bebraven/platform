@@ -232,7 +232,8 @@ class CanvasAPI
   end
 
   def get_assignment(course_id, assignment_id)
-    JSON.parse(get("/courses/#{course_id}/assignments/#{assignment_id}").body)
+    response = get("/courses/#{course_id}/assignments/#{assignment_id}")
+    JSON.parse(response.body)
   end
 
   # Gets a list of all assignments for a course.
@@ -244,6 +245,11 @@ class CanvasAPI
   def update_assignment_lti_launch_url(course_id, assignment_id, new_url)
     body = { :assignment => { :external_tool_tag_attributes => { :url => new_url } } }
     response = put("/courses/#{course_id}/assignments/#{assignment_id}", body)
+    JSON.parse(response.body)
+  end
+
+  def delete_assignment(course_id, assignment_id)
+    response = delete("/courses/#{course_id}/assignments/#{assignment_id}")
     JSON.parse(response.body)
   end
 

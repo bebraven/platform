@@ -246,4 +246,19 @@ RSpec.describe CanvasAPI do
       expect(overrides.count).to eq(4)
     end
   end
+
+  describe '#delete_assignment' do
+    let(:course_id) { 123456 }
+    let(:assignment1) { FactoryBot.json(:canvas_assignment, course_id: course_id) }
+
+    it 'hits the Canvas API correctly' do
+      request_url = "#{CANVAS_API_URL}/courses/#{course_id}/assignments/#{assignment1['id']}"
+      stub_request(:delete, request_url).to_return( body: assignment1 )
+
+      response = canvas.delete_assignment(course_id, assignment1['id'])
+
+      expect(WebMock).to have_requested(:delete, request_url).once
+      expect(response).to eq(JSON.parse(assignment1))
+    end
+  end
 end

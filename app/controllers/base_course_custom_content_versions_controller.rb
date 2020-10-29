@@ -63,12 +63,25 @@ class BaseCourseCustomContentVersionsController < ApplicationController
     @base_course_custom_content_version.custom_content_version = new_custom_content_version
     @base_course_custom_content_version.save!
 
-    redirect_to edit_polymorphic_path(@base_course), notice: "Latest version successfully published to Canvas." 
+    respond_to do |format|
+      format.html { redirect_to edit_polymorphic_path(@base_course), notice: "Latest version of #{custom_content.title} successfully published to Canvas." }
+      format.json { head :no_content }
+    end
   end
 
+  # Deletes a Project, Survey, etc (aka CustomContent) from the Canvas course that this
+  # BaseCourseCustomContentVersion join model represents and then deletes this record locally.
   def destroy
     authorize @base_course_custom_content_version
-    raise NotImplementedError, "TODO: delete the local BaseCourseCustomContentVersion[#{@base_course_custom_content_version.inspect}] and call into Canvas to delete the associated assignment"
+    name = @base_course_custom_content_version.custom_content_version.title
+
+    CanvasAPI.client.delete_assignment(@base_course.canvas_course_id, @base_course_custom_content_version.canvas_assignment_id)
+    @base_course_custom_content_version.destroy
+
+    respond_to do |format|
+      format.html { redirect_to edit_polymorphic_path(@base_course), notice: "#{name} was successfully deleted from #{@base_course.name} in Canvas." }
+      format.json { head :no_content }
+    end
   end
 
   private
