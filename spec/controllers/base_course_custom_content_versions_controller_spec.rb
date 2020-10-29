@@ -3,6 +3,13 @@ require 'rails_helper'
 RSpec.describe BaseCourseCustomContentVersionsController, type: :controller do
   render_views
 
+##########
+# TODO: refactor the below "POST #create" tests to work with the new
+# Course Management approach for publishing a Project/Survey
+#######
+
+context "TODO refactor old specs" do
+
   let(:base_course_custom_content_version) { create :course_project_version }
   let(:state) { LtiLaunchController.generate_state }
   let(:target_link_uri) { 'https://target/link' }
@@ -56,4 +63,50 @@ RSpec.describe BaseCourseCustomContentVersionsController, type: :controller do
       end
     end
   end
+end # "TODO refactor old specs"
+################
+#### END TODO
+################
+
+  let!(:admin_user) { create :admin_user }
+  let(:course) { create :course_with_canvas_id }
+  let(:course_project_version) { create :course_project_version, base_course: course }
+  let(:invalid_edit_project_params) { {base_course_id: course_project_version.base_course_id, id: course_project_version} }
+  let(:course_template) { create :course_template_with_canvas_id }
+  let(:course_template_project_version) { create :course_template_project_version, base_course: course_template }
+  let(:valid_edit_project_params) { {base_course_id: course_template_project_version.base_course_id, id: course_template_project_version} }
+  let(:canvas_client) { double(CanvasAPI) }
+
+
+  # This should return the minimal set of values that should be in the session
+  # in order to pass any filters (e.g. authentication) defined in
+  # BaseCourseCustomContentVersionsController. Be sure to keep this updated too.
+  let(:valid_session) { {} }
+
+  before(:each) do
+    allow(CanvasAPI).to receive(:client).and_return(canvas_client)
+  end
+
+  context 'when logged in as admin user' do
+    before do
+      sign_in admin_user
+    end  
+
+    describe 'POST #update' do
+     context 'with invalid params' do
+        it 'throws when not a CourseTemplate' do
+          expect { post :update, params: invalid_edit_project_params, session: valid_session }.to raise_error(BaseCourse::BaseCourseEditError)
+        end
+      end
+    end # 'POST #update'
+
+    describe 'POST #delete' do
+      context 'with invalid params' do
+        it 'throws when not a CourseTemplate' do
+          expect { post :destroy, params: invalid_edit_project_params, session: valid_session }.to raise_error(BaseCourse::BaseCourseEditError)
+        end
+      end
+    end # 'POST #delete
+
+  end # logged in as admin user
 end

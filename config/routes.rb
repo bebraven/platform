@@ -43,7 +43,7 @@ Rails.application.routes.draw do
     resources :base_course_custom_content_versions, only: [:new, :create, :update, :destroy]
   end
 
-  resources :base_course_custom_content_versions, only: [:new] do
+  resources :base_course_custom_content_versions, only: [:new, :create] do # TODO: get rid of the create here when we refactor to use Course Mgmt page
     resources :project_submissions, :path => 'submissions', only: [:show, :new, :create]
   end
 
