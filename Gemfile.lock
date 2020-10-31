@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/bebraven/rowan_bot.git
-  revision: b078c0f257c875e632008186b68e5f23f6803e2c
-  ref: b078c0f
+  revision: 76481f077d9780ba9d48489ed9ae1859c97472df
+  ref: 76481f0
   specs:
     rowan_bot (0.1.0)
       capybara
@@ -140,7 +140,7 @@ GEM
       rubycas-client (>= 2.2.1)
     diff-lcs (1.4.4)
     docile (1.3.2)
-    docusign_esign (3.5.0)
+    docusign_esign (3.6.0)
       json (~> 2.1, >= 2.1.0)
       jwt (~> 2.2, >= 2.2.1)
       typhoeus (~> 1.0, >= 1.0.1)
