@@ -1,0 +1,7 @@
+<% content_for :headline do %>
+  Webinar Management
+<% end %>
+<div class="list-group w-25 mt-5 ml-4">
+  <%= link_to 'Update Webinars', update_webinar_path , type: "button", class: "list-group-item list-group-item-action active" %>
+  <%= link_to 'Generate Webinars', '#' , type: "button", class: "list-group-item list-group-item-action" %>
+</div>

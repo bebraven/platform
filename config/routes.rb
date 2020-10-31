@@ -1,5 +1,5 @@
 # Needed to use the url_helpers outside of views and controller
-Rails.application.routes.default_url_options[:host] = Rails.application.secrets.application_host 
+Rails.application.routes.default_url_options[:host] = Rails.application.secrets.application_host
 
 Rails.application.routes.draw do
 
@@ -80,6 +80,11 @@ Rails.application.routes.draw do
   # Sync to Join
   post 'sync_to_join', to: 'join#sync_to_join'
   get 'sync_to_join', to: 'join#init_sync_to_join'
+
+  # Zoom Management
+  get 'webinar_management', to: 'webinar#index'
+  get 'update_webinar', to: 'webinar#init_update_webinar'
+  post 'update_webinar', to: 'webinar#update_webinar'
 
   # RubyCAS Routes
   resources :cas, except: [:show]
