@@ -82,9 +82,8 @@ Rails.application.routes.draw do
   get 'sync_to_join', to: 'join#init_sync_to_join'
 
   # Zoom Management
-  get 'webinar_management', to: 'webinar#index'
-  get 'update_webinar', to: 'webinar#init_update_webinar'
-  post 'update_webinar', to: 'webinar#update_webinar'
+  get 'sync_to_webinar', to: 'webinar#init_sync_to_webinar'
+  post 'sync_to_webinar', to: 'webinar#sync_to_webinar'
 
   # RubyCAS Routes
   resources :cas, except: [:show]
