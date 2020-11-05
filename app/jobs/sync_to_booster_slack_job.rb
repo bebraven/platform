@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-# Update webinar job
-class SyncToWebinarJob < ApplicationJob
+# Update booster slack job
+class SyncToBoosterSlackJob < ApplicationJob
   queue_as :default
 
-  def perform(program_id, email, force_update)
-    SyncWebinarLinksForProgram.new(salesforce_program_id: program_id, force_update: force_update).run
+  def perform(emails, email)
+    SyncBoosterSlackForEmails.new(emails: emails).run
     SyncSalesforceToLmsMailer.with(email: email).success_email.deliver_now
   end
 

@@ -1,0 +1,33 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Update Slack</li>
+  </ol>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <legend>Update Program Participants to Cohort Channel on Slack</legend>
+      <%= form_with(url: sync_to_slack_path, method: "post", local: true) do |form| %>
+        <div class="form-group">
+          <%= form.label :program_id, "Program ID:" %>
+          <%= form.text_field :program_id, autofocus: true, class: "form-control", required: true, placeholder: "a34scx992...", autocomplete: "salesforce-program-id" %>
+        </div>
+      
+        <div class="form-group">
+          <%= form.label :email, "Email:" %>
+          <%= form.email_field :email, class: "form-control", required: true, placeholder: "you@example.com", autocomplete: "email" %>
+        </div>
+              
+        <div class="actions">
+          <%= form.submit "Update Slack Cohorts", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-sm">
+      <% if @show_booster_slack_sync %>
+        <%= link_to "Sync to Booster Slack", sync_to_booster_slack_path, type: "button", class: "btn btn-secondary float-right" %>
+      <% end %>
+    </div>
+  </div>
+</div>

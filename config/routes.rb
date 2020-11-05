@@ -85,6 +85,18 @@ Rails.application.routes.draw do
   get 'sync_to_webinar', to: 'webinar#init_sync_to_webinar'
   post 'sync_to_webinar', to: 'webinar#sync_to_webinar'
 
+  # Generate Webinar
+  get 'generate_webinar', to: 'webinar#init_generate_webinar'
+  post 'generate_webinar', to: 'webinar#generate_webinar'
+
+  # Slack Management
+  get 'sync_to_slack', to: 'slack#init_sync_to_slack'
+  post 'sync_to_slack', to: 'slack#sync_to_slack'
+
+  # Booster Slack Management
+  get 'sync_to_booster_slack', to: 'slack#init_sync_to_booster_slack'
+  post 'sync_to_booster_slack', to: 'slack#sync_to_booster_slack'
+
   # RubyCAS Routes
   resources :cas, except: [:show]
   get '/cas/login', to: 'cas#login'
