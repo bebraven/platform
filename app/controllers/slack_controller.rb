@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
-# Slack controller
+# A non standard controller used to initiate syncs from Salesforce into Slack cohorts
 class SlackController < ApplicationController
   layout 'admin'
 
+  # Non-standard controller without normal CRUD methods. Disable the convenience module.
+  def dry_crud_enabled?() 
+    false 
+  end
   before_action :authorize_index
 
   def init_sync_to_slack
@@ -11,26 +15,33 @@ class SlackController < ApplicationController
   end
 
   def sync_to_booster_slack
-    redirect_to root_path, notice: 'Nothing happened! Run this on booster platform instead' and return unless booster_instance?
 
-    email = params[:email]
-    emails = params[:emails]
+    the_notice = nil
+    if booster_instance?
+      SyncToBoosterSlackJob.perform_later(email_to_notify, emails_to_sync)
+      'The sync process was started. Watch out for an email'
+    else
+      'Nothing happened! Run this on booster platform instead'
+    end
 
-    SyncToBoosterSlackJob.perform_later(emails, email)
-
-    redirect_to root_path, notice: 'The sync process was started. Watch out for an email'
+    redirect_to_root_path(notice: the_notice)
   end
 
   def sync_to_slack
-    program_id = params[:program_id]
-    email = params[:email]
-
-    SyncToSlackJob.perform_later(program_id, email)
+    SyncToSlackJob.perform_later(params[:program_id], email_to_notify)
 
     redirect_to root_path, notice: 'The sync process was started. Watch out for an email'
   end
 
   private
+
+  def email_to_notify
+    params[:email]
+  end
+
+  def emails_to_sync
+    params[:emails]
+  end
 
   def booster_instance?
     ENV['BOOSTER_INSTANCE'].present?
