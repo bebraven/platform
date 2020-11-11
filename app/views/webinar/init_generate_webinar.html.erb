@@ -18,9 +18,9 @@
           <%= form.label :participants, "Meeting Participants:" %>
           <%= form.file_field :participants, class: "form-control-file", required: true %>
         </div>
-
+        <p> Upload csv with the following columns <strong>email</strong>,	<strong>first_name</strong>,	<strong>last_name</strong> OR <a href="webinar_template.csv" download>download template</a><p>
         <div class="form-group">
-          <%= form.label :email, "Email:" %>
+          <%= form.label :email, "Email to notify:" %>
           <%= form.email_field :email, class: "form-control", required: true, placeholder: "you@example.com", autocomplete: "email" %>
         </div>
 

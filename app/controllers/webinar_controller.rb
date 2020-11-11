@@ -2,30 +2,28 @@
 
 require 'csv'
 
-# Webinar controller
+# Non-standard controller used to generate webinar links independently
+# and generates webinar links from Salesforce
 class WebinarController < ApplicationController
   layout 'admin'
+
+  # Non-standard controller without normal CRUD methods. Disable the convenience module.
+  def dry_crud_enabled?() 
+    false 
+  end
 
   before_action :authorize_index
 
   def generate_webinar
-    participants_file = params[:participants]
-    email = params[:email]
-    meeting_id = params[:meeting_id]
-
-    participants = CSV.read(participants_file.path, headers: true).map(&:to_h)
-    GenerateWebinarJob.perform_later(meeting_id, email, participants)
+    participants = CSV.read(params[:participants].path, headers: true).map(&:to_h)
+    GenerateWebinarJob.perform_later(params[:meeting_id], params[:email], participants)
 
     redirect_to root_path, notice: 'The generation process was started. Watch out for an email'
   end
 
   def sync_to_webinar
-    program_id = params[:program_id]
-    email = params[:email]
-    force_update = params[:force_update].eql?('1')
-
-    SyncToWebinarJob.perform_later(program_id, email, force_update)
-
+    SyncToWebinarJob.perform_later(params[:program_id], params[:email], params[:force_update].present?)
+    
     redirect_to root_path, notice: 'The sync process was started. Watch out for an email'
   end
 

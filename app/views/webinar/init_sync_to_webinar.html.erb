@@ -15,12 +15,12 @@
         </div>
       
         <div class="form-group">
-          <%= form.label :email, "Email:" %>
+          <%= form.label :email, "Email to notify:" %>
           <%= form.email_field :email, class: "form-control", required: true, placeholder: "you@example.com", autocomplete: "email" %>
         </div>
       
         <div class="form-group form-check">
-          <%= form.check_box :force_update, class: "form-check-input", id: "force_update_check" %>
+          <%= form.check_box :force_update, {class: "form-check-input", id: "force_update_check"}, true, false %>
           <%= form.label :force_update, "Force Update", class: "form-check-label", for: "force_update_check" %>
         </div>
       
