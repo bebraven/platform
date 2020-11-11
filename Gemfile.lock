@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/bebraven/rowan_bot.git
-  revision: 0140634c16aece9713410b7ec8dbe6983beccfaa
-  ref: 0140634
+  revision: 1bfcee71eb1e2fd02c71877fc00efb1591fa44e0
+  ref: 1bfcee7
   specs:
     rowan_bot (0.1.0)
       capybara
