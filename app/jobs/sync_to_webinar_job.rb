@@ -6,11 +6,11 @@ class SyncToWebinarJob < ApplicationJob
 
   def perform(program_id, email, force_update)
     SyncWebinarLinksForProgram.new(salesforce_program_id: program_id, force_update: force_update).run
-    SyncSalesforceToLmsMailer.with(email: email).success_email.deliver_now
+    BackgroundSyncJobMailer.with(email: email).success_email.deliver_now
   end
 
   rescue_from(StandardError) do |exception|
-    SyncSalesforceToLmsMailer.with(email: arguments.second).failure_email.deliver_now
+    BackgroundSyncJobMailer.with(email: arguments.second).failure_email.deliver_now
     raise exception
   end
 end
