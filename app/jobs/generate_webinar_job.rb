@@ -11,6 +11,6 @@ class GenerateWebinarJob < ApplicationJob
 
   rescue_from(StandardError) do |exception|
     GenerateWebinarMailer.with(email: arguments.second).failure_email.deliver_now
-    raise exception
+    raise
   end
 end

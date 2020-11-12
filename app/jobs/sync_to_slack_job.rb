@@ -11,6 +11,6 @@ class SyncToSlackJob < ApplicationJob
 
   rescue_from(StandardError) do |exception|
     BackgroundSyncJobMailer.with(email: arguments.second).failure_email.deliver_now
-    raise exception
+    raise
   end
 end
