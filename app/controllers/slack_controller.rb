@@ -4,11 +4,12 @@
 class SlackController < ApplicationController
   layout 'admin'
 
+  before_action :authorize_index
+  
   # Non-standard controller without normal CRUD methods. Disable the convenience module.
   def dry_crud_enabled?() 
     false 
   end
-  before_action :authorize_index
 
   def init_sync_to_slack
     @show_booster_slack_sync = booster_instance?

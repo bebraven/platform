@@ -7,13 +7,13 @@ require 'csv'
 class WebinarController < ApplicationController
   layout 'admin'
 
+  before_action :authorize_index
+
   # Non-standard controller without normal CRUD methods. Disable the convenience module.
   def dry_crud_enabled?() 
     false 
   end
-
-  before_action :authorize_index
-
+  
   def generate_webinar
     participants = CSV.read(params[:participants].path, headers: true).map(&:to_h)
     GenerateWebinarJob.perform_later(params[:meeting_id], params[:email], participants)
