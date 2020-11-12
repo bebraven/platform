@@ -19,8 +19,6 @@ class SyncBoosterSlackForEmails
   end
 
   private
-
-  attr_reader :emails
   
   def admin_emails
     ENV.fetch('SLACK_ADMIN_EMAILS', '').split(',').map(&:strip)

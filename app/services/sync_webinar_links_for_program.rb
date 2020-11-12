@@ -13,10 +13,6 @@ class SyncWebinarLinksForProgram
     tasks.salesforce_api = RowanBot::SalesforceAPI.new
     tasks.zoom_api = RowanBot::ZoomAPI.new
 
-    tasks.sync_zoom_links_for_program(sf_program_id, force_update)
+    tasks.sync_zoom_links_for_program(@sf_program_id, @force_update)
   end
-
-  private
-
-  attr_reader :sf_program_id, :force_update
 end
