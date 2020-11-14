@@ -25,6 +25,6 @@ class SyncBoosterSlackForEmails
   end
 
   def emails_a
-    emails.split(',').map(&:strip)
+    @emails.split(',').map(&:strip)
   end
 end
