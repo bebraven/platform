@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
-class SyncSalesforceProgramToJoinJob < ApplicationJob
+# Update booster slack job
+class SyncToBoosterSlackJob < ApplicationJob
   queue_as :default
 
-  def perform(program_id, email)
-    SyncJoinUsersForProgram.new(salesforce_program_id: program_id).run
+  def perform(emails, email)
+    SyncBoosterSlackForEmails.new(emails: emails).run
     BackgroundSyncJobMailer.with(email: email).success_email.deliver_now
   end
 
-  rescue_from(StandardError) do |_exception|
+  rescue_from(StandardError) do |exception|
     BackgroundSyncJobMailer.with(email: arguments.second).failure_email.deliver_now
+    raise
   end
-
 end
