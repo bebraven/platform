@@ -19,13 +19,13 @@ class SlackController < ApplicationController
 
     the_notice = nil
     if booster_instance?
-      SyncToBoosterSlackJob.perform_later(email_to_notify, emails_to_sync)
+      SyncToBoosterSlackJob.perform_later(emails_to_sync, email_to_notify)
       the_notice = 'The sync process was started. Watch out for an email'
     else
       the_notice = 'Nothing happened! Run this on booster platform instead'
     end
 
-    redirect_to_root_path, notice = the_notice
+    redirect_to root_path, notice: the_notice
   end
 
   def sync_to_slack
