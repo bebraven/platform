@@ -14,7 +14,7 @@ class GenerateWebinarForParticipants
     registrants = tasks.add_participants_to_meetings(@meeting_id, @participants)
     CSV.generate do |csv|
       csv << registrants.first.keys
-      csv << registrants.map(&:values)
+      registrants.each { |registrant| csv << registrant.values }
     end
   end
 end
