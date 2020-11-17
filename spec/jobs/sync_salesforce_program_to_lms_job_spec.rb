@@ -10,7 +10,7 @@ RSpec.describe SyncSalesforceProgramToLmsJob, type: :job do
 
     before(:each) do
       allow(SyncPortalEnrollmentsForProgram).to receive(:new).and_return(program_portal_enrollments)
-      allow(SyncSalesforceToLmsMailer).to receive(:with).and_return(mailer)
+      allow(BackgroundSyncJobMailer).to receive(:with).and_return(mailer)
     end
 
     it 'starts the sync process for a program id' do

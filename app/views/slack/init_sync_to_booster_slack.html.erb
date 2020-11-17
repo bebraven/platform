@@ -1,0 +1,29 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Update Slack</li>
+  </ol>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <legend>Update Booster Program Participants to Cohort Channel on Slack</legend>
+      <%= form_with url: sync_to_booster_slack_path, method: "post", local: true do |form| %>
+        <div class="form-group">
+          <%= form.label :emails, "Emails of participants to add:" %>
+          <%= form.text_area :emails, class: "form-control", required: true, placeholder: "you@example.com, me@example.com", autocomplete: "emails" %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :email, "Email to notify:" %>
+          <%= form.email_field :email, class: "form-control", required: true, placeholder: "you@example.com", autocomplete: "email" %>
+        </div>
+
+        <div class="actions">
+          <%= form.submit "Update Booster Slack Cohorts", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-sm"></div>
+  </div>
+</div>

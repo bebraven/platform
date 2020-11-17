@@ -2,10 +2,9 @@
   Dashboard
 <% end %>
 <div class="list-group w-25 mt-5 ml-4">
-  <%= link_to 'Content Editor', new_custom_content_path, type: "button", class: "list-group-item list-group-item-action active" %>
-  <%= link_to 'Portal', canvas_url, target: :_blank, type: "button", class: "list-group-item list-group-item-action" %>
-  <%= link_to 'Course Management', base_courses_path, type: "button", class: "list-group-item list-group-item-action" %>
-  <%= link_to 'Sync To LMS', sync_to_lms_path, type: "button", class: "list-group-item list-group-item-action" %>
-  <%= link_to 'Sync To Join', sync_to_join_path, type: "button", class: "list-group-item list-group-item-action" %>
-  <%= link_to 'Users', users_path, type: "button", class: "list-group-item list-group-item-action" %>
+  <% @links.each do |link| %>
+    <% target = link[:blank_target].present? ? :_blank : :_self %>
+    <% extra_class = link[:is_active].present? ? 'active' : '' %>
+    <%= link_to link[:title], link[:path], target: target, type: "button", class: "list-group-item list-group-item-action #{extra_class}"%>
+  <% end %>
 </div>
