@@ -16,13 +16,23 @@ $shadow: 0 0 3px $neutralLT;
 $baseSpacing: 1em;
 $radius: 4px;
 
-$headerType: DIN,"Trade Gothic MT",Oswald,sans-serif;
+$headings-font-family: 'DIN Pro Condensed', 'Oswald', sans-serif;
 
 html, body, main, #container {
   height:100%;
   padding:0;
   margin:0;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $headings-font-family;
+}
+
+// TODO: clean everything below here up
+
+h1{font-size: 1em; text-transform: uppercase; margin-right: $baseSpacing;}
+h2{font-size: 1.5em;}
+h4{text-transform: uppercase; font-size:1em;color:#666;}
 
 /* The side navigation menu */
 nav {
@@ -109,10 +119,6 @@ ul#view-mode li:hover{
 ul#view-mode li.active:hover{
   background: white;
 }
-
-h1{font-family:$headerType;font-size: 1em; text-transform: uppercase; margin-right: $baseSpacing;}
-h2{font-size: 1.5em;}
-h4{text-transform: uppercase; font-size:1em;color:#666;}
 
 header ul li {
   border-radius: $radius;

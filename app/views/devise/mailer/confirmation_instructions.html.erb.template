@@ -194,7 +194,7 @@ and then swapped it out for this after inlining:
       }
 
 /* TODO: host this somewhere and link it in to use it above instead of Open Sans.*/
-/*          //font-family: "TradeGothicNo.20-Cond", Impact, sans-serif; */
+/*          //font-family: 'DIN Pro Condensed', 'Oswald', sans-serif; */
 
       .btn-primary table td {
         background-color: #DB2B36; 
