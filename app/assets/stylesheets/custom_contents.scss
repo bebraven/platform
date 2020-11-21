@@ -122,78 +122,6 @@ html {
 }
 /* /hacks */
 
-/* --- Show module --- */
-.show-module-notice {
-	font-size: 20px;
-	margin: 2em;
-
-	strong {
-		color: red;
-	}
-}
-
-/* --- Warnings for invalid content --- */
-.content-section > :not(.module-block):not([data-placeholder="[Empty section]"]):before,
-.content-section > .module-block:nth-of-type(2):before {
-        content: "INVALID CONTENT IN SECTION - Please remove or ask tech team for help\A";
-        white-space: pre;
-        color: black;
-        background-color: red;
-        border: 1px black solid;
-        padding: 0.2em;
-        font-weight: bold;
-        font-size: 12pt;
-}
-
-.content-section > :not(.module-block):not([data-placeholder="[Empty section]"]),
-.content-section > .module-block:nth-of-type(2) {
-        background-color: khaki;
-}
-
-/* --- Editor / Content styles --- */
-.bz-module,
-.bz-view-box {
-	width: 100%;
-	position: relative;
-	background-color: white;
-}
-
-.bz-module > .ck {
-	max-width: 708px;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.bz-module input[data-correctness="correct"] + label {
-    color: green;
-}
-
-.bz-module input[data-correctness="incorrect"] + label {
-    color: red;
-}
-
-.bz-module input[data-correctness="maybe"] + label,
-.bz-module input[data-correctness=""] + label {
-    color: #a54c2a;
-}
-
-
-div.module-block div.module-icon-preview,
-.module-icon-preview {
-        width: 50px;
-        height: 50px;
-        background-position-y: 0;
-        padding: 0;
-        border: 0;
-        margin: 0;
-        margin-bottom: 0.5em;
-        background-repeat: no-repeat;
-}
-
-figure.table {
-        text-align: left;
-}
-
 .bz-assignment .highlighted-user-input {
   background-color: #3BE7DD
 }
@@ -252,21 +180,11 @@ figure.table {
 }
 
 /* TYPOGRAPHY */
-.bz-module th,
-.bz-module h1,
-.bz-module h2,
-.bz-module h3,
-.bz-module h4,
-.bz-module h5,
-.bz-module h6,
 button.ck.ck-button.ck-heading_h2 .ck-button__label,
 button.ck.ck-button.ck-heading_h3 .ck-button__label,
 button.ck.ck-button.ck-heading_h4 .ck-button__label,
 button.ck.ck-button.ck-heading_h5 .ck-button__label,
-button.ck.ck-button.ck-heading_h6 .ck-button__label,
-.bz-module nav li,
-.bz-module input[type="button"],
-.bz-module th {
+button.ck.ck-button.ck-heading_h6 .ck-button__label {
 	text-transform: uppercase;
 	line-height: normal;
 	font-weight: normal;
@@ -299,29 +217,6 @@ button.ck.ck-button.ck-heading_h5 .ck-button__label {
 	font-size: 24px;
 }
 
-/* Unhide "display: none" things. */
-.conditional-show {
-	display: block;
-}
-
-.revealable,
-.feedback {
-	display: block;
-}
-
-.instant-range-feedback .feedback {
-	display: block;
-}
-
-.bz-ajax-loaded-rubric .learning_outcome_flag,
-.bz-ajax-loaded-rubric .links,
-.bz-ajax-loaded-rubric .points_form,
-.bz-ajax-loaded-rubric .editing,
-.bz-ajax-loaded-rubric .long_description_holder,
-.bz-ajax-loaded-rubric .threshold {
-	display: block;
-}
-
 /* more overrides */
 .block-quote-bg > div.content,
 div.content > blockquote {
@@ -332,15 +227,6 @@ div.content > blockquote:focus,
 div.content > blockquote:focus > small {
         color: black;
         background: none;
-}
-div.module-block:not(.block-quote-bg) blockquote {
-        padding: 0 1.5em;
-        margin: 0;
-        border-left: none;
-        width: 100%;
-        background: none;
-        color: black;
-        font-size: 18px;
 }
 
 /* custom components */
