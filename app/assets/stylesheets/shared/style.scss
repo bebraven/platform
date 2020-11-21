@@ -28,6 +28,18 @@ h1, h2, h3, h4, h5, h6 {
   font-family: $headings-font-family;
 }
 
+th {
+  font-family: $headings-font-family;
+}
+
+input[type=submit] {
+  font-family: $headings-font-family;
+}
+
+.btn, .button-primary, .button-secondary {
+  font-family: $headings-font-family;
+}
+
 // TODO: clean everything below here up
 
 h1{font-size: 1em; text-transform: uppercase; margin-right: $baseSpacing;}
