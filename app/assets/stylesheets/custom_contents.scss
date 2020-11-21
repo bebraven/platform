@@ -9,24 +9,6 @@
     width: unset !important;
     max-width: 42rem;
 
-    h1, h2, h3, h4, h5, h6 {
-        margin: 0;
-        margin-top: 1rem;
-        line-height: normal;
-        font-weight: bold;
-        text-transform: capitalize !important;
-    }
-
-    h2, h4, h6 {
-        color: #DB2B36;
-    }
-
-    th {
-        margin: 0;
-        line-height: normal;
-        font-weight: bold;
-    }
-
     p {
         font-size: 1rem;
         line-height: 1.7 !important;
@@ -42,15 +24,7 @@
     ul, ol {
         font-size: 1rem;
     }
-
-    h2 {
-        font-size: 48px;
-    }
-
-    h4 {
-        font-size: 36px;
-    }
-
+    
     li {
         line-height: 1.7 !important;
         margin-top: 0.5rem;
@@ -85,11 +59,6 @@
         width: 215px;
         height: 41px;
     }
-}
-
-html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 /* End Braven Projects CSS */
