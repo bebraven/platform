@@ -16,12 +16,14 @@ $shadow: 0 0 3px $neutralLT;
 $baseSpacing: 1em;
 $radius: 4px;
 
+$font-family-base: 'Mercury Text', 'Georgia', serif;
 $headings-font-family: 'DIN Pro Condensed', 'Oswald', sans-serif;
 
 html, body, main, #container {
   height:100%;
   padding:0;
   margin:0;
+  font-family: $font-family-base;
 }
 
 h1, h2, h3, h4, h5, h6 {
