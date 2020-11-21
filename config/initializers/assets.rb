@@ -12,13 +12,11 @@ Rails.application.config.assets.paths << Rails.root.join('app', 'assets', 'fonts
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
-# Rails.application.config.assets.precompile += %w( admin.js admin.css )
-Rails.application.config.assets.precompile += %w( accounts.css )
-Rails.application.config.assets.precompile += %w( content_editor.css )
-Rails.application.config.assets.precompile += %w( custom_contents.css )
-Rails.application.config.assets.precompile += %w( lti_placement.css )
-Rails.application.config.assets.precompile += %w( projects.css )
-Rails.application.config.assets.precompile += %w( form_assembly.css )
+Rails.application.config.assets.precompile += %w( layouts/application.css )
+Rails.application.config.assets.precompile += %w( layouts/accounts.css )
+Rails.application.config.assets.precompile += %w( layouts/admin.css )
+Rails.application.config.assets.precompile += %w( layouts/content_editor.css )
+Rails.application.config.assets.precompile += %w( layouts/lti_canvas.css )
 
 # Add fonts to precompile
 Rails.application.config.assets.precompile << /\.(?:svg|eot|woff|ttf)\z/

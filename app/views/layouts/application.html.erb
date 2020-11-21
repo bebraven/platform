@@ -15,7 +15,11 @@
 
     <link rel="shortcut icon" href="https://bebraven.org/wp-content/themes/bebraven/favicon.ico">
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%# 'stylesheet_link_tag' comes after 'stylesheet_pack_tag' so that our custom styles
+        take precendence. For more context see the notes about Sprockets vs Webpacker here:
+        app/javascript/stylesheets/application.scss %>
+    <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag 'layouts/application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application' %>
 
     <%= yield :head %>

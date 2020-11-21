@@ -1,6 +1,6 @@
 class LtiAssignmentSelectionController < ApplicationController
   include LtiHelper
-  layout 'lti_placement'
+  layout 'lti_canvas'
 
   before_action :set_lti_launch, only: [:new, :create]
   skip_before_action :verify_authenticity_token, only: [:new, :create], if: :is_sessionless_lti_launch?

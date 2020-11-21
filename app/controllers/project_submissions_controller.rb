@@ -5,7 +5,7 @@ class ProjectSubmissionsController < ApplicationController
   include LtiHelper
   include DryCrud::Controllers::Nestable
   
-  layout 'projects'
+  layout 'lti_canvas'
 
   nested_resource_of BaseCourseProjectVersion
 

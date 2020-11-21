@@ -1,15 +1,18 @@
 /*
- * This is a manifest file that'll be compiled into projects.css, which will include all the files
+ * This is a manifest file that'll be compiled into lti_canvas.css, which will include all the files
  * listed below.
  *
  * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
  * vendor/assets/stylesheets directory can be referenced here using a relative path.
  *
- * You're free to add content-editor-wide styles to this file and they'll appear at the bottom of the
+ * You're free to add lti-canvas-wide styles, those that will appear in all pages shown when
+ * launched in Canvas through the LTI Extension, to this file and they'll appear at the bottom of the
  * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
  */
 //*= require custom_contents
-//*= require project_submissions
+
+// TODO: look for #lesson-content-preview and  #assignment-create
+// classes and set their height/width in a more general way for LTI views

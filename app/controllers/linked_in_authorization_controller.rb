@@ -7,7 +7,7 @@ require 'uri'
 require 'linked_in_api'
 
 class LinkedInAuthorizationController < ApplicationController
-  layout 'content_editor'
+  layout 'lti_canvas'
 
   # iframe-able endpoint that renders a static LinkedIn button
   def login

@@ -2,7 +2,7 @@ require 'zip'
 
 class LessonContentsController < ApplicationController
   include LtiHelper
-  layout 'lti_placement'
+  layout 'lti_canvas'
 
   before_action :set_lti_launch, only: [:create, :show]
   skip_before_action :verify_authenticity_token, only: [:create, :show], if: :is_sessionless_lti_launch?

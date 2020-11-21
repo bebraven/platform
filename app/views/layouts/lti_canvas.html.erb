@@ -1,9 +1,9 @@
-<% content_for :title, 'Content Editor' %>
+<% content_for :title, 'Braven LTI Extension' %>
 
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'layouts/content_editor', media: 'all', 'data-turbolinks-track': 'reload' %>
-  <%= javascript_pack_tag 'sidebar' %>
-  <%= javascript_pack_tag 'content_editor' %>
+  <%= stylesheet_link_tag 'layouts/lti_canvas', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'server_rendering' %>
+  <%= javascript_pack_tag 'project_submit_button' %>
   <%= javascript_pack_tag 'linked_in_authorization_button' %>
   <%= javascript_pack_tag 'linked_in_authorization_window' %>
 <% end %>

@@ -1,32 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Braven Platform Administration</title>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-    
-    <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+<% content_for :title, 'Braven Platform Administration' %>
 
-  </head>
-  <body>
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'layouts/admin', media: 'all', 'data-turbolinks-track': 'reload' %>
+<% end %>
 
-    <% flash.each do |key, value| %>
-      <div class="alert alert-warning alert-dismissible fade show show-alert" role="alert">
-        <a href="#" class="close" data-dismiss="alert">×</a>
-        <ul class="messages">
-          <li>
-            <%= value %>
-          </li>
-        </ul>
-      </div>
-    <% end %>
-    <%= render 'layouts/admin_navbar' %>
-    <h2><%= content_for?(:headline) ? yield(:headline) : '' %></h2>
-    <%= content_for?(:headline_buttons) ? yield(:headline_buttons) : '' %>
+<% content_for :content do %>
 
-    <%= yield %>
-  </body>
-</html>
+  <% flash.each do |key, value| %>
+    <div class="alert alert-warning alert-dismissible fade show show-alert" role="alert">
+      <a href="#" class="close" data-dismiss="alert">×</a>
+      <ul class="messages">
+        <li>
+          <%= value %>
+        </li>
+      </ul>
+    </div>
+  <% end %>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light static-top home-navbar">
+    <div class="container-fluid">
+      <%= link_to root_path, class: "navbar-brand p-0" do %>
+        <%= image_tag 'braven_logo.png', alt: 'logo', height: '50', loading: 'lazy' %>
+      <% end %>
+
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <%= link_to 'Log out', destroy_user_session_path,  method: :delete %>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2><%= content_for?(:headline) ? yield(:headline) : '' %></h2>
+  <%= content_for?(:headline_buttons) ? yield(:headline_buttons) : '' %>
+
+  <%= yield %>
+
+<% end %>
+
+<%= render template: "layouts/application" %>
+

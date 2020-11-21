@@ -2,22 +2,20 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/journal/bootswatch";
 
-.show-alert {
-  position: absolute;
-  z-index: 100;
-  width: 100%;
-}
-
-.align-center {
-  text-align: center; 
-}
-
-.align-right {
-  text-align: right; 
-}
-
-.align-left {
-  text-align: left; 
-}
-
-
+// DON'T ADD YOUR OWN CSS HERE. This file is only for importing CSS from
+// node.js packages.
+//
+// Context: We use the Rails Sprockets pipeline to bundle all assets, 
+// with the exception of Javascript. In other words: all custom
+// CSS, images, etc should go somewhere in the app/assets directory.
+//
+// This file and everything under app/javascript is only for javascript which
+// is bundled using Webpacker. Hence why it's called app/javascript.
+//
+// However, some node.js modules have their own CSS and other assets.
+// That's where this (and any other stylesheet or non-javascript asset) under
+// app/javascript comes in. It's to bundle assets that are part of javascript
+// packages that we don't control.
+//
+// This article does a decent job of talking about this whole thang:
+// https://rossta.net/blog/why-does-rails-install-both-webpacker-and-sprockets.html

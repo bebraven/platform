@@ -49,24 +49,4 @@ module ApplicationHelper
     ).html_safe
   end
 
-  def is_production_app?
-    ENV['HEROKU_APP_NAME'] == 'braven-platform'
-  end
-
-  def portal_stylesheet_link_tag
-    # Choose S3 resource based on where we're running.
-    assets = if is_production_app?
-      "canvas-prod-assets"
-    else
-      "canvas-stag-assets"
-    end
-
-    # Automatically change the "version" string to fix caching issues.
-    version = ENV['HEROKU_RELEASE_VERSION']
-
-    stylesheetURL = "https://s3.amazonaws.com/#{assets}/braven_newui.css?v=#{version}"
-
-    # Return full HTML link element.
-    "<link rel='stylesheet' href='#{stylesheetURL}'>".html_safe
-  end
 end
