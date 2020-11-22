@@ -1,26 +1,8 @@
-/**------
-  This file is for styling standard html elements application wide.
-  If you want to target a particular class used through the application,
-  put it in application.scss
-*/
-
-/*---SKY---*/
-/*$primaryZLT: #EBF7F7;*/
-/*$primaryXLT: #D7EFEF;*/
-$primaryLT: #C4E6E7;
-$primaryMD: #9AD7D7;
-$primaryDK: #5BBBBA;
-$primaryXDK: #378383;
-/*$primaryZDK: #046366;*/
-
-/*---SILVER---*/
-$neutralZLT: #F3F3F3;
-$neutralXLT: #E6E6E6;
-$neutralLT: #D1D1D1;
-
-$shadow: 0 0 3px $neutralLT;
-$baseSpacing: 1em;
-$radius: 4px;
+/**
+ * This file is for styling standard html elements application wide.
+ * If you want to target a particular class used through the application,
+ * put it in application.scss
+ */
 
 $font-family-base: 'Mercury Text', 'Georgia', serif;
 $headings-font-family: 'DIN Pro Condensed', 'Oswald', sans-serif;
@@ -39,7 +21,7 @@ html, body, main {
   overflow-y: scroll;
 }
 
-header{
+header {
   height: 3.8rem;
 }
 
@@ -52,10 +34,6 @@ h1, h2, h3, h4, h5, h6 {
 
 h1, h3, h5 {
   color: #DB2B36;
-}
-
-h1 {
-  margin-right: $baseSpacing;
 }
 
 th {
@@ -71,186 +49,3 @@ input[type=submit] {
   font-family: $headings-font-family;
   text-transform: uppercase;
 }
-
-// TODO: clean everything below here up
-
-/* The side navigation menu */
-nav {
-  height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: $primaryMD; /* Black*/
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-}
-
-#wysiwyg-container {
-  padding:$baseSpacing;
-}
-
-#wysiwyg-container, ul#view-mode li.active{
-  background:white;
-  box-shadow: $shadow;
-}
-
-ul#view-mode, header ul, ul#component-types, ul#widget-list, ul#edit-page{
-  list-style:none;
-  margin:  0;
-  padding: 0;
-  overflow:auto;
-}
-
-ul#view-mode{
-  margin: 0 0 1px 0;
-}
-
-ul#widget-list li {
-  border-radius: $radius;
-  border: 1px solid #CCC;
-  padding: ($baseSpacing / 2);
-  margin-bottom: ($baseSpacing / 2);
-}
-
-ul#widget-list li:hover{
-  background: $primaryLT;
-  border-color:$primaryMD;
-}
-
-ul#component-types li , ul#widget-list li, ul#view-mode li, ul#edit-page li{
-  display: block;
-}
-
-ul#component-types li , ul#view-mode li, ul#edit-page li{
-  float:left;
-}
-
-ul#edit-page {
-    float:right;
-}
-
-ul#edit-page li{
-    float:right;
-    margin-left:10px;
-    margin-top:10px;
-}
-
-ul#component-types li , ul#view-mode li{
-  padding:($baseSpacing / 2) $baseSpacing;
-  border-radius: $radius $radius 0 0;
-}
-
-ul#view-mode li:hover{
-  background: $primaryMD;
-  cursor: pointer;
-}
-
-ul#view-mode li.active:hover{
-  background: white;
-}
-
-header ul li {
-  border-radius: $radius;
-  display:block;
-  border: 1px solid #CCC;
-  float:right;
-  padding: ($baseSpacing / 2);
-}
-
-header ul li.success{
-  background: $primaryLT;
-  border-color:$primaryMD;
-  color:$primaryXDK;
-}
-
-h1, #autosave-indicator{
-  float:left; 
-  padding: ($baseSpacing / 2) 0;
-}
-
-main{
-  min-width: 1000px;
-}
-
-#wysiwyg-container{
-  min-height:400px; 
-  border-radius: 0 $radius 0 0;
-}
-
-#workspace{
-  margin-right:300px;
-}
-
-#vertical-toolbar{
-  float:right;
-  width: 300px;
-  margin-left: -300px;
-  height:100%;
-  border-top:1px solid $neutralXLT;;
-  background:$neutralZLT;
-}
-
-#toolbar-page-settings,
-#toolbar-components{
-  padding: $baseSpacing;
-}
-
-#workspace{
-  padding: $baseSpacing $baseSpacing 0 $baseSpacing;
-}
-
-#toolbar-components{
-  border-top:1px solid #ccc;
-}
-
-#workspace{
-  border-top:1px solid $neutralLT;
-}
-
-ul#component-types{
-  margin-bottom:-1px;
-  padding: 0 $baseSpacing;
-}
-
-ul#component-types li{
-  border:1px solid #ccc;
-  font-size:80%;
-  background:$neutralZLT;
-}
-
-ul#widget-list li{
-  position: relative;
-  padding-right:($baseSpacing * 2.5);
-  border-bottom-width:2px;
-}
-
-ul#widget-list li:after{
-  content:"+"; 
-  position:absolute; 
-  right: ($baseSpacing / 2); 
-  height:22px; 
-  width: 22px; 
-  border-radius: 11px; 
-  background: $neutralLT; 
-  text-align:center;
-  color:$neutralZLT;
-  font-weight: bold;
-  line-height: 19px;
-  top:50%; 
-  margin-top:-11px;
-}
-
-ul#component-types li:hover, ul#component-types li.active{
-  z-index:100;
-  position:relative;
-  border-bottom-color:$neutralZLT;
-}
-
-ul#widget-list li:hover:after{
-  background:$primaryDK;
-}
-
-
