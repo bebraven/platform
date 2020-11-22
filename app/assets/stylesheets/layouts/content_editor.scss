@@ -15,7 +15,7 @@
 
 
 /**
- * Put CSS for the Content Editor itself here. Put CSS for the actual content in custom_contents
+ * Content Editor styles. For the actual content styles, put them in custom_contents.scss
  */
 
 /*---SKY---*/
@@ -41,6 +41,59 @@ main{
   min-width: 1000px;
 }
 
+/* custom temporary hacks for content editor demo */
+#content-editor .ck.ck-editor__editable_inline {
+  min-height: 25rem;
+}
+
+#content-editor textarea.secret-html {
+  display: none;
+}
+/* /hacks */
+
+
+/* TYPOGRAPHY */
+
+// TODO: make all of this match the actual displayed style of the
+// associated custom content
+
+button.ck.ck-button.ck-heading_h2 .ck-button__label,
+button.ck.ck-button.ck-heading_h3 .ck-button__label,
+button.ck.ck-button.ck-heading_h4 .ck-button__label,
+button.ck.ck-button.ck-heading_h5 .ck-button__label,
+button.ck.ck-button.ck-heading_h6 .ck-button__label {
+	text-transform: uppercase;
+	line-height: normal;
+	font-weight: normal;
+}
+
+button.ck.ck-button.ck-heading_h2 .ck-button__label,
+button.ck.ck-button.ck-heading_h4 .ck-button__label,
+button.ck.ck-button.ck-heading_h6 .ck-button__label {
+	color: #DB2B36;
+}
+
+button.ck.ck-button.ck-heading_h2 .ck-button__label {
+	font-size: 40px;
+}
+
+button.ck.ck-button.ck-heading_h3 .ck-button__label {
+	font-size: 34px;
+}
+
+button.ck.ck-button.ck-heading_h4 .ck-button__label {
+	font-size: 27px;
+}
+
+button.ck.ck-button.ck-heading_h6 .ck-button__label {
+ font-size: 16px;
+ letter-spacing: 0.1em;
+}
+
+button.ck.ck-button.ck-heading_h5 .ck-button__label {
+	font-size: 24px;
+}
+
 /* The side navigation menu */
 nav {
   background-color: $primaryMD; /* Black*/
@@ -48,6 +101,7 @@ nav {
   padding-top: 60px; /* Place content 60px from the top */
 }
 
+/* header navigation bar */
 #content-editor span#autosave-indicator {
   display: none;
 }
@@ -69,6 +123,119 @@ nav {
   }
 }
 
+/* React Tabs */
+.react-tabs__tab--selected {
+    border: 0 !important;
+}
+
+/* custom components */
+.ck iframe.ck-widget,
+.ck iframe.ck-widget.ck-widget_selected,
+.ck iframe.ck-widget.ck-widget_selected:hover {
+        outline-width: 10px;
+        outline-offset: -10px;
+        padding: 10px;
+}
+
+div.partial-html-document:after {
+   content: " ";
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+/* --- Right sidebar styles --- */
+ul.widget-list li.disabled,
+ul.widget-list li.disabled:hover {
+  border: 1px solid #bbb;
+  background-color: #ddd;
+  color: #888;
+}
+
+/* --- Left Sidebar styles --- */
+
+/* Position and sizing of burger button */
+.bm-burger-button {
+  position: fixed;
+  width: 36px;
+  height: 30px;
+  left: 36px;
+  top: 36px;
+}
+
+/* Color/shape of burger icon bars */
+.bm-burger-bars {
+  background: #373a47;
+}
+
+/* Color/shape of burger icon bars on hover*/
+.bm-burger-bars-hover {
+  background: #a90000;
+}
+
+/* Position and sizing of clickable cross button */
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+/* Color/shape of close button cross */
+.bm-cross {
+  background: #373a47;
+}
+
+/*
+Sidebar wrapper styles
+Note: Beware of modifying this element as it can break the animations - you should not need to touch it in most cases
+*/
+.bm-menu-wrap {
+  position: fixed;
+  height: 100%;
+}
+
+/* General sidebar styles */
+.bm-menu {
+  background: #9ad7d7;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+}
+
+/* Morph shape necessary with bubble or elastic */
+.bm-morph-shape {
+  fill: #373a47;
+}
+
+/* Wrapper for item list */
+.bm-item-list {
+  color: #b8b7ad;
+  padding: 0.8em;
+}
+
+/* Individual item */
+.bm-item {
+  display: inline-block;
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* --- In-editor content-part widget styles --------------------------------------------------- */
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(1em);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* TODO: comment the rest of this to group things into the various parts of the editor */
+
 #workspace {
   margin-right:300px;
 }
@@ -83,8 +250,11 @@ nav {
 
 #wysiwyg-container {
   min-height:400px;
+  // Set a max height that matches the right-sidebar... for now.
+  max-height: 825px;
   border-radius: 0 $radius 0 0;
   padding:$baseSpacing;
+  overflow-y: auto;
 }
 
 #wysiwyg-container, ul#view-mode li.active {
