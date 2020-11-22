@@ -1,7 +1,8 @@
 /**
- * This file is for styling standard html elements application wide.
- * If you want to target a particular class used through the application,
- * put it in application.scss
+ * This file is for the base styling of all html elements and applies to the entire
+ * application (aka layouts). If you want to target a particular element using
+ * its class or id, put that targeted styling in application.scss or an even narrower
+ * scoped file if it's not an element used across the entire application.
  */
 
 $font-family-base: 'Mercury Text', 'Georgia', serif;
