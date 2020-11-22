@@ -330,11 +330,7 @@ class ContentEditor extends Component {
                     <div className="col-sm-6">
                         <span id="autosave-indicator" className="saved">Saved</span>
                         <span id="autosave-indicator" className="saving">Saving...</span>
-                        <ul>
-                            <li onClick={(evt) => this.handleSave(evt)}>
-                                <span className="btn-secondary">Save</span>
-                            </li>
-                        </ul>
+                        <span onClick={(evt) => this.handleSave(evt)} className="btn-secondary">Save</span>
                     </div>
                 </div>
             </header>
