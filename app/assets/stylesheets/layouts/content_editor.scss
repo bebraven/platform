@@ -43,16 +43,9 @@ main{
 
 /* The side navigation menu */
 nav {
-  height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
   background-color: $primaryMD; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
 #content-editor span#autosave-indicator {
@@ -112,7 +105,11 @@ ul#view-mode li.active:hover {
   background: white;
 }
 
-ul#widget-list li {
+ul.widget-list {
+  padding-bottom: 15px;
+}
+
+ul.widget-list li {
   border-radius: $radius;
   border: 1px solid #CCC;
   padding: ($baseSpacing / 2);
@@ -122,16 +119,16 @@ ul#widget-list li {
   border-bottom-width:2px;
 }
 
-ul#widget-list li:hover {
+ul.widget-list li:hover {
   background: $primaryLT;
   border-color:$primaryMD;
 }
 
-ul#widget-list li:hover:after {
+ul.widget-list li:hover:after {
   background:$primaryDK;
 }
 
-ul#widget-list li:after {
+ul.widget-list li:after {
   content:"+";
   position:absolute;
   right: ($baseSpacing / 2);
@@ -175,14 +172,14 @@ ul#component-types li:hover, ul#component-types li.active {
 }
 
 
-ul#component-types, ul#widget-list,ul#view-mode, ul#edit-page, header ul {
+ul#component-types, ul.widget-list,ul#view-mode, ul#edit-page, header ul {
   list-style:none;
   margin:  0;
   padding: 0;
   overflow:auto;
 }
 
-ul#component-types li, ul#widget-list li, ul#view-mode li, ul#edit-page li {
+ul#component-types li, ul.widget-list li, ul#view-mode li, ul#edit-page li {
   display: block;
 }
 
@@ -206,10 +203,17 @@ ul#component-types li , ul#view-mode li {
 }
 
 #toolbar-page-settings,
-#toolbar-components{
+#toolbar-components,
+#toolbar-contextual {
   padding: $baseSpacing;
 }
 
-#toolbar-components{
+#toolbar-components,
+#toolbar-contextual {
   border-top:1px solid #ccc;
+}
+
+#toolbar-contextual:empty {
+  transform:translate(9999px);
+  display: none;
 }
