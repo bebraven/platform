@@ -90,7 +90,7 @@ button.ck.ck-button.ck-heading_h5 .ck-button__label {
 
 /* The side navigation menu */
 nav {
-  background-color: $bv-blue-400; /* Black*/
+  background-color: $bv-black;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
 }
@@ -153,12 +153,12 @@ ul.widget-list li {
 }
 
 ul.widget-list li:hover {
-  background: $bv-blue-300;
-  border-color:$bv-blue-400;
+  background: $bv-skyblue-300;
+  border-color:$bv-skyblue-400;
 }
 
 ul.widget-list li:hover:after {
-  background:$bv-blue-600;
+  background:$bv-skyblue-600;
 }
 
 ul.widget-list li:after {
@@ -170,7 +170,7 @@ ul.widget-list li:after {
   border-radius: 11px;
   background: $bv-silver-300;
   text-align:center;
-  color:$bv-silver-100;
+  color:$bv-silver-200;
   font-weight: bold;
   line-height: 19px;
   top:50%;
@@ -299,7 +299,7 @@ ul#view-mode {
 }
 
 ul#view-mode li:hover {
-  background: $bv-blue-400;
+  background: $bv-skyblue-400;
   cursor: pointer;
 }
 
@@ -325,13 +325,13 @@ ul#component-types {
 ul#component-types li {
   border:1px solid #ccc;
   font-size:80%;
-  background:$bv-silver-100;
+  background:$bv-silver-200;
 }
 
 ul#component-types li:hover, ul#component-types li.active {
   z-index:100;
   position:relative;
-  border-bottom-color:$bv-silver-100;
+  border-bottom-color:$bv-silver-200;
 }
 
 
@@ -360,8 +360,8 @@ ul#component-types li , ul#view-mode li {
   width: 300px;
   margin-left: -300px;
   height:100%;
-  border-top:1px solid $bv-silver-100;
-  background:$bv-silver-100;
+  border-top:1px solid $bv-silver-200;
+  background:$bv-silver-200;
 }
 
 #toolbar-page-settings,

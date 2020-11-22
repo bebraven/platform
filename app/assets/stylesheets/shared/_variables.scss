@@ -1,0 +1,59 @@
+// You can import this into any SASS file where you need to reference these
+//
+// The naming of this file and the variable naming conventions draw inspiration
+// from Boostrap: https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
+
+// Fonts
+$font-family-base: 'Mercury Text', 'Georgia', serif;
+$headings-font-family: 'DIN Pro Condensed', 'Oswald', sans-serif;
+
+// Color system
+// Taken from here: https://drive.google.com/file/d/1RgRGxi0o0xSfoSNBLkXUEHjhZLD0BSdz/view?usp=sharing
+// Note: weight 500 is MD on the above chart.
+
+$bv-black: #262426;
+
+$bv-red-200: #F8D8DA;
+$bv-red-300: #F7B0B4;
+$bv-red-400: #F3888E;
+$bv-red-500: #EB3B46;
+$bv-red-600: #DB2B36; // Changed from above chart to be more accessible. Was: #C8141F
+$bv-red-700: #850E14;
+$bv-red-800: #600001;
+$bv-red: $bv-red-500; // Default 
+
+$bv-silver-100: #FBFBFB; 
+$bv-silver-200: #F3F3F3; // Not on the chart. I think Sarah created this b/c she needed something in between?
+$bv-silver-300: #E6E6E6; 
+$bv-silver-400: #D1D1D1;
+$bv-silver-500: #ACACAC;
+$bv-silver-600: #727272;
+$bv-silver-700: #4B4B4B;
+$bv-silver-800: #2B2B2B;
+$bv-silver-900: $bv-black;
+$bv-silver: $bv-silver-300; // Default
+
+$bv-skyblue-200: #EBF7F7;
+$bv-skyblue-300: #D7EFEF;
+$bv-skyblue-400: #C4E6E7;
+$bv-skyblue-500: #9AD7D7;
+$bv-skyblue-600: #5BBBBA;
+$bv-skyblue-700: #378383;
+$bv-skyblue-800: #046366;
+$bv-skyblue: $bv-skyblue-500; // Default
+
+$bv-oceanblue-600: #2E6D99;
+$bv-oceanblue-700: #235877;
+$bv-oceanblue-800: #173B4F;
+$bv-oceanblue: $bv-oceanblue-600; // Default
+
+$bv-gold-200: #F6EFDF;
+$bv-gold-300: #EDDCBE;
+$bv-gold-400: #E3CD9C;
+$bv-gold-500: #D1AB5C;
+$bv-gold-600: #B08833;
+$bv-gold-700: #755A22;
+$bv-gold-800: #644600;
+$bv-gold: $bv-gold-500; // Default
+
+// Add more things that need to be consistent across SASS files here:

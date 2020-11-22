@@ -32,12 +32,12 @@
 }
 
 .btn-secondary{
-  background-color: grey;
+  background-color: $bv-silver-600;
 }
 
 .btn-primary:hover,.btn-secondary:hover,
 .btn-primary:focus,.btn-secondary:focus {
-  background-color: black;
+  background-color: $bv-black;
   border-color: $bv-silver-300;
 }
 
