@@ -20,7 +20,7 @@ $bv-red-500: #EB3B46;
 $bv-red-600: #DB2B36; // Changed from above chart to be more accessible. Was: #C8141F
 $bv-red-700: #850E14;
 $bv-red-800: #600001;
-$bv-red: $bv-red-500; // Default 
+$bv-red: $bv-red-600; // Default (for web. The print version is lighter)
 
 $bv-silver-100: #FBFBFB; 
 $bv-silver-200: #F3F3F3; // Not on the chart. I think Sarah created this b/c she needed something in between?

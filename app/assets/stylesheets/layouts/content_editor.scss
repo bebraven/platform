@@ -49,7 +49,7 @@ main{
 /* TYPOGRAPHY */
 
 // TODO: make all of these headings match the actual displayed style of the
-// associated custom content. I'm confused b/c what displays as
+// associated custom content headings. I'm confused b/c what displays as
 // "Heading 1" is actually <h2>. Generally, across the site, <h1>
 // should be red, in all caps, and a standard size. Then the rest of
 // them should alternate b/n red and black down to <h6>. We can
@@ -70,7 +70,7 @@ button.ck.ck-button.ck-heading_h6 .ck-button__label {
 button.ck.ck-button.ck-heading_h2 .ck-button__label,
 button.ck.ck-button.ck-heading_h4 .ck-button__label,
 button.ck.ck-button.ck-heading_h6 .ck-button__label {
-	color: $bv-red-600;
+	color: $bv-red;
 }
 
 button.ck.ck-button.ck-heading_h2 .ck-button__label {
