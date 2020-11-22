@@ -25,9 +25,7 @@ $radius: 4px;
 $font-family-base: 'Mercury Text', 'Georgia', serif;
 $headings-font-family: 'DIN Pro Condensed', 'Oswald', sans-serif;
 
-// TODO: move the container class to application. Look at where main is used?
-
-html, body, main, #container {
+html, body, main {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -83,10 +81,6 @@ nav {
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-}
-
-#container {
-  transition: margin-left .5s;
 }
 
 header{
