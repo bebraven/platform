@@ -49,6 +49,12 @@ main{
 #content-editor textarea.secret-html {
   display: none;
 }
+
+#content-editor #raw-html-container > textarea {
+  width: 100%;
+  min-height: 600px;
+}
+
 /* /hacks */
 
 
@@ -110,7 +116,6 @@ nav {
   h1, #autosave-indicator {
     float:left;
     margin-right: $baseSpacing;
-    padding: ($baseSpacing / 2) 0;
   }
 
   .btn-secondary {
@@ -145,6 +150,45 @@ div.partial-html-document:after {
 }
 
 /* --- Right sidebar styles --- */
+ul.widget-list {
+  padding-bottom: 15px;
+}
+
+ul.widget-list li {
+  border-radius: $radius;
+  border: 1px solid #CCC;
+  padding: ($baseSpacing / 2);
+  padding-right:($baseSpacing * 2.5);
+  margin-bottom: ($baseSpacing / 2);
+  position: relative;
+  border-bottom-width:2px;
+}
+
+ul.widget-list li:hover {
+  background: $primaryLT;
+  border-color:$primaryMD;
+}
+
+ul.widget-list li:hover:after {
+  background:$primaryDK;
+}
+
+ul.widget-list li:after {
+  content:"+";
+  position:absolute;
+  right: ($baseSpacing / 2);
+  height:22px;
+  width: 22px;
+  border-radius: 11px;
+  background: $neutralLT;
+  text-align:center;
+  color:$neutralZLT;
+  font-weight: bold;
+  line-height: 19px;
+  top:50%;
+  margin-top:-11px;
+}
+
 ul.widget-list li.disabled,
 ul.widget-list li.disabled:hover {
   border: 1px solid #bbb;
@@ -159,8 +203,8 @@ ul.widget-list li.disabled:hover {
   position: fixed;
   width: 36px;
   height: 30px;
-  left: 36px;
-  top: 36px;
+  left: 25px;
+  top: 25px;
 }
 
 /* Color/shape of burger icon bars */
@@ -275,45 +319,6 @@ ul#view-mode li.active:hover {
   background: white;
 }
 
-ul.widget-list {
-  padding-bottom: 15px;
-}
-
-ul.widget-list li {
-  border-radius: $radius;
-  border: 1px solid #CCC;
-  padding: ($baseSpacing / 2);
-  padding-right:($baseSpacing * 2.5);
-  margin-bottom: ($baseSpacing / 2);
-  position: relative;
-  border-bottom-width:2px;
-}
-
-ul.widget-list li:hover {
-  background: $primaryLT;
-  border-color:$primaryMD;
-}
-
-ul.widget-list li:hover:after {
-  background:$primaryDK;
-}
-
-ul.widget-list li:after {
-  content:"+";
-  position:absolute;
-  right: ($baseSpacing / 2);
-  height:22px;
-  width: 22px;
-  border-radius: 11px;
-  background: $neutralLT;
-  text-align:center;
-  color:$neutralZLT;
-  font-weight: bold;
-  line-height: 19px;
-  top:50%;
-  margin-top:-11px;
-}
-
 ul#edit-page {
     float:right;
 }
@@ -342,7 +347,7 @@ ul#component-types li:hover, ul#component-types li.active {
 }
 
 
-ul#component-types, ul.widget-list,ul#view-mode, ul#edit-page, header ul {
+ul#component-types, ul.widget-list,ul#view-mode, ul#edit-page {
   list-style:none;
   margin:  0;
   padding: 0;
@@ -362,7 +367,6 @@ ul#component-types li , ul#view-mode li {
   border-radius: $radius $radius 0 0;
 }
 
-// TODO: are these toolbar styles obsolete?
 #vertical-toolbar{
   float:right;
   width: 300px;
