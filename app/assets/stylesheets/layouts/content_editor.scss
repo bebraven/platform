@@ -48,8 +48,14 @@ main{
 
 /* TYPOGRAPHY */
 
-// TODO: make all of this match the actual displayed style of the
-// associated custom content
+// TODO: make all of these headings match the actual displayed style of the
+// associated custom content. I'm confused b/c what displays as
+// "Heading 1" is actually <h2>. Generally, across the site, <h1>
+// should be red, in all caps, and a standard size. Then the rest of
+// them should alternate b/n red and black down to <h6>. We can
+// use SASS mixins or extends to define each in style.scss and apply them
+// here, but I'm confused if we need to do the offset where <h1> in CKEditor
+// is really <h2>
 
 button.ck.ck-button.ck-heading_h2 .ck-button__label,
 button.ck.ck-button.ck-heading_h3 .ck-button__label,
@@ -64,7 +70,7 @@ button.ck.ck-button.ck-heading_h6 .ck-button__label {
 button.ck.ck-button.ck-heading_h2 .ck-button__label,
 button.ck.ck-button.ck-heading_h4 .ck-button__label,
 button.ck.ck-button.ck-heading_h6 .ck-button__label {
-	color: #DB2B36;
+	color: $bv-red-600;
 }
 
 button.ck.ck-button.ck-heading_h2 .ck-button__label {
@@ -150,7 +156,7 @@ ul.widget-list li:hover {
   border-color:$bv-skyblue-400;
 }
 
-ul.widget-list li:hover:after {
+ul.widget-list li:hover:not(.disabled):after {
   background:$bv-skyblue-600;
 }
 
@@ -172,9 +178,9 @@ ul.widget-list li:after {
 
 ul.widget-list li.disabled,
 ul.widget-list li.disabled:hover {
-  border: 1px solid #bbb;
-  background-color: #ddd;
-  color: #888;
+  border: 1px solid $bv-silver-400;
+  background-color: $bv-silver-300;
+  color: $bv-silver-700;
 }
 
 /* --- Left Sidebar styles --- */
@@ -196,12 +202,12 @@ nav {
 
 /* Color/shape of burger icon bars */
 .bm-burger-bars {
-  background: #373a47;
+  background: $bv-black;
 }
 
 /* Color/shape of burger icon bars on hover*/
 .bm-burger-bars-hover {
-  background: #a90000;
+  background: $bv-red-800;
 }
 
 /* Position and sizing of clickable cross button */
@@ -212,7 +218,7 @@ nav {
 
 /* Color/shape of close button cross */
 .bm-cross {
-  background: #373a47;
+  background: $bv-black;
 }
 
 /*
@@ -233,17 +239,17 @@ Note: Beware of modifying this element as it can break the animations - you shou
 
 /* Morph shape necessary with bubble or elastic */
 .bm-morph-shape {
-  fill: #373a47;
+  fill: $bv-black;
 }
 
 /* Wrapper for item list */
 .bm-item-list {
-  color: #b8b7ad;
   padding: 0.8em;
 }
 
 /* Individual item */
 .bm-item {
+  color: $bv-oceanblue-700;
   display: inline-block;
 }
 
