@@ -16,6 +16,40 @@
 
 @import "shared/variables";
 
+
+/**
+ * Buttons
+ */
+.btn, .btn-primary, .btn-secondary {
+  font-family: $headings-font-family;
+  text-transform: uppercase;
+  border-radius: 0.2rem;
+}
+
+.btn-primary {
+  background-color: $bv-red-600;
+  padding: 0.5rem 2rem;
+}
+
+.btn-secondary{
+  background-color: grey;
+}
+
+.btn-primary:hover,.btn-secondary:hover,
+.btn-primary:focus,.btn-secondary:focus {
+  background-color: black;
+  border-color: $bv-silver-300;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: white;
+}
+
+/**************************************
+// TODO: cleanup everything below here
+ *************************************/
+
 .feather {
   width: 16px;
   height: 16px;
