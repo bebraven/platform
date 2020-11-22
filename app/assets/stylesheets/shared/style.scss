@@ -5,13 +5,12 @@
  * scoped file if it's not an element used across the entire application.
  */
 
-$font-family-base: 'Mercury Text', 'Georgia', serif;
-$headings-font-family: 'DIN Pro Condensed', 'Oswald', sans-serif;
+@import "variables";
 
 html, body, main {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -34,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1, h3, h5 {
-  color: #DB2B36;
+  color: $bv-red-600;
 }
 
 th {
@@ -50,3 +49,4 @@ input[type=submit] {
   font-family: $headings-font-family;
   text-transform: uppercase;
 }
+

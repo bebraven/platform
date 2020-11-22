@@ -18,21 +18,9 @@
  * Content Editor styles. For the actual content styles, put them in custom_contents.scss
  */
 
-/*---SKY---*/
-/*$primaryZLT: #EBF7F7;*/
-/*$primaryXLT: #D7EFEF;*/
-$primaryLT: #C4E6E7;
-$primaryMD: #9AD7D7;
-$primaryDK: #5BBBBA;
-$primaryXDK: #378383;
-/*$primaryZDK: #046366;*/
+@import "shared/variables";
 
-/*---SILVER---*/
-$neutralZLT: #F3F3F3;
-$neutralXLT: #E6E6E6;
-$neutralLT: #D1D1D1;
-
-$shadow: 0 0 3px $neutralLT;
+$shadow: 0 0 3px $bv-silver-300;
 $radius: 4px;
 
 $baseSpacing: 1em;
@@ -102,7 +90,7 @@ button.ck.ck-button.ck-heading_h5 .ck-button__label {
 
 /* The side navigation menu */
 nav {
-  background-color: $primaryMD; /* Black*/
+  background-color: $bv-blue-400; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
 }
@@ -165,12 +153,12 @@ ul.widget-list li {
 }
 
 ul.widget-list li:hover {
-  background: $primaryLT;
-  border-color:$primaryMD;
+  background: $bv-blue-300;
+  border-color:$bv-blue-400;
 }
 
 ul.widget-list li:hover:after {
-  background:$primaryDK;
+  background:$bv-blue-600;
 }
 
 ul.widget-list li:after {
@@ -180,9 +168,9 @@ ul.widget-list li:after {
   height:22px;
   width: 22px;
   border-radius: 11px;
-  background: $neutralLT;
+  background: $bv-silver-300;
   text-align:center;
-  color:$neutralZLT;
+  color:$bv-silver-100;
   font-weight: bold;
   line-height: 19px;
   top:50%;
@@ -289,7 +277,7 @@ Note: Beware of modifying this element as it can break the animations - you shou
 }
 
 #workspace {
-  border-top:1px solid $neutralLT;
+  border-top:1px solid $bv-silver-300;
 }
 
 #wysiwyg-container {
@@ -311,7 +299,7 @@ ul#view-mode {
 }
 
 ul#view-mode li:hover {
-  background: $primaryMD;
+  background: $bv-blue-400;
   cursor: pointer;
 }
 
@@ -337,13 +325,13 @@ ul#component-types {
 ul#component-types li {
   border:1px solid #ccc;
   font-size:80%;
-  background:$neutralZLT;
+  background:$bv-silver-100;
 }
 
 ul#component-types li:hover, ul#component-types li.active {
   z-index:100;
   position:relative;
-  border-bottom-color:$neutralZLT;
+  border-bottom-color:$bv-silver-100;
 }
 
 
@@ -372,8 +360,8 @@ ul#component-types li , ul#view-mode li {
   width: 300px;
   margin-left: -300px;
   height:100%;
-  border-top:1px solid $neutralXLT;;
-  background:$neutralZLT;
+  border-top:1px solid $bv-silver-100;
+  background:$bv-silver-100;
 }
 
 #toolbar-page-settings,
