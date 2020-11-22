@@ -88,13 +88,6 @@ button.ck.ck-button.ck-heading_h5 .ck-button__label {
 	font-size: 24px;
 }
 
-/* The side navigation menu */
-nav {
-  background-color: $bv-black;
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
-}
-
 /* header navigation bar */
 #content-editor span#autosave-indicator {
   display: none;
@@ -185,6 +178,12 @@ ul.widget-list li.disabled:hover {
 }
 
 /* --- Left Sidebar styles --- */
+
+/* The side navigation menu */
+nav {
+  overflow-x: hidden; /* Disable horizontal scroll */
+}
+
 
 /* Position and sizing of burger button */
 .bm-burger-button {
