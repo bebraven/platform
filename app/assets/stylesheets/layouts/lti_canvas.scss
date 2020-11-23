@@ -16,5 +16,10 @@
 
 @import "shared/variables";
 
-// TODO: look for #lesson-content-preview and  #assignment-create
-// classes and set their height/width in a more general way for LTI views
+// TODO: do this more generically for all views loaded into the canvas layout.
+// Don't tie it to bz-assignment.
+
+// Center the root div on the page.
+.bz-assignment {
+  margin: 1rem auto;
+}
