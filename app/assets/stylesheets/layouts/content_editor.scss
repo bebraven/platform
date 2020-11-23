@@ -103,6 +103,7 @@ button.ck.ck-button.ck-heading_h5 .ck-button__label {
   h1, #autosave-indicator {
     float:left;
     margin-right: $baseSpacing;
+    margin-bottom: 0;
   }
 
   .btn-secondary {
@@ -192,10 +193,10 @@ nav {
 /* Position and sizing of burger button */
 .bm-burger-button {
   position: fixed;
-  width: 36px;
-  height: 30px;
-  left: 25px;
-  top: 25px;
+  width: 2.2rem;
+  height: 1.9rem;
+  left: 2rem;
+  top: 1rem;
 }
 
 /* Color/shape of burger icon bars */
