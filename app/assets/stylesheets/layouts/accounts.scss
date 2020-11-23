@@ -17,20 +17,11 @@
 section {
   border: 0;
   display: block;
-  font-size: 100%;
   margin-left: -15px;
   margin-right: -15px;
   margin: 0;
   padding: 0;
   vertical-align: baseline;
-}
-
-p {
-  font-size: 1.2em;
-}
-
-h2 {
-  margin-bottom: 1rem;
 }
 
 .plank .section-container {
@@ -80,22 +71,6 @@ section:after {
   display: table;
 }
 
-label {
-  border: 0;
-  display: inline-block;
-  font-weight: bold;
-  font-size: 100%;
-  margin-bottom: 5px;
-  margin: 0;
-  max-width: 100%;
-  padding: 0;
-  vertical-align: baseline;
-}
-
-.field {
-  margin: 0 0 10px;
-}
-
 // Uncomment to have activerecord validation failures add a red border around the field.
 // Right now, we only have the password creation form which we would want to turn this off
 // for since it's only two fields there and they don't need to be highlighted.
@@ -105,17 +80,7 @@ label {
 //}
 
 .form-control {
-  display: block;
-  width: 100%;
-  height: 45px;
-  padding: 6px 12px;
-  line-height: 1.428571429;
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
-  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
-  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  height: 2.75rem;
 }
 
 .form-control:focus {
