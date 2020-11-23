@@ -6,6 +6,7 @@
  */
 
 @import "variables";
+@import "buttons";
 
 html, body, main {
   -ms-text-size-adjust: 100%;
@@ -42,5 +43,13 @@ th {
 }
 
 input[type=submit] {
-  font-family: $headings-font-family;
+  @include braven-button-base;
+  @include braven-button-primary;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+input[type=submit]:hover, 
+input[type=submit]:focus {
+  @include braven-button-base-hover;
 }

@@ -15,6 +15,7 @@
 //*= require shared/style
 
 @import "shared/variables";
+@import "shared/buttons";
 
 /**
  * Text
@@ -34,31 +35,37 @@
 
 /**
  * Buttons
+ * --------
+ * Note that input[type=submit]'s are already styled as buttons. These classes
+ * let you style other elements, like links and spans, as buttons.
+ * 
+ * You can override a submit button's style with the secondary style, but if you
+ * try and get fancy, you're probably going to run into this CSS specificity issue:
+ * https://stackoverflow.com/questions/14666581/precedence-in-css-selector-specifity-conflicts-type-vs-class-selector
+ * You shouldn't be deviating from our standard submit button anyway.
  */
 .btn, .btn-primary, .btn-secondary {
-  font-family: $headings-font-family;
-  text-transform: uppercase;
-  border-radius: 0.2rem;
+  @include braven-button-base;
 }
 
-.btn-primary {
-  background-color: $bv-red;
-  padding: 0.5rem 2rem;
+.btn-primary, input.btn-primary {
+  @include braven-button-primary;
 }
 
-.btn-secondary{
+.btn-secondary, input.btn-secondary {
   background-color: $bv-silver-600;
+  border-color: $bv-silver-500;
+  padding: 0.4rem 1rem;
 }
 
-.btn-primary:hover,.btn-secondary:hover,
-.btn-primary:focus,.btn-secondary:focus {
-  background-color: $bv-black;
-  border-color: $bv-silver-300;
+.btn-primary:hover, input.btn-primary:hover,
+.btn-secondary:hover, input.btn-secondary:hover {
+  @include braven-button-base-hover;
 }
 
-.btn-secondary:hover,
-.btn-secondary:focus {
-  color: white;
+.btn-primary:focus, input.btn-primary:focus,
+.btn-secondary:focus, input.btn-secondary:focus {
+  @include braven-button-base-focus;
 }
 
 /**

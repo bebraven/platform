@@ -1,0 +1,24 @@
+@mixin braven-button-base {
+  border-radius: 0.2rem;
+  border-width: 0.1rem;
+  background-color: $bv-red;
+  border-color: $bv-red-500;
+  color: white;
+  font-family: $headings-font-family;
+  letter-spacing: 0.02rem;
+  text-transform: uppercase;
+}
+
+@mixin braven-button-base-hover {
+  background-color: $bv-black;
+  border-color: $bv-silver-300;
+  color: white;
+}
+
+@mixin braven-button-base-focus {
+  @include braven-button-base-hover;
+}
+
+@mixin braven-button-primary {
+  padding: 0.5rem 2rem;
+}

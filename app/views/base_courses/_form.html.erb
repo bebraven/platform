@@ -70,7 +70,7 @@
       <%= form.hidden_field :type %>
 
       <div class="actions">
-        <%= form.submit 'Update Settings', class: 'btn btn-primary' %>
+        <%= form.submit 'Update Settings', class: 'btn btn-secondary' %>
         <%= link_to 'Cancel', base_courses_path, class: 'btn btn-secondary'%>
       </div>
     </div>
@@ -78,10 +78,10 @@
 
   <br/>
   <h3>Edit Projects</h3>
-  <%= link_to 'Add Project', new_base_course_base_course_project_version_path(base_course), class: 'btn btn-sm btn-outline-secondary' %>
+  <%= link_to 'Add Project', new_base_course_base_course_project_version_path(base_course), class: 'btn btn-sm btn-secondary' %>
   <%= render :partial => 'base_course_custom_content_versions/list', locals: {base_course_custom_content_versions: base_course.base_course_project_versions} %>
 
   <h3>Edit Impact Surveys</h3>
-  <%= link_to 'Add Impact Survey', new_base_course_base_course_survey_version_path(base_course), class: 'btn btn-sm btn-outline-secondary' %>
+  <%= link_to 'Add Impact Survey', new_base_course_base_course_survey_version_path(base_course), class: 'btn btn-sm btn-secondary' %>
   <%= render :partial => 'base_course_custom_content_versions/list', locals: {base_course_custom_content_versions: base_course.base_course_survey_versions} %>
 <% end %>

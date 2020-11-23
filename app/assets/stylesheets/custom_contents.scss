@@ -3,6 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 /* assets/styles.css */
 
+@import "shared/variables";
 
 /* Braven Projects CSS */
 .bz-assignment {
@@ -31,7 +32,7 @@
         margin-bottom: 0;
     }
 
-    textarea, input {
+    textarea, input:not([type=submit]) {
         font-size: 1rem;
         margin-top: 8px;
         margin-bottom: 8px;
@@ -48,76 +49,22 @@
     }
 
     div.watch-out {
-        padding: 0.5em;
-        margin: 0.5em;
-        outline: red 2px solid;
+        padding: 1rem;
+        margin: 0.5rem;
+        outline: $bv-red 0.3rem solid;
     }
 
     iframe.linked-in-authorization-button {
-        margin-top: 10px;
+        margin-top: 1rem;
         /* This is the size of the button icon */
         width: 215px;
         height: 41px;
     }
-}
 
-.bz-assignment .highlighted-user-input {
-  background-color: #3BE7DD
+    .highlighted-user-input {
+      background-color: $bv-skyblue-500;
+    }
 }
-
-.bz-assignment input[type=submit] {
-	background-image: none;
-	background: #DB2B36;
-	border: 1px solid transparent;
-	border-color: white;
-	border-radius: 5px;
-	color: white;
-	cursor: pointer;
-	display: inline-block;
-	font-size: 21px;
-	font-weight: 400;
-	letter-spacing: 1px;
-	line-height: 1.333em;
-	margin: 0;
-	padding: 10px 50px;
-	text-align: center;
-	text-transform: uppercase;
-	text-shadow: none;
-	transition: all 0.5s ease 0s;
-	user-select: none;
-	vertical-align: middle;
-	white-space: nowrap;
-}
-
- .bz-assignment input[type=submit]:focus {
-	background-color: #3071a9;
-	border-color: #285e8e;
-	outline: 5px auto -webkit-focus-ring-color;
-	outline-offset: -2px;
-	text-decoration: none;
-}
-
-.bz-assignment input[type=submit]:active:focus {
-	outline: 5px auto -webkit-focus-ring-color;
-	outline-offset: -2px;
-}
-
-.bz-assignment input[type=submit]:hover {
-	background-color: #3071a9;
-	background: #000;
-	border-color: #285e8e;
-	text-decoration: none;
-}
-
-.bz-assignment input[type=submit]:active {
-	-webkit-box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
-	background-color: #3071a9;
-	background-image: none;
-	border-color: #285e8e;
-	box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
-	outline: 0;
-}
-
 /* End Braven Projects CSS */
 
 // TODO: are there obsolete? I don't know if they are content styles or content editor styles.
@@ -128,6 +75,6 @@ div.content > blockquote {
 
 div.content > blockquote:focus,
 div.content > blockquote:focus > small {
-        color: black;
+        color: $bv-black;
         background: none;
 }
