@@ -106,10 +106,6 @@ label {
   height: 45px;
   padding: 6px 12px;
   line-height: 1.428571429;
-  color: #555555;
-  background-color: white;
-  background-image: none;
-  border: 1px solid #cccccc;
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
   box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
@@ -119,7 +115,7 @@ label {
 }
 
 .form-control:focus {
-  border-color: #66afe9;
+  border-color: $bv-oceanblue;
   outline: 0;
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(102,175,233,0.6);
   box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(102,175,233,0.6);
@@ -137,25 +133,20 @@ label {
   content: '\a0';
 }
 
-.plank {
-  color: #333333;
-  width: 100%;
-}
-
 .plank .section-container>section>div:not(.no-pad) {
   padding: 2.25em 0.938em 1.5em 0.938em;
 }
 
 .plank.plain-md {
-  background-color: #e6e6e6;
+  background-color: $bv-silver-200;
 }
 
 .plank.plain-md .section-container {
-  background-color: #f2f2f2;
+  background-color: $bv-silver-100;
 }
 
 #error_explanation li {
-  color: red;
+  color: $bv-red;
 }
 
 #error_explanation h3 {
@@ -178,23 +169,20 @@ label {
 
 .fb_fico a {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAQAAAD8x0bcAAABQUlEQVQokW2SXyuDYRjGn8lmTWkknDpgTrD4CFtWsoTxDdTKkW8hy58NXwBb42uoCYcspMQRSxOO1c/1svfZ85buk/e97l/X/e8xmFZ0sEKZOxqKW45ZJuTnfGSaC6V2SJFQpCkKr5F0oXne2SBuXb3oo0CTrA9N8cVqAPAjz6fnZohwxWYgFaXb9rOtNsJG7T7SY4GIirxRZ6D1H+eJJcOJ6LbLIHCtyaJWKVExmiLlFFoXVGOOLqvNUDfayqgVhngQ9M0lMaslaAShEJOCTtW4caBXr1zakYYFHQVmzXjlquw60oigagDao2zIaci44/TCgYP08syCIax1bTldxbSrNlTknE7vI6nl5/89yxofTPgHzurABZ3UBfrl32TWP/CfW01zlrS6MUWGfe45Y5zAe/K6yWn4+u+ju+GQxbbrD4aWkJRuvrDpAAAAAElFTkSuQmCC) no-repeat 0 center;
-  opacity: .4;
+  opacity: .9;
   padding-left: 25px;
-  color: #fff !important;
 }
 
 .tw_fico a {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAQAAAD8x0bcAAABU0lEQVQokXWSPUsDQRCGN2osJUoarQTBE0Q5tNE6IQEhhNNoY6sQ8B9YiIVFMPgRtbHUGNEfYSUowVKDsVBiZ4r4DXY+zh57lwvEHbjdnXludvedUShjHSxQokpd7J4T5gl5MQ+ZpCyhHWJYYnEKgl9hB6E0r+SI+Fm19ZGnQcqDJvhkuQXwLMuHzqbo5obNtoi2bblGWMl1n+iRbYiwCQyxJNn73XWEGnOKc6GVC+XIyNzJLfDNhvllj1Mlr4j5qX85Yk2+eqSNN0FFiSrDZrtOc7wxaLwW9SA0KiFvXPhXt3jRx8V9xypfLvLDtO9L6uPO2DXbKQ5d5BEnIMI+JSUvqhmtB1gUUR2iAaSXZxwl6pTZ+lfMAtd06YUt4mfbIiu8M+4VOCUFzktJg0BU8jeYCbaKLY1RFXUTjIglOeCBS8Za+0mXJUORitt0dxwz28z6B1ASn4uFLqeWAAAAAElFTkSuQmCC) no-repeat 0 center;
-  opacity: .4;
+  opacity: .9;
   padding-left: 25px;
-  color: #fff !important;
 }
 
 .blog_fico a {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAQAAACMnYaxAAAAxklEQVQYlV3QsQpBURjA8SsLE4My0ZVsKBtlUYpMHsAjsJjuAygjyWhQbPIGshGLhZ1ksVtE/Z17z43vOP863c6vTvd8Fg3u/K8jKSwsixMPRvRES8VjjTc67ofRmjk1ci42vYOCOtBlmKq9zUZjjKwo7ONZYxlHlPDxojFPSxQ30aYqiphYZyhKmxhSv/QraGLz+wz5FA+dvxEE2DHTuOfFgoloq8bX15hjpeYrO6pLowxcdEtSNCrR5clBo81BXf42ulL5AOzyS6X+YSCQAAAAAElFTkSuQmCC) no-repeat 0 center;
-  opacity: .4;
+  opacity: .9;
   padding-left: 25px;
-  color: #fff !important;
 }
 
 .fb_fico a:hover {
@@ -210,18 +198,18 @@ label {
 }
 
 .braven-cc {
-  border-top: 1px solid #71716c;
+  border-top: 1px solid $bv-silver-400;
   padding: 20px 0 0;
   text-align: center;
-  color: #71716c;
+  color: $bv-silver-400;
 }
 
 .braven-cc a {
-  color: #71716c;
+  color: $bv-silver-400;
 }
 
 .braven-cc a:hover {
-  color: #fff;
+  color: white;
 }
 
 .info_footer_link:before {
@@ -231,8 +219,7 @@ label {
 
 .footer_widget {
   background-color: none;
-  color: #71716c;
-  font-size: 16px;
+  color: $bv-silver-400;
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
   -ms-hyphens: auto;
@@ -247,7 +234,7 @@ label {
 .footer_widget .footer-title {
   font-size: 18px;
   margin: 0 0 10px;
-  color: #fff;
+  color: white;
 }
 
 .footer_widget ul {
@@ -261,15 +248,15 @@ label {
 }
 
 .footer_widget a {
-  color: #91918C;
+  color: $bv-silver;
 }
 
 .footer_widget a:visited {
-  color: #91918C;
+  color: $bv-silver;
 }
 
 .footer_widget a:hover {
-  color: #fff;
+  color: white;
   text-decoration: none;
 }
 
@@ -310,7 +297,7 @@ label {
 }
 
 #booster-login a {
-  color: black;
+  color: $bv-black;
   text-decoration: underline;
   font-weight: bold;
 }
