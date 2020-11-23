@@ -7,74 +7,52 @@
 
 /* Braven Projects CSS */
 .bz-assignment {
-    width: unset !important;
-    max-width: 42rem;
+  width: unset !important;
+  max-width: 42rem;
 
-    p {
-        font-size: 1rem;
-        line-height: 1.7 !important;
-        margin: 0;
-        margin-top: 0.5rem;
-        padding: 0;
-    }
+  p {
+    font-size: 1rem;
+  }
 
-    p + p {
-        margin-top: 1rem;
-    }
+  textarea, input:not([type=submit]) {
+    min-width: 6rem;
+  }
 
-    ul, ol {
-        font-size: 1rem;
-    }
-    
-    li {
-        line-height: 1.7 !important;
-        margin-top: 0.5rem;
-        margin-bottom: 0;
-    }
+  textarea, input[type=text] {
+    width: 100% !important;
+  }
 
-    textarea, input:not([type=submit]) {
-        font-size: 1rem;
-        margin-top: 8px;
-        margin-bottom: 8px;
-        padding: 6px;
-        min-width: 100px;
-    }
+  textarea {
+    min-height: 6rem;
+  }
 
-    textarea, input[type="text"] {
-        width: 100% !important;
-    }
+  div.watch-out {
+    padding: 1rem;
+    margin: 0.5rem;
+    outline: $bv-red 0.3rem solid;
+  }
 
-    textarea {
-        min-height: 6rem;
-    }
+  iframe.linked-in-authorization-button {
+      margin-top: 1rem;
+      /* This is the size of the button icon */
+      width: 215px;
+      height: 41px;
+  }
 
-    div.watch-out {
-        padding: 1rem;
-        margin: 0.5rem;
-        outline: $bv-red 0.3rem solid;
-    }
-
-    iframe.linked-in-authorization-button {
-        margin-top: 1rem;
-        /* This is the size of the button icon */
-        width: 215px;
-        height: 41px;
-    }
-
-    .highlighted-user-input {
-      background-color: $bv-skyblue-500;
-    }
+  .highlighted-user-input {
+    background-color: $bv-skyblue-500;
+  }
 }
 /* End Braven Projects CSS */
 
 // TODO: are there obsolete? I don't know if they are content styles or content editor styles.
 .block-quote-bg > div.content,
 div.content > blockquote {
-        width: 100%;
+  width: 100%;
 }
 
 div.content > blockquote:focus,
 div.content > blockquote:focus > small {
-        color: $bv-black;
-        background: none;
+  color: $bv-black;
+  background: none;
 }
