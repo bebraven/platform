@@ -1,4 +1,4 @@
-<div class="col-md-4 col-md-offset-4">
+<div class="col-md-4 offset-md-4">
   <h2>Braven Login</h2>
   <% if @message %>
     <p><%= @message[:message] %></p>
@@ -18,7 +18,7 @@
 </div>
 
 <% if ENV['APPLICATION_HOST'].exclude? 'booster'  %>
-<div class="col-md-6 col-md-offset-4" id="booster-login">
+<div class="col-md-6 offset-md-4" id="booster-login">
   For the Braven Career Booster: <a href="//<%= @settings[:booster_portal_domain] %>">Login here</a>
 </div>
 <% end %>
