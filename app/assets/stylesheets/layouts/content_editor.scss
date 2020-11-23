@@ -114,30 +114,96 @@ button.ck.ck-button.ck-heading_h5 .ck-button__label {
   }
 }
 
-/* React Tabs */
+/* main body of the editor */
+#workspace {
+  margin-right:300px;
+}
+
+#workspace {
+  padding: $baseSpacing $baseSpacing 0 $baseSpacing;
+}
+
+#workspace {
+  border-top:1px solid $bv-silver-300;
+}
+
+/* the actual WYSIWYG content */
+#wysiwyg-container {
+  min-height:400px;
+  // Set a max height that matches the right-sidebar... for now.
+  max-height: 825px;
+  border-radius: 0 $radius 0 0;
+  padding:$baseSpacing;
+  overflow-y: auto;
+  background:white;
+  box-shadow: $shadow;
+}
+
+
+/* The tabs to choose between Design and Code view */
 .react-tabs__tab--selected {
     border: 0 !important;
 }
 
-/* custom components */
-.ck iframe.ck-widget,
-.ck iframe.ck-widget.ck-widget_selected,
-.ck iframe.ck-widget.ck-widget_selected:hover {
-        outline-width: 10px;
-        outline-offset: -10px;
-        padding: 10px;
+ul#view-mode {
+  list-style:none;
+  margin: 0 0 1px 0;
+  overflow:auto;
+  padding: 0;
 }
 
-div.partial-html-document:after {
-   content: " ";
-   display: block;
-   height: 0;
-   clear: both;
+ul#view-mode li {
+  display: block;
+  float:left;
+  padding:($baseSpacing / 2) $baseSpacing;
+  border-radius: $radius $radius 0 0;
+}
+
+ul#view-mode li:hover {
+  background: $bv-skyblue-400;
+  cursor: pointer;
+}
+
+ul#view-mode li.active:hover, ul#view-mode li.active {
+  background: white;
+  box-shadow: $shadow;
 }
 
 /* --- Right sidebar styles --- */
+
+/* The right side bar container */
+#vertical-toolbar{
+  float:right;
+  width: 300px;
+  margin-left: -300px;
+  height:100%;
+  border-top:1px solid $bv-silver-200;
+  background:$bv-silver-200;
+}
+
+#toolbar-page-settings,
+#toolbar-components,
+#toolbar-contextual {
+  padding: $baseSpacing;
+}
+
+#toolbar-components,
+#toolbar-contextual {
+  border-top:1px solid #ccc;
+}
+
+#toolbar-contextual:empty {
+  transform:translate(9999px);
+  display: none;
+}
+
+/* The items in the right toolbar. E.g. the buttons to insert things. */
 ul.widget-list {
   padding-bottom: 15px;
+  list-style:none;
+  margin:  0;
+  padding: 0;
+  overflow:auto;
 }
 
 ul.widget-list li {
@@ -255,131 +321,4 @@ Note: Beware of modifying this element as it can break the animations - you shou
 /* Styling of overlay */
 .bm-overlay {
   background: rgba(0, 0, 0, 0.3);
-}
-
-/* --- In-editor content-part widget styles --------------------------------------------------- */
-
-@keyframes slideUp {
-    0% {
-        opacity: 0;
-        transform: translateY(1em);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* TODO: comment the rest of this to group things into the various parts of the editor */
-
-#workspace {
-  margin-right:300px;
-}
-
-#workspace {
-  padding: $baseSpacing $baseSpacing 0 $baseSpacing;
-}
-
-#workspace {
-  border-top:1px solid $bv-silver-300;
-}
-
-#wysiwyg-container {
-  min-height:400px;
-  // Set a max height that matches the right-sidebar... for now.
-  max-height: 825px;
-  border-radius: 0 $radius 0 0;
-  padding:$baseSpacing;
-  overflow-y: auto;
-}
-
-#wysiwyg-container, ul#view-mode li.active {
-  background:white;
-  box-shadow: $shadow;
-}
-
-ul#view-mode {
-  margin: 0 0 1px 0;
-}
-
-ul#view-mode li:hover {
-  background: $bv-skyblue-400;
-  cursor: pointer;
-}
-
-ul#view-mode li.active:hover {
-  background: white;
-}
-
-ul#edit-page {
-    float:right;
-}
-
-ul#edit-page li {
-    float:right;
-    margin-left:10px;
-    margin-top:10px;
-}
-
-ul#component-types {
-  margin-bottom:-1px;
-  padding: 0 $baseSpacing;
-}
-
-ul#component-types li {
-  border:1px solid #ccc;
-  font-size:80%;
-  background:$bv-silver-200;
-}
-
-ul#component-types li:hover, ul#component-types li.active {
-  z-index:100;
-  position:relative;
-  border-bottom-color:$bv-silver-200;
-}
-
-
-ul#component-types, ul.widget-list,ul#view-mode, ul#edit-page {
-  list-style:none;
-  margin:  0;
-  padding: 0;
-  overflow:auto;
-}
-
-ul#component-types li, ul.widget-list li, ul#view-mode li, ul#edit-page li {
-  display: block;
-}
-
-ul#component-types li, ul#view-mode li, ul#edit-page li {
-  float:left;
-}
-
-ul#component-types li , ul#view-mode li {
-  padding:($baseSpacing / 2) $baseSpacing;
-  border-radius: $radius $radius 0 0;
-}
-
-#vertical-toolbar{
-  float:right;
-  width: 300px;
-  margin-left: -300px;
-  height:100%;
-  border-top:1px solid $bv-silver-200;
-  background:$bv-silver-200;
-}
-
-#toolbar-page-settings,
-#toolbar-components,
-#toolbar-contextual {
-  padding: $baseSpacing;
-}
-
-#toolbar-components,
-#toolbar-contextual {
-  border-top:1px solid #ccc;
-}
-
-#toolbar-contextual:empty {
-  transform:translate(9999px);
-  display: none;
 }
