@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class AccountCreator
-  def initialize(sign_up_params:)
+  def initialize(sign_up_params:, for_nlu: false)
     @salesforce_contact_id = sign_up_params['salesforce_id']
     @password_params = {
-      'password' => sign_up_params['password'],
-      'password_confirmation' => sign_up_params['password_confirmation']
+      password: sign_up_params['password'],
+      password_confirmation: sign_up_params['password_confirmation']
     }
     @salesforce_contact = nil
+    @for_nlu = for_nlu
   end
 
   def run
@@ -33,13 +34,22 @@ class AccountCreator
   end
 
   def platform_user_params
-    @password_params
+    password_params
       .merge({
                email: salesforce_contact.email,
                first_name: salesforce_contact.first_name,
                last_name: salesforce_contact.last_name,
                salesforce_id: salesforce_contact.id
              })
+  end
+
+  def password_params
+    if @for_nlu
+      password = Devise.friendly_token[0, 20]
+      { password: password, password_confirmation: password }
+    else
+      @password_params
+    end
   end
 
   def salesforce_contact
