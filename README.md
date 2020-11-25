@@ -342,6 +342,8 @@ Stylesheets (CSS/SCSS):
 
     app/assets/stylesheets/*
 
+* *See the [CSS and Javascript Wiki](https://github.com/bebraven/platform/wiki/CSS-and-Javascript) for a TON more detail*
+
 Tests:
 
     spec/*
