@@ -94,11 +94,14 @@ textarea, input {
 input[type=submit] {
   @include braven-button-base;
   @include braven-button-primary;
-  font-size: 1.25rem;
-  font-weight: bold;
 }
 
 input[type=submit]:hover, 
 input[type=submit]:focus {
   @include braven-button-base-hover;
+}
+
+/* A link adjacent to a submit is part of the submit button */
+input[type=submit] + a {
+  color: $button-color-base;
 }

@@ -1,10 +1,13 @@
+$button-color-base: white;
+
 @mixin braven-button-base {
   border-radius: 0.2rem;
   border-width: 0.1rem;
   background-color: $bv-red;
   border-color: $bv-red-500;
-  color: white;
+  color: $button-color-base;
   font-family: $headings-font-family;
+  font-weight: bold;
   letter-spacing: 0.02rem;
   text-transform: uppercase;
 }
@@ -12,7 +15,7 @@
 @mixin braven-button-base-hover {
   background-color: $bv-black;
   border-color: $bv-silver-300;
-  color: white;
+  color: $button-color-base;
 }
 
 @mixin braven-button-base-focus {
@@ -20,5 +23,6 @@
 }
 
 @mixin braven-button-primary {
+  font-size: 1.25rem;
   padding: 0.5rem 2rem;
 }

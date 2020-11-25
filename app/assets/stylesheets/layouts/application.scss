@@ -58,6 +58,10 @@
   padding: 0.4rem 1rem;
 }
 
+.btn:visited, .btn-primary:visited, .btn-secondary:visited {
+  color: $button-color-base;
+}
+
 .btn-primary:hover, input.btn-primary:hover,
 .btn-secondary:hover, input.btn-secondary:hover {
   @include braven-button-base-hover;
