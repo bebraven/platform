@@ -1,0 +1,16 @@
+@mixin braven-headings-base {
+  font-family: $headings-font-family;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: $bv-black;
+}
+
+@mixin braven-headings-alternate {
+  color: $bv-red;
+}
+
+@mixin braven-headings-h6 {
+  font-size: $h6-font-size;
+  letter-spacing: 0.05rem;
+}

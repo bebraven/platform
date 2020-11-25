@@ -56,4 +56,13 @@ $bv-gold-700: #755A22;
 $bv-gold-800: #644600;
 $bv-gold: $bv-gold-500; // Default
 
-// Add more things that need to be consistent across SASS files here:
+// Buttons
+$button-color-base: white;
+
+// Headings
+$h1-font-size: 2rem;
+$h2-font-size: 2.5rem;
+$h3-font-size: 2.125rem;
+$h4-font-size: 1.6875rem;
+$h5-font-size: 1.5rem;
+$h6-font-size: 1rem;
