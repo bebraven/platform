@@ -9,8 +9,9 @@
 <% end %>
 
 <% content_for :content do %>
-  <%# Add stuff to the body here %>
-  <%= yield %>
+  <div class="container bv-lti-container">
+    <%= yield %>
+  </div>
 <% end %>
 
 <%= render template: "layouts/application" %>

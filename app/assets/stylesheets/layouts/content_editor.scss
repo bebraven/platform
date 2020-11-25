@@ -26,10 +26,6 @@ $radius: 4px;
 
 $baseSpacing: 1em;
 
-main{
-  min-width: 1000px;
-}
-
 /* custom temporary hacks for content editor demo */
 #content-editor .ck.ck-editor__editable_inline {
   min-height: 25rem;
@@ -126,6 +122,7 @@ button.ck.ck-button.ck-heading_h6 .ck-button__label {
   min-height:400px;
   // Set a max height that matches the right-sidebar... for now.
   max-height: 825px;
+  max-width: $container-max-width-md; // Make it match how it'll be shown in Canvas
   border-radius: 0 $radius 0 0;
   padding:$baseSpacing;
   overflow-y: auto;

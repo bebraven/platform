@@ -543,7 +543,7 @@ class ContentEditor extends Component {
                         </div>
                     </TabList>
                     <TabPanel className="row justify-content-center">
-                        <div id="wysiwyg-container" className="bv-custom-content-container col-sm-6">
+                        <div id="wysiwyg-container" className="container bv-custom-content-container">
                             <CKEditor
                                 editor={BalloonEditor}
                                 data={this.state.editorData}

@@ -16,10 +16,13 @@
 
 @import "shared/variables";
 
-// TODO: do this more generically for all views loaded into the canvas layout.
-// Don't tie it to bv-custom-content-container.
-
-// Center the root div on the page.
-.bv-custom-content-container {
+// Center the root div horizontally on the page when shown inside an iFrame through
+// our LTI extension. Set the max-width to medium sized devices even when viewed
+// on a desktop to force ourselves to create content that will look good on a
+// mobile device. If you decide to change the max-width for a certain view,
+// make sure you write your content responsively!
+.bv-lti-container {
+  max-width: $container-max-width-md;
   margin: 1rem auto;
 }
+

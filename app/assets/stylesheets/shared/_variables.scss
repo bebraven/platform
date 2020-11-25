@@ -3,6 +3,21 @@
 // The naming of this file and the variable naming conventions draw inspiration
 // from Boostrap: https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
 
+// Grid containers - breakpoints and max-widths for different screen sizes
+// Taken from Bootstrap
+$grid-breakpoint-xs: 0;
+$grid-breakpoint-sm: 576px;
+$grid-breakpoint-md: 768px;
+$grid-breakpoint-lg: 992px;
+$grid-breakpoint-xl: 1200px;
+$grid-breakpoint-xxl: 1400px;
+
+$container-max-width-sm: 540px;
+$container-max-width-md: 720px;
+$container-max-width-lg: 960px;
+$container-max-width-xl: 1140px;
+$container-max-width-xxl: 1320px;
+
 // Fonts
 $font-family-base: 'Mercury Text', 'Georgia', serif;
 $headings-font-family: 'DIN Pro Condensed', 'Oswald', sans-serif;
