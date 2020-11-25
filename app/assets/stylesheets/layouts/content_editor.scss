@@ -26,9 +26,12 @@ $radius: 4px;
 
 $baseSpacing: 1em;
 
+// Set a height that more or less matches the right-sidebar... for now.
+$contentHeight: 675px;
+
 /* custom temporary hacks for content editor demo */
 #content-editor .ck.ck-editor__editable_inline {
-  min-height: 25rem;
+  min-height: $contentHeight;
 }
 
 #content-editor textarea.secret-html {
@@ -37,7 +40,7 @@ $baseSpacing: 1em;
 
 #content-editor #raw-html-container > textarea {
   width: 100%;
-  min-height: 600px;
+  min-height: $contentHeight;
 }
 
 /* end hacks */
@@ -119,15 +122,15 @@ button.ck.ck-button.ck-heading_h6 .ck-button__label {
 
 /* the actual WYSIWYG content */
 #wysiwyg-container {
-  min-height:400px;
-  // Set a max height that matches the right-sidebar... for now.
-  max-height: 825px;
+  min-height: $contentHeight;
+  max-height: $contentHeight;
   max-width: $container-max-width-md; // Make it match how it'll be shown in Canvas
+  height: $contentHeight;
   border-radius: 0 $radius 0 0;
-  padding:$baseSpacing;
   overflow-y: auto;
   background:white;
   box-shadow: $shadow;
+  padding: 0;
 }
 
 
@@ -167,7 +170,6 @@ ul#view-mode li.active:hover, ul#view-mode li.active {
   float:right;
   width: 300px;
   margin-left: -300px;
-  height:100%;
   border-top:1px solid $bv-silver-200;
   background:$bv-silver-200;
 }
