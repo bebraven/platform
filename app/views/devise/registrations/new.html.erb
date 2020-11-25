@@ -1,7 +1,7 @@
 <% if params[:u] || params.dig(:user, :salesforce_id) %>
 
 <div class="col-md-6 offset-md-4">
-  <h2>Create Account</h2>
+  <h1>Create Account</h1>
   <p>Enter the password you'll use to login to Braven.</p>
 </div>
 <div class="col-md-4 offset-md-4 no-pad">
@@ -35,7 +35,7 @@
 <% else %>
 
 <%= render "devise/shared/error_messages", resource: resource %>
-<h2>Uh oh. Something went wrong!</h1>
+<h3>Uh oh. Something went wrong!</h3>
 <div>
 <p>You should have a received a link from Braven after signing up for the program at <a href="https://bebraven.org">bebraven.org</a>.</p>
 <p>If you don't have access to the email you signed up with or didn't receive an email with a link, please <a href="mailto:support@bebraven.org">contact us here</a></p>
