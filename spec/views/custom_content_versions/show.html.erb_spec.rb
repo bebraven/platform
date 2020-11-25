@@ -10,8 +10,8 @@ RSpec.describe "custom_content_versions/show", type: :view do
     assign(:custom_content, custom_content_version.custom_content)
   end
 
-  it "renders bz-assignment" do
+  it "renders bv-custom-content-container" do
     render
-    expect(rendered).to match(/<div class="bz-assignment">/)
+    expect(rendered).to match(/<div class="bv-custom-content-container">/)
   end
 end

@@ -17,9 +17,9 @@
 @import "shared/variables";
 
 // TODO: do this more generically for all views loaded into the canvas layout.
-// Don't tie it to bz-assignment.
+// Don't tie it to bv-custom-content-container.
 
 // Center the root div on the page.
-.bz-assignment {
+.bv-custom-content-container {
   margin: 1rem auto;
 }

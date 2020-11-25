@@ -19,6 +19,6 @@ RSpec.describe "custom_contents/show", type: :view do
       :body => "<p>MyText</p>",
     ))
     render
-    expect(rendered).to match(/<div class="bz-assignment">/)
+    expect(rendered).to match(/<div class="bv-custom-content-container">/)
   end
 end

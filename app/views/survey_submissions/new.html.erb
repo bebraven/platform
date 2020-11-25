@@ -1,5 +1,5 @@
 <%= form_for [@base_course_survey_version, @survey_submission] do |f| %>
-  <div class="bz-assignment">
+  <div class="bv-custom-content-container">
     <%== @base_course_survey_version.survey_version.body %>
     <input id="state" name='state' type='hidden' value="<%= params[:state] %>" />
     <div class="actions">
