@@ -23,6 +23,7 @@
 // make sure you write your content responsively!
 .bv-lti-container {
   max-width: $container-max-width-md;
-  margin: 1rem auto;
+  margin: 0 auto;
+  height: 100vh; // Height of iframe viewport layout, not the actual screen
 }
 

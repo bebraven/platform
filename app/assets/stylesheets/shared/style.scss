@@ -16,10 +16,15 @@ html, body {
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height:100%;
-  padding:0;
-  margin:0;
+  height: 100%;
+  padding: 0;
+  margin: 0;
   font-family: $font-family-base;
+
+  // Weird stuff happens with margin collapsing causing a margin between the body and
+  // the first element. This prevents it. Example of problem:
+  // https://stackoverflow.com/questions/7742720/css-margin-pushing-the-body-element
+  overflow: auto; 
 }
 
 header {
