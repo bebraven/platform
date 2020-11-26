@@ -136,7 +136,8 @@ button.ck.ck-button.ck-heading_h6 .ck-button__label {
 
 /* The tabs to choose between Design and Code view */
 .react-tabs__tab--selected {
-    border: 0 !important;
+  color: $bv-oceanblue-600;
+  text-decoration: underline;
 }
 
 ul#view-mode {
@@ -174,10 +175,20 @@ ul#view-mode li.active:hover, ul#view-mode li.active {
   background:$bv-silver-200;
 }
 
+#vertical-toolbar h4,
+#vertical-toolbar .form-group {
+  margin-bottom: .75rem;
+}
+
+#vertical-toolbar input,
+#vertical-toolbar label {
+  margin-bottom: 0.25rem;
+}
+
 #toolbar-page-settings,
 #toolbar-components,
 #toolbar-contextual {
-  padding: $baseSpacing;
+  padding: $baseSpacing/2 $baseSpacing;
 }
 
 #toolbar-components,
@@ -290,8 +301,8 @@ Note: Beware of modifying this element as it can break the animations - you shou
 
 /* General sidebar styles */
 .bm-menu {
-  background: #9ad7d7;
-  padding: 2.5em 1.5em 0;
+  background: $bv-skyblue-200;
+  padding: 2.5em 0 0;
   font-size: 1.15em;
 }
 
@@ -300,15 +311,13 @@ Note: Beware of modifying this element as it can break the animations - you shou
   fill: $bv-black;
 }
 
-/* Wrapper for item list */
-.bm-item-list {
-  padding: 0.8em;
-}
-
 /* Individual item */
 .bm-item {
+  border-bottom: 0.1rem solid $bv-silver-100;
   color: $bv-oceanblue-700;
   display: inline-block;
+  outline: none;
+  padding-left: 1.5rem;
 }
 
 /* Styling of overlay */

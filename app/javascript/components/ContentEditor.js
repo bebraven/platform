@@ -344,14 +344,14 @@ class ContentEditor extends Component {
         return (
             <div id="toolbar-page-settings">
                 <h4>Details</h4>
-                <h2>
+                <h4>
                     <input type="text"
                         name="custom_content[title]"
                         defaultValue={this.props.custom_content['title']}
                         placeholder="Title"
                     />
-                </h2>
-                <select name="custom_content[type]" defaultValue={type}>
+                </h4>
+                <select name="custom_content[type]" defaultValue={type} className="form-control-sm">
             		<option disabled value=''>Select a Type</option>
             		<option>Project</option>
             		<option>Survey</option>
