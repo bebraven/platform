@@ -9,7 +9,7 @@
 @import "buttons";
 @import "headings";
 
-html, body, main {
+html, body {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
@@ -20,7 +20,6 @@ html, body, main {
   padding:0;
   margin:0;
   font-family: $font-family-base;
-  overflow-y: scroll;
 }
 
 header {
