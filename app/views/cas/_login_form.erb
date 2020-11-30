@@ -9,8 +9,7 @@
 -->
   <iframe style="visibility: hidden; width: 1px; height: 1px;" src="//<%= @settings[:public_site_domain] %>/users/clear_session_cookie"></iframe>
 <% end %>
-<form method="post" action="<%= @form_action || "login" %>" id="login-form"
-    onsubmit="submitbutton = document.getElementById('login-submit'); submitbutton.value='Please wait'; submitbutton.disabled=true; return true;">
+<form method="post" action="<%= @form_action || "login" %>" id="login-form">
       <div class="field"><label id="username-label" for="username">
         Email
       </label><br />
@@ -25,7 +24,7 @@
     <br />
     <input type="hidden" id="lt" name="lt" value="<%= @lt %>" />
     <input type="hidden" id="service" name="service" value="<%= @service %>" />
-    <div><input id="login-submit" class="button-primary" name="commit" type="submit" value="Log in" /></div>
+    <div><input id="login-submit" name="commit" type="submit" value="Log in" /></div>
     <div id="infoline">
       <%= @infoline %>
     </div>
