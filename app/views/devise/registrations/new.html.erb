@@ -22,7 +22,7 @@
       <%= f.label :password_confirmation %>
       <%= f.password_field :password_confirmation, class: 'form-control', required: true, autocomplete: "new-password" %>
     </div>
-    <br/>
+
     <div class="actions">
       <%= f.hidden_field :salesforce_id, :value => params[:u] ||= params[:user][:salesforce_id] %>
       <%= f.submit "Create Account" %>
