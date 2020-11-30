@@ -1,21 +1,9 @@
 <% content_for :title, 'Submit Waivers' %>
 
-<% if @base_course.is_a?(Course) %>
-
-  <% content_for :head do %>
-    <%= render inline: @form_head %>
-  <% end %>
-  <%= render inline: @form_body %>
-
-<% elsif @base_course.is_a?(CourseTemplate) %>
-
-  <div class="form-instructions-container">
-    <h2>Waiver Instructions</h2>
-    <p>
-    When this Course Template is launched as a new Program the waivers to sign will appear here.
-    The actual waivers shown are controlled by the <code>FA ID Fellow Waivers</code> field on the
-    Salesforce Program record.
-    </p>
-  </div>
-
+<% content_for :head do %>
+  <%= render inline: @form_head %>
 <% end %>
+
+<% content_for :additional_container_css, 'embedded-form-assembly-container' %>
+
+<%= render inline: @form_body %>

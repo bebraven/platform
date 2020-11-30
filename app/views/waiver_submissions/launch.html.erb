@@ -1,6 +1,11 @@
 <% content_for :title, 'Launch Waivers Form' %>
 
-<div class="form-instructions-container">
+<% content_for :instructions_prompt do %>
   <p>In order to participate in Braven, please sign and submit the waivers.</p>
+<% end %>
+
+<% content_for :instructions_call_to_action do  %>
   <p><a href="<%= @new_waivers_url %>" class="btn btn-primary btn-lg" target="_parent">Click here to get started</a></p>
-</div>
+<% end %>
+
+<%= render partial: 'instructions' %>

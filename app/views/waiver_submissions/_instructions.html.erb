@@ -1,0 +1,29 @@
+<div class="row h-50">
+  <div class="col-md align-self-center">
+
+    <% if content_for? :instructions_heading %>
+    <div class="row justify-content-center">
+      <div class="col-sm-6">
+        <%= yield(:instructions_heading) %>
+      </div>
+    </div>
+    <% end %>
+
+    <% if content_for? :instructions_prompt %>
+    <div class="row justify-content-center">
+      <div class="col-sm-6">
+        <%= yield(:instructions_prompt) %>
+      </div>
+    </div>
+    <% end %>
+
+    <% if content_for? :instructions_call_to_action %>
+    <div class="row justify-content-center">
+      <div class="col-sm-6">
+        <%= yield(:instructions_call_to_action) %>
+      </div>
+    </div>
+    <% end %>
+
+  </div>
+</div>

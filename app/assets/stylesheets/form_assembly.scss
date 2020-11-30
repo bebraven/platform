@@ -1,28 +1,11 @@
-/*
- * This is a manifest file that'll be compiled into form_assembly.css, which will include all the files
- * listed below.
- *
- * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add form-assembly-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- */
+// Place all the styles related to the form-assembly controller here.
+// They will automatically be included in lti_canvas.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
 
-
-.form-instructions-container {
-    width: 42rem;
-    margin: 2em auto;
-    overflow-y: auto;
-
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1rem;
-    }
-
-    p {
-      margin-top: 0.5rem;
-    }
+div.embedded-form-assembly-container {
+  // Generally we show things at a medium screen device size in Canvas.
+  // This is to encourage us to create mobile friendly pages. However,
+  // FormAssembly forms aren't content we're creating. This allows the
+  // FormAssembly content the full width and let's it deal with responsiveness.
+  max-width: 100%;
 }

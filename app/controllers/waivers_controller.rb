@@ -3,7 +3,7 @@
 require 'lti_advantage_api'
 require 'canvas_api'
 
-# Handles publishing and unpubliching Waivers forms that Fellows need to sign
+# Handles publishing and unpublishing Waivers forms that Fellows need to sign
 # in order to participate in the course.
 #
 # The waivers forms are created in FormAssembly. Here is one example: https://braven.tfaforms.net/forms/builder/5.0.0/4810809
@@ -24,7 +24,7 @@ class WaiversController < ApplicationController
   # Adds the #publish and #unpublish actions
   include Publishable
 
-  layout 'form_assembly'
+  layout 'admin'
 
   nested_resource_of BaseCourse
 

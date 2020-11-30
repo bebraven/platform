@@ -8,8 +8,14 @@
   <%= javascript_pack_tag 'linked_in_authorization_window' %>
 <% end %>
 
+<%# 
+Puts the .container bv-lti-container as the root div of the body
+in the application layout, but also allows views to add some additional
+CSS in order to customize the layout. See waiver_submissions#new for an example.
+%>
 <% content_for :content do %>
-  <div class="container bv-lti-container">
+
+  <div class="container bv-lti-container <%= yield(:additional_container_css) %>">
     <%= yield %>
   </div>
 <% end %>

@@ -1,8 +1,9 @@
-<div class="form-instructions-container">
-  <h3>Waivers Submitted</h3>
-  <p>Thank you for signing and submitting your waivers!</p>
+<% content_for :instructions_heading do %>
+  <h1>Waivers Submitted</h1>
+<% end %>
 
-  <% content_for :additional_instructions do %>
-    <%= yield %>
-  <% end %>
-</div>
+<% content_for :instructions_prompt do %>
+  <p>Thank you for signing and submitting your waivers!</p>
+<% end %>
+
+<%= render partial: 'instructions' %>
