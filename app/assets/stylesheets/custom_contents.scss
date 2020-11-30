@@ -30,20 +30,22 @@
     outline: $bv-red 0.3rem solid;
   }
 
-  iframe.linked-in-authorization-button {
-      margin-top: 1rem;
-      /* This is the size of the button icon */
-      width: 215px;
-      height: 41px;
-  }
-
   .highlighted-user-input {
     background-color: $bv-skyblue-500;
+  }
+
+  iframe.linked-in-authorization-button {
+    // Size of button icon with an extra pixel in each dimension 
+    // for the border on hover and focus.
+    width: 217px;
+    height: 43px; // Height of button plus 2px for the 1px border.
+    border-width: 0;
   }
 }
 /* End Braven Projects CSS */
 
-// TODO: are there obsolete? I don't know if they are content styles or content editor styles.
+// TODO: are there obsolete? I don't know if they are custom content
+// styles or content editor styles or what?
 .block-quote-bg > div.content,
 div.content > blockquote {
   width: 100%;
