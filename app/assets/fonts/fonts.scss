@@ -1,5 +1,11 @@
-// Add all fonts here. They will automatically be made available to the
+// Add all custom fonts here. They will automatically be made available to the
 // the entire web application.
+// For Google Fonts, you can either just link them in the application layout or
+// host them ourselves using a fontsource npm package such as this for Roboto:
+// https://www.npmjs.com/package/fontsource-roboto
+// Note: I was having trouble getting the Webpacker config to load the packages
+// files so we're just linking in app/assets/stylesheets/layouts/application.html.erb
+// at the moment.
 
 @font-face {
     font-family:'DIN Pro Condensed';
