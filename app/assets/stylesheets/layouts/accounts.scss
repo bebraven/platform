@@ -129,6 +129,9 @@ section:after {
 
 #footer_bottom.braven_section {
   background: #262426;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 #footer_menu .footer_widget {
@@ -213,7 +216,7 @@ section:after {
 }
 
 .footer_widget li {
-  padding: 5px 0;
+  padding: 0;
 }
 
 .footer_widget a {
