@@ -3,7 +3,7 @@ class PeerReviewSubmissionsController < ApplicationController
   # Controller actions are defined in Submittable.
   include Submittable
   
-  layout 'projects'
+  layout 'lti_canvas'
 
   nested_resource_of Course
 
