@@ -1,4 +1,4 @@
-<% content_for :title, 'Braven LTI Extension' %>
+<% content_for :title, 'Braven LTI Extension' unless content_for?(:title) %>
 
 <% content_for :head do %>
   <%= stylesheet_link_tag 'layouts/lti_canvas', media: 'all', 'data-turbolinks-track': 'reload' %>

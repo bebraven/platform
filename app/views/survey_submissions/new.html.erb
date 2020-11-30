@@ -1,3 +1,5 @@
+<% content_for :title, 'Impact Survey' %>
+
 <%= form_for [@base_course_survey_version, @survey_submission] do |f| %>
   <div class="bv-custom-content-container">
     <%== @base_course_survey_version.survey_version.body %>
