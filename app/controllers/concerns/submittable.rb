@@ -17,6 +17,10 @@
 #     params.permit(:permitted_stuff).to_h
 #   end
 #
+#   def allow_multiple_submissions
+#     true
+#   end
+#
 # The results of this hash are passed to MyModel.save_answers! in #create below.
 # The model you're using the controller with must then implement `save_answers!`
 # that takes in the answers_params_hash and saves the submission answers. Note
@@ -48,11 +52,14 @@ module Submittable
   def new
     authorize instance_variable
 
+    return if allow_multiple_submissions
+
     # Only one submission per user and nest-parent.
     previous_submission = model_class.find_by(
       :user => current_user,
       parent_variable_name => instance_variable_get("@#{parent_variable_name}")
     )
+
     return redirect_to instance_path(previous_submission) if previous_submission
   end
 

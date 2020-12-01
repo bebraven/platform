@@ -1,5 +1,5 @@
 <div class="bv-custom-content-container">
-  <%= render 'project' %>
+  <%= render 'project' locals: { read_only: false, unsubmitted_answers: @unsubmitted_answers } %>
 
   <!-- Submit -->
   <%= react_component('Projects/ProjectSubmitButton', {

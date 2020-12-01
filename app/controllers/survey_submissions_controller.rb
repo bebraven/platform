@@ -8,6 +8,10 @@ class SurveySubmissionsController < ApplicationController
   nested_resource_of CourseSurveyVersion
 
 private
+  # Called by Submittable.new.  
+  def allow_multiple_submissions
+    false
+  end
 
   # Called by Submittable.create.
   def answers_params_hash
