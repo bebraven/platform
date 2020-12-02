@@ -22,9 +22,9 @@ class SalesforceAPI
                          :docusign_template_id,
                          :pre_accelerator_qualtrics_survey_id,
                          :post_accelerator_qualtrics_survey_id,
-                         :lc_docusign_template_id, :short_name) do
+                         :lc_docusign_template_id, :short_name, :school_name) do
                            def nlu?
-                             short_name.eql?('CHI: NLU')
+                             school_name.eql?('National Louis University')
                            end
                          end
 
@@ -102,7 +102,7 @@ class SalesforceAPI
 
   def get_program_info(program_id)
     soql_query = 
-      "SELECT Id, Name, Target_Course_ID_in_LMS__c, LMS_Coach_Course_Id__c, School__c, Program_Shortname__c, " \
+      "SELECT Id, Name, Target_Course_ID_in_LMS__c, LMS_Coach_Course_Id__c, School__c, Program_Shortname__c, School__r.Name, " \
         "Section_Name_in_LMS_Coach_Course__c, Default_Timezone__c, Docusign_Template_ID__c, " \
         "Preaccelerator_Qualtrics_Survey_ID__c, Postaccelerator_Qualtrics_Survey_ID__c, " \
         "LC_DocuSign_Template_ID__c " \
@@ -189,7 +189,8 @@ class SalesforceAPI
               program['Preaccelerator_Qualtrics_Survey_ID__c'],
               program['Postaccelerator_Qualtrics_Survey_ID__c'],
               program['LC_DocuSign_Template_ID__c'],
-              program['Program_Shortname__c'])
+              program['Program_Shortname__c'],
+              program['School__r']['Name'])
   end
 
   def find_contact(id:)

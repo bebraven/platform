@@ -100,6 +100,9 @@ class SetupPortalAccount
 
   def portal_username
     if sf_program.nlu?
+      # For NLU, the username is the student ID with the suffix @nlu.edu
+      # this is what is stored as the login username and also what the SSO
+      # returns
       "#{sf_participant.student_id}@nlu.edu"
     else
       sf_participant.email
