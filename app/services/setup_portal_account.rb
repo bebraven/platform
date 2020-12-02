@@ -16,6 +16,8 @@ class SetupPortalAccount
   def run
     find_or_create_portal_user!
     user = User.find_by!(salesforce_id: sf_contact_id)
+    # NLU email is not the email on SF. This will mess up SSO to platform in the
+    # future if left out.
     user.update(email: portal_username) if sf_program.nlu?
     join_user_id = find_or_create_join_user!(user, portal_user.id).id if should_create_join_user?
     sync_portal_enrollment!
