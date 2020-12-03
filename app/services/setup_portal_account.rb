@@ -16,6 +16,9 @@ class SetupPortalAccount
   def run
     find_or_create_portal_user!
     user = User.find_by!(salesforce_id: sf_contact_id)
+    # NLU email is not the email on SF. This will mess up SSO to platform in the
+    # future if left out.
+    user.update(email: portal_username) if sf_program.nlu?
     join_user_id = find_or_create_join_user!(user, portal_user.id).id if should_create_join_user?
     sync_portal_enrollment!
     update_user_references!(user, salesforce_id: sf_contact_id,
@@ -36,7 +39,11 @@ class SetupPortalAccount
   end
 
   def send_confirmation_notification(user)
-    user.send_confirmation_instructions
+    if sf_program.nlu?
+      user.skip_confirmation!
+    else
+      user.send_confirmation_instructions
+    end
   end
 
   def update_user_references!(user, salesforce_id:, join_user_id:)
@@ -94,9 +101,14 @@ class SetupPortalAccount
   end
 
   def portal_username
-    # TODO: For now it's email but there are cases like NLU where is
-    # #{user_student_id}@nlu.edu
-    sf_participant.email
+    if sf_program.nlu?
+      # For NLU, the username is the student ID with the suffix @nlu.edu
+      # this is what is stored as the login username and also what the SSO
+      # returns
+      "#{sf_participant.student_id}@nlu.edu"
+    else
+      sf_participant.email
+    end
   end
 
   def portal_user
