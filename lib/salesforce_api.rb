@@ -190,7 +190,7 @@ class SalesforceAPI
               program['Postaccelerator_Qualtrics_Survey_ID__c'],
               program['LC_DocuSign_Template_ID__c'],
               program['Program_Shortname__c'],
-              program['School__r']['Name'])
+              program.fetch('School__r', {})['Name'])
   end
 
   def find_contact(id:)
