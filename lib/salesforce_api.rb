@@ -11,6 +11,7 @@ class SalesforceAPI
   JSON_HEADERS = {content_type: :json, accept: :json}
 
   DATA_SERVICE_PATH = '/services/data/v49.0'
+  NLU_SCHOOL_NAME = 'National Louis University'
 
   SFContact = Struct.new(:id, :email, :first_name, :last_name)
   SFParticipant = Struct.new(:first_name, :last_name, :email, :role,
@@ -24,7 +25,7 @@ class SalesforceAPI
                          :post_accelerator_qualtrics_survey_id,
                          :lc_docusign_template_id, :short_name, :school_name) do
                            def nlu?
-                             school_name.eql?('National Louis University')
+                             school_name.eql?(NLU_SCHOOL_NAME)
                            end
                          end
 

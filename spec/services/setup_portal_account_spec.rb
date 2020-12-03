@@ -6,7 +6,7 @@ RSpec.describe SetupPortalAccount do
   describe '#run' do
     let(:sf_client) { instance_double('SalesforceAPI', find_participant: SalesforceAPI::SFParticipant.new, find_program: SalesforceAPI::SFProgram.new, update_contact: nil) }
     let(:canvas_client) { instance_double('CanvasAPI', find_user_by: CanvasAPI::LMSUser.new, create_account: CanvasAPI::LMSUser.new) }
-    let(:platform_user) { instance_double('User', update!: nil, send_confirmation_instructions: nil, email: nil, first_name: nil, last_name: nil) }
+    let(:platform_user) { instance_double('User', update!: nil, send_confirmation_instructions: nil, email: nil, first_name: nil, last_name: nil, update: nil, skip_confirmation!: nil) }
     let(:enrollment_process) { instance_double('SyncPortalEnrollmentForAccount', run: nil) }
 
     let(:join_api_client) { instance_double('JoinAPI', find_user_by: JoinAPI::JoinUser.new, create_user: JoinAPI::JoinUser.new) }
@@ -41,6 +41,25 @@ RSpec.describe SetupPortalAccount do
       SetupPortalAccount.new(salesforce_contact_id: nil).run
 
       expect(canvas_client).not_to have_received(:create_account)
+    end
+
+    it 'updates user email for nlu' do
+      nlu_program = SalesforceAPI::SFProgram.new(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, SalesforceAPI::NLU_SCHOOL_NAME)
+      allow(sf_client).to receive(:find_program).and_return(nlu_program)
+
+      SetupPortalAccount.new(salesforce_contact_id: nil).run
+
+      expect(platform_user).to have_received(:update)
+    end
+
+    it 'skips sending confirmation for nlu' do
+      nlu_program = SalesforceAPI::SFProgram.new(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, SalesforceAPI::NLU_SCHOOL_NAME)
+      allow(sf_client).to receive(:find_program).and_return(nlu_program)
+
+      SetupPortalAccount.new(salesforce_contact_id: nil).run
+
+      expect(platform_user).not_to have_received(:send_confirmation_instructions)
+      expect(platform_user).to have_received(:skip_confirmation!)
     end
 
     it 'does not do join api stuff if no config var set' do

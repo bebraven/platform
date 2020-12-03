@@ -37,7 +37,7 @@ class SyncPortalEnrollmentsForProgram
     AccountCreator.new(
       sign_up_params: { 'salesforce_id' => contact_id },
       for_nlu: true
-    )
+    ).run
   end
 
   def reconcile_email!(portal_user, participant)
