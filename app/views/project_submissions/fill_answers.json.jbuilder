@@ -1,0 +1,37 @@
+json.current_submission(
+  json.extract!(
+    @current_submission,
+    :id,
+    :user_id,
+    :course_content_version_id,
+    :is_submitted,
+    :created_at,
+    :updated_at,
+  )
+  json.answers(
+    json.array!(
+      @current_submission.answers,
+      :input_name,
+      :input_value,
+    )
+  )
+)
+
+json.previous_submission(
+  json.extract!(
+    @previous_submission,
+    :id,
+    :user_id,
+    :course_content_version_id,
+    :is_submitted,
+    :created_at,
+    :updated_at,
+  )
+  json.answers(
+    json.array!(
+      @previous_submission.answers,
+      :input_name,
+      :input_value,
+    )
+  )
+)

@@ -184,6 +184,14 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
     t.index ["user_id"], name: "index_peer_review_submissions_on_user_id"
   end
 
+  create_table "project_submission_answers", force: :cascade do |t|
+    t.bigint "project_submission_id", null: false
+    t.string "input_name"
+    t.text "input_value"
+    t.index ["project_submission_id", "input_name"], name: "index_project_submission_answers_unique_1", unique: true
+    t.index ["project_submission_id"], name: "index_project_submission_answers_on_project_submission_id"
+  end
+
   create_table "project_submissions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.float "points_received"
@@ -192,6 +200,7 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "course_custom_content_version_id", null: false
+    t.boolean "is_submitted"
     t.index ["course_custom_content_version_id"], name: "index_project_submissions_on_course_project_version_id"
     t.index ["user_id"], name: "index_project_submissions_on_user_id"
   end
@@ -418,6 +427,7 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
   add_foreign_key "peer_review_submission_answers", "users", column: "for_user_id"
   add_foreign_key "peer_review_submissions", "courses"
   add_foreign_key "peer_review_submissions", "users"
+  add_foreign_key "project_submission_answers", "project_submissions"
   add_foreign_key "project_submissions", "course_custom_content_versions"
   add_foreign_key "project_submissions", "users"
   add_foreign_key "rise360_module_interactions", "users"

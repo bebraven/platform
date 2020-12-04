@@ -5,8 +5,8 @@
 
 <!-- Load previous answers -->
 <%= content_tag :div, '', id: "javascript_variables", data: {
-  user_override_id: @project_submission.user.id,
   read_only: read_only,
-  prefill_answers: unsubmitted_answers,
+  prefill_answers: unsubmitted_answers.to_json,
+  course_custom_content_version_id: @course_project_version.id,
 } %>
 <%= javascript_pack_tag 'xapi_assignment' %>
