@@ -1,0 +1,9 @@
+json.array!(
+  @project_submission_answers,
+  :id,
+  :created_at,
+  :updated_at,
+  :project_submission_id,
+  :input_name,
+  :input_value,
+)

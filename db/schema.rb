@@ -50,6 +50,8 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
     t.bigint "custom_content_version_id", null: false
     t.integer "canvas_assignment_id", null: false
     t.string "type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["course_id", "custom_content_version_id"], name: "index_course_custom_content_version_unique_version_ids", unique: true
     t.index ["course_id"], name: "index_course_custom_content_versions_on_course_id"
     t.index ["custom_content_version_id"], name: "index_course_custom_content_versions_on_version_id"
@@ -165,6 +167,8 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
 
   create_table "peer_review_questions", force: :cascade do |t|
     t.string "text", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "peer_review_submission_answers", force: :cascade do |t|
@@ -172,6 +176,8 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
     t.bigint "for_user_id", null: false
     t.string "input_value"
     t.bigint "peer_review_question_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["for_user_id"], name: "index_peer_review_submission_answers_on_for_user_id"
     t.index ["peer_review_question_id"], name: "index_peer_review_submission_answers_on_peer_review_question_id"
     t.index ["peer_review_submission_id"], name: "index_peer_review_submission_answers_on_submission_id"
@@ -180,6 +186,8 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
   create_table "peer_review_submissions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "course_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["course_id"], name: "index_peer_review_submissions_on_course_id"
     t.index ["user_id"], name: "index_peer_review_submissions_on_user_id"
   end
@@ -188,6 +196,8 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
     t.bigint "project_submission_id", null: false
     t.string "input_name"
     t.text "input_value"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["project_submission_id", "input_name"], name: "index_project_submission_answers_unique_1", unique: true
     t.index ["project_submission_id"], name: "index_project_submission_answers_on_project_submission_id"
   end
@@ -237,6 +247,8 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
     t.bigint "user_id", null: false
     t.string "state_id", null: false
     t.text "value"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["canvas_course_id", "canvas_assignment_id", "activity_id", "user_id", "state_id"], name: "module_states_unique_index_1", unique: true
     t.index ["user_id"], name: "index_rise360_module_states_on_user_id"
   end
