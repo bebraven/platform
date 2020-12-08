@@ -12,7 +12,6 @@ Add to this README please. It's easy to edit and see your changes locally using 
 First, we need to copy a couple of environment files in the app directory:
 
     cp .env.example .env
-    cp .env.database.example .env.database
 
 Then you'll need to add your AWS credentials and the file upload bucket to your shell enviromnment (e.g. in `~/.bash_profile`):
 

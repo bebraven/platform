@@ -21,3 +21,4 @@ coverage/
 # Bundler / gems stuff
 .bundle/config
 vendor/bundle/
+*.dump
