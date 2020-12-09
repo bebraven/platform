@@ -1,12 +1,10 @@
 <% content_for :title, 'Project' %>
 
 <!-- Project content TODO: Check read_only and add CSS style -->
-<%== @course_project_version.project_version.body %>
+<div id="custom-content-wrapper"
+     data-read-only="<%= read_only %>"
+     data-course-custom-content-version-id="<%= @course_project_version.id %>">
+  <%== @course_project_version.project_version.body %>
+</div>
 
-<!-- Load previous answers -->
-<%= content_tag :div, '', id: "javascript_variables", data: {
-  read_only: read_only,
-  prefill_answers: unsubmitted_answers.to_json,
-  course_custom_content_version_id: @course_project_version.id,
-} %>
 <%= javascript_pack_tag 'xapi_assignment' %>

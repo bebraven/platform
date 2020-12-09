@@ -16,7 +16,7 @@ class ProjectSubmissionsController < ApplicationController
   before_action :set_lti_launch
   skip_before_action :verify_authenticity_token, only: [:create], if: :is_sessionless_lti_launch?
 
-  before_action :set_user, only: [:index]
+  before_action :set_has_previous_submission, only: [:edit, :new]
 
   def show
     authorize @project_submission
@@ -27,19 +27,6 @@ class ProjectSubmissionsController < ApplicationController
   def edit
     authorize @project_submission
     render plain: 'Not allowed to edit previous submissions', status: 403 and return if @project_submission.is_submitted
-
-    # TODO: refactor into ajax.
-    @previous_submission = ProjectSubmission.where(
-      course_project_version: @course_project_version,
-      user: @project_submission.user,
-      is_submitted: true,
-    ).last
-    
-    # TODO: refactor into ajax.
-    # Get most recent answers.
-    @unsubmitted_answers = ProjectSubmissionAnswer.where(
-      project_submission: [@project_submission, @previous_submission],
-    )
   end
 
   def create
@@ -89,30 +76,16 @@ class ProjectSubmissionsController < ApplicationController
       is_submitted: false,
     )
     authorize @project_submission
-
-    # TODO: refactor into ajax.
-    @previous_submission = ProjectSubmission.where(
-      course_project_version: @course_project_version,
-      user: @project_submission.user,
-      is_submitted: true,
-    ).last
-    
-    # TODO: refactor into ajax.
-    # Get most recent answers.
-    @unsubmitted_answers = ProjectSubmissionAnswer.where(
-      project_submission: [@project_submission, @previous_submission],
-    )
   end
 
 private
-  # Called by Submittable.new.
-  def allow_multiple_submissions
-    true
+
+  def set_has_previous_submission
+    @has_previous_submission = ProjectSubmission.where(
+      course_project_version: @course_project_version,
+      user: @project_submission.user,
+      is_submitted: true,
+    ).exists?
   end
 
-  # Called by Submittable.create.
-  def answers_params_hash
-    # We ignore all the params and look at ProjectSubmissionAnswers.
-    {}
-  end
 end

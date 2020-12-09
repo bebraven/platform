@@ -5,7 +5,7 @@ import Rails from '@rails/ujs';
 // Passed in from the view using this JS
 const CCCV_DATA_ATTR = 'data-course-custom-content-version-id';
 const READ_ONLY_ATTR = 'data-read-only';
-const PREFILL_DATA_ATTR = 'data-prefill-answers';
+const WRAPPER_DIV_ID = 'custom-content-wrapper';
 
 // These are the HTML elements we'll attach sendStatement() to
 const SUPPORTED_INPUT_ELEMENTS = [
@@ -15,15 +15,12 @@ const SUPPORTED_INPUT_ELEMENTS = [
  'textarea',
 ];
 
-// This is how we identify the element
-const INPUT_ID_ATTR = 'name';
-
 // Main page logic.
 document.addEventListener('DOMContentLoaded', () => {
     prefillInputs();
 
     // If write-enabled, attach listeners to save intermediate responses
-    if (document.getElementById('javascript_variables').attributes[READ_ONLY_ATTR].value === "false") {
+    if (document.getElementById(WRAPPER_DIV_ID).attributes[READ_ONLY_ATTR].value === "false") {
         attachInputListeners();
     }
 });
@@ -34,8 +31,16 @@ function getAllInputs() {
 
 function prefillInputs() {
     const inputs = getAllInputs();
+    const wrapperDiv = document.getElementById(WRAPPER_DIV_ID);
 
-    const course_custom_content_version_id = document.getElementById('javascript_variables').attributes[CCCV_DATA_ATTR].value;
+    // Mark all inputs as disabled if data-read-only is true.
+    if (wrapperDiv.attributes[READ_ONLY_ATTR].value === "true") {
+        inputs.forEach((input) => {
+            input.disabled = true;
+        });
+    }
+
+    const course_custom_content_version_id = document.getElementById(WRAPPER_DIV_ID).attributes[CCCV_DATA_ATTR].value;
 
     fetch(
       `/course_project_versions/${course_custom_content_version_id}/project_submission_answers`,
@@ -47,7 +52,6 @@ function prefillInputs() {
       },
      )
     .then((response) => {
-        // TODO
         // Convert array of answer objects into map of {input_name: input_value}.
         response.json().then((answers) => {
             const prefills = answers.reduce((map, obj) => {
@@ -55,8 +59,8 @@ function prefillInputs() {
                 return map;
             }, {});
 
-            // Note: we don't handle read-only, this is done by the view's CSS.
             inputs.forEach( input => {
+                // Prefill input values.
                 const prefill = prefills[input.name];
                 if (!prefill) {
                     return; // Nothing previously entered by user.
@@ -86,8 +90,9 @@ function sendStatement(e) {
     const input = e.target;
     const input_name = input.name;
     const input_value = input.value;
+    const wrapperDiv = document.getElementById(WRAPPER_DIV_ID);
 
-    const course_custom_content_version_id = document.getElementById('javascript_variables').attributes[CCCV_DATA_ATTR].value;
+    const course_custom_content_version_id = wrapperDiv.attributes[CCCV_DATA_ATTR].value;
 
     const data = {
         project_submission_answer: {
@@ -96,7 +101,7 @@ function sendStatement(e) {
         },
     };
 
-    // TODO: Ajax call to ProjectSubmissionAnswersController
+    // Ajax call to ProjectSubmissionAnswersController.
     fetch(
       `/course_project_versions/${course_custom_content_version_id}/project_submission_answers`,
       {
