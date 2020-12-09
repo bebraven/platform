@@ -29,25 +29,36 @@ class ProjectSubmissionsController < ApplicationController
     render plain: 'Not allowed to edit previous submissions', status: 403 and return if @project_submission.is_submitted
   end
 
-  def create
-    authorize instance_variable
+  def submit
+    # Note: There should be one and only one match.
+    # In other cases this will exhibit undefined behavior.
+    @project_submission = ProjectSubmission.create_or_find_by!(
+      user: current_user,
+      course_project_version: @course_project_version,
+      is_submitted: false,
+    )
+    authorize @project_submission, :update?
 
     # Record in our DB first, so we have the data even if updating Canvas fails.
-    instance_variable.save_answers!
+    @project_submission.save_answers!
 
     # Update Canvas
     # TODO: project submission.
     lti_score = LtiScore.new_full_credit_submission(
-      @current_user.canvas_user_id,
-      # E.g. survey_submission_url(@survey_submission, protocol: 'https').
-      self.send("#{instance_variable_name}_url", instance_variable, protocol: 'https'),
+      current_user.canvas_user_id,
+      course_project_version_project_submission_url(
+        @course_project_version,
+        @project_submission,
+        protocol: 'https'
+      ),
     )
     LtiAdvantageAPI.new(@lti_launch).create_score(lti_score)
 
-    redirect_to instance_path(instance_variable)
-  end
-
-  def update
+    redirect_to course_project_version_project_submission_path(
+      @course_project_version,
+      @project_submission,
+      state: @lti_launch.state
+    )
   end
 
   # NOTE: This action exhibits nonstandard behavior!!
@@ -65,7 +76,8 @@ class ProjectSubmissionsController < ApplicationController
       authorize unsubmitted_submission
       redirect_to edit_course_project_version_project_submission_path(
         @course_project_version,
-        unsubmitted_submission
+        unsubmitted_submission,
+        state: @lti_launch.state
       ) and return
     end
 
@@ -83,7 +95,7 @@ private
   def set_has_previous_submission
     @has_previous_submission = ProjectSubmission.where(
       course_project_version: @course_project_version,
-      user: @project_submission.user,
+      user: current_user,
       is_submitted: true,
     ).exists?
   end

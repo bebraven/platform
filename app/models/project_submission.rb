@@ -8,13 +8,17 @@ class ProjectSubmission < ApplicationRecord
   has_one :project_version, through: :course_project_version, source: :custom_content_version, class_name: 'ProjectVersion'
 
   # TODO: force read-only when is_submitted: true
+  # TODO: there can only be one is_submitted:false ???
 
   def project
     project_version.project
   end
 
-  def save_answers!(_)
-    # Note: ignore param and just submit this submission.
-    update!(is_submitted: true)
+  def save_answers!
+    # TODO: fetch old answers too
+
+    # Mark as submitted and set the uniqueness_condition to NULL
+    # at the same time, so our uniqueness constraint works.
+    update!(is_submitted: true, uniqueness_condition: nil)
   end
 end

@@ -64,7 +64,9 @@ Rails.application.routes.draw do
   resources :course_custom_content_versions, only: [:create, :update, :destroy] 
 
   resources :course_project_versions, controller: 'course_custom_content_versions', type: 'CourseProjectVersion', only: [] do
-    resources :project_submissions, only: [:new, :edit, :create, :update]
+    resources :project_submissions, only: [:new, :edit, :show]
+    post 'project_submissions/submit', to: 'project_submissions#submit'
+
     resources :project_submission_answers, only: [:index, :create]
   end
 
@@ -83,7 +85,6 @@ Rails.application.routes.draw do
     resources :lessons, only: [:index, :show]
   end
 
-  resources :project_submissions, only: [:show]
   resources :survey_submissions, only: [:show]
   resources :peer_review_submissions, only: [:show]
 

@@ -31,4 +31,8 @@ class ProjectSubmissionPolicy < ApplicationPolicy
   def create?
     ProjectVersionPolicy.new(user, record.project_version).show?
   end
+
+  def update?
+    create?
+  end
 end
