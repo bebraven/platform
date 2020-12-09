@@ -34,19 +34,48 @@ function getAllInputs() {
 
 function prefillInputs() {
     const inputs = getAllInputs();
-    const prefills = document.getElementById('javascript_variables').attributes[PREFILL_DATA_ATTR].value;
 
-    // Note: we don't handle read-only, this is done by the view's CSS.
-    inputs.forEach( input => {
-        const prefill = prefills[input.name];
-        if (!prefill) {
-            return; // Nothing previously entered by user.
-        } else if (input.type == 'radio' && input.value == prefill.value) {
-            input.checked = true; // Check appropriate radio.
-        } else  {
-            input.value = prefill.value; // Set input value.
-        }
+    const course_custom_content_version_id = document.getElementById('javascript_variables').attributes[CCCV_DATA_ATTR].value;
+
+    fetch(
+      `/course_project_versions/${course_custom_content_version_id}/project_submission_answers`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+      },
+     )
+    .then((response) => {
+        // TODO
+        // Convert array of answer objects into map of {input_name: input_value}.
+        response.json().then((answers) => {
+            const prefills = answers.reduce((map, obj) => {
+                map[obj.input_name] = obj.input_value;
+                return map;
+            }, {});
+
+            // Note: we don't handle read-only, this is done by the view's CSS.
+            inputs.forEach( input => {
+                const prefill = prefills[input.name];
+                if (!prefill) {
+                    return; // Nothing previously entered by user.
+                } else if (input.type == 'radio') {
+                    if (input.value == prefill) {
+                        input.checked = true; // Check appropriate radio.
+                    }
+                } else {
+                    input.value = prefill; // Set input value.
+                }
+            });
+        });
+
+    })
+    .catch((error) => {
+        // TODO
+        console.log(error);
     });
+
 }
 
 function attachInputListeners() {
@@ -85,6 +114,6 @@ function sendStatement(e) {
     })
     .catch((error) => {
         // TODO
-        console.log(response);
+        console.log(error);
     });
 }
