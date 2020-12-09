@@ -9,7 +9,7 @@ class SyncSalesforceProgramToLmsJob < ApplicationJob
     BackgroundSyncJobMailer.with(email: email).success_email.deliver_now
   end
 
-  rescue_from(StandardError) do |_exception|
+  rescue_from(StandardError) do |_|
     BackgroundSyncJobMailer.with(email: arguments.second).failure_email.deliver_now
   end
 end
