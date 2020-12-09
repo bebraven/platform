@@ -5,12 +5,22 @@ class ProjectSubmissionAnswersController < ApplicationController
   nested_resource_of CourseProjectVersion
 
   def index
-    @project_submission_answers = ProjectSubmissionAnswer.where(
+    # Find the latest answer for each input_name attached to this project and user.
+    answer_ids = ProjectSubmissionAnswer.where(
       project_submission: [ProjectSubmission.where(
         user: current_user,
         course_project_version: @course_project_version,
       )],
-    )
+    ).select(
+      'max(id) as id, input_name'
+    ).group(
+      :input_name
+    ).map {
+      |answer| answer.id
+    }
+
+    @project_submission_answers = ProjectSubmissionAnswer.find(answer_ids)
+
     # FIXME!! authorize the right thing
     authorize @course_project_version
 

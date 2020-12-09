@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_07_185957) do
+ActiveRecord::Schema.define(version: 2020_12_07_221522) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -211,7 +211,9 @@ ActiveRecord::Schema.define(version: 2020_12_07_185957) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "course_custom_content_version_id", null: false
     t.boolean "is_submitted"
+    t.integer "uniqueness_condition", default: 1
     t.index ["course_custom_content_version_id"], name: "index_project_submissions_on_course_project_version_id"
+    t.index ["user_id", "course_custom_content_version_id", "is_submitted", "uniqueness_condition"], name: "index_project_submissions_unique_1", unique: true
     t.index ["user_id"], name: "index_project_submissions_on_user_id"
   end
 

@@ -16,7 +16,7 @@ class AddUniquenessColumnToProjectSubmissions < ActiveRecord::Migration[6.0]
     end
 
     add_index :project_submissions,
-      [:user_id, :course_custom_content_id, :is_submitted, :uniqueness_condition],
+      [:user_id, :course_custom_content_version_id, :is_submitted, :uniqueness_condition],
       unique: true,
       name: 'index_project_submissions_unique_1'
   end
