@@ -20,7 +20,6 @@ class ProjectSubmissionsController < ApplicationController
 
   def show
     authorize @project_submission
-    @unsubmitted_answers = nil
   end
 
   # Note: this should only be called on unsubmitted submissions.

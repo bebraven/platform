@@ -70,6 +70,10 @@ Rails.application.routes.draw do
     resources :project_submission_answers, only: [:index, :create]
   end
 
+  resources :project_submissions, only: [] do
+    resources :project_submission_answers, only: [:index]
+  end
+
   resources :course_survey_versions, controller: 'course_custom_content_versions', type: 'CourseSurveyVersion', only: [] do
     resources :survey_submissions, only: [:new, :create]
   end

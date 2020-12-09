@@ -3,7 +3,7 @@
 import Rails from '@rails/ujs';
 
 // Passed in from the view using this JS
-const CCCV_DATA_ATTR = 'data-course-custom-content-version-id';
+const SUBMISSION_DATA_ATTR = 'data-project-submission-id';
 const READ_ONLY_ATTR = 'data-read-only';
 const WRAPPER_DIV_ID = 'custom-content-wrapper';
 
@@ -40,10 +40,11 @@ function prefillInputs() {
         });
     }
 
-    const course_custom_content_version_id = document.getElementById(WRAPPER_DIV_ID).attributes[CCCV_DATA_ATTR].value;
+    const project_submission_id = document.getElementById(WRAPPER_DIV_ID).attributes[SUBMISSION_DATA_ATTR].value;
+    const api_url = `/project_submissions/${project_submission_id}/project_submission_answers`;
 
     fetch(
-      `/course_project_versions/${course_custom_content_version_id}/project_submission_answers`,
+      api_url,
       {
         method: 'GET',
         headers: {

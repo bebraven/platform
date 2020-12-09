@@ -2,9 +2,16 @@
 
 <div class="bv-custom-content-container"
      id="custom-content-wrapper"
-     data-read-only="true"
+     data-read-only="false"
      data-project-submission-id="<%= @project_submission.id %>">
   <%== @course_project_version.project_version.body %>
+
+  <!-- Submit -->
+  <%= react_component('Projects/ProjectSubmitButton', {
+    hasSubmission: @has_previous_submission,
+    ltiLaunchState: params[:state],
+    courseContentVersionId: @course_project_version.id,
+  })%>
 </div>
 
 <%= javascript_pack_tag 'xapi_assignment' %>

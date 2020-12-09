@@ -2,27 +2,21 @@
 class ProjectSubmissionAnswersController < ApplicationController
   include DryCrud::Controllers::Nestable
 
-  nested_resource_of CourseProjectVersion
+  # The index can be accessed under either of these nested parents.
+  nested_resource_of [CourseProjectVersion, ProjectSubmission]
 
   def index
-    # Find the latest answer for each input_name attached to this project and user.
-    answer_ids = ProjectSubmissionAnswer.where(
-      project_submission: [ProjectSubmission.where(
+    @project_submission_answers = ProjectSubmission.last_answers_for_submissions(
+      # If nested under project_submission, use that ID. Otherwise,
+      # use the course_project_version ID and current_user.
+      @project_submission || [ProjectSubmission.where(
         user: current_user,
         course_project_version: @course_project_version,
-      )],
-    ).select(
-      'max(id) as id, input_name'
-    ).group(
-      :input_name
-    ).map {
-      |answer| answer.id
-    }
-
-    @project_submission_answers = ProjectSubmissionAnswer.find(answer_ids)
+      )]
+    )
 
     # FIXME!! authorize the right thing
-    authorize @course_project_version
+    authorize @project_submission || @course_project_version
 
     # TODO: only return the latest for each input_name.
   end

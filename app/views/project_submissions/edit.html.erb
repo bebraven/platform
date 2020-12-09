@@ -1,11 +1,1 @@
-<div class="bv-custom-content-container">
-  <%= render 'project', read_only: false %>
-
-  <!-- Submit -->
-  <%= react_component('Projects/ProjectSubmitButton', {
-    hasSubmission: @has_previous_submission,
-    ltiLaunchState: params[:state],
-    courseContentVersionId: @course_project_version.id,
-  })%>
-</div>
-
+<%= render 'form' %>
