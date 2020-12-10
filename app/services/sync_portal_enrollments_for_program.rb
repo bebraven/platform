@@ -13,13 +13,15 @@ class SyncPortalEnrollmentsForProgram
         salesforce_contact_id: participant.contact_id,
         student_id: participant.student_id
       )
-      if portal_user.nil?
+      if portal_user.exist?
+        reconcile_email!(portal_user, participant) if email_inconsistent?(portal_user, participant)
+        sync_portal_enrollment!(portal_user, participant)
+      elsif sf_program.nlu?
+        run_account_creation_for_nlu!(participant.contact_id)
+      else
         Rails.logger.debug("no portal account yet for '#{participant.email}'; skipping")
         next
       end
-
-      reconcile_email!(portal_user, participant) if email_inconsistent?(portal_user, participant)
-      sync_portal_enrollment!(portal_user, participant)
     end
   end
 
@@ -29,6 +31,13 @@ class SyncPortalEnrollmentsForProgram
 
   def email_inconsistent?(portal_user, participant)
     !participant.email.casecmp(portal_user.email).zero?
+  end
+
+  def run_account_creation_for_nlu!(contact_id)
+    AccountCreator.new(
+      sign_up_params: { 'salesforce_id' => contact_id },
+      for_nlu: true
+    ).run
   end
 
   def reconcile_email!(portal_user, participant)
