@@ -44,7 +44,9 @@ function prefillInputs() {
     }
 
     const project_submission_id = document.getElementById(WRAPPER_DIV_ID).attributes[SUBMISSION_DATA_ATTR].value;
-    if(project_submission_id){ // If no answers have been saved, there won't be a submission or anything to pre-fill.
+
+    // If no answers have been saved, there won't be a submission or anything to pre-fill.
+    if (project_submission_id) {
         const api_url = `/project_submissions/${project_submission_id}/project_submission_answers`;
 
         fetch(
@@ -98,7 +100,7 @@ function sendStatement(e) {
     const input_value = input.value;
     const wrapperDiv = document.getElementById(WRAPPER_DIV_ID);
 
-    const course_custom_content_version_id = wrapperDiv.attributes[COURSE_PROJECT_VERSION_DATA_ATTR].value;
+    const course_project_version_id = wrapperDiv.attributes[COURSE_PROJECT_VERSION_DATA_ATTR].value;
 
     const data = {
         project_submission_answer: {
@@ -107,9 +109,9 @@ function sendStatement(e) {
         },
     };
 
-    // Ajax call to ProjectSubmissionAnswersController.
+    // AJAX call to ProjectSubmissionAnswersController.
     fetch(
-      `/course_project_versions/${course_custom_content_version_id}/project_submission_answers`,
+      `/course_project_versions/${course_project_version_id}/project_submission_answers`,
       {
         method: 'POST',
         body: JSON.stringify(data),
