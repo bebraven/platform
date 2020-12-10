@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(response);
         })
         .catch((error) => {
-            const error_msg = `Failed to save answer: [name='${input_name}', value='${input_value}'`;
+            const error_msg = `Failed to save answer: [name='${input_name}', value='${input_value}']`;
             console.error(error_msg);
             honey_span.addErrorDetails(error_msg, error);
         });
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /////////////////////////////
 
     // If no answers have been saved in the past, there won't be a submission or anything to pre-fill.
-    if(projectSubmissionId) {
+    if (projectSubmissionId) {
         prefillInputs();
     }
 
