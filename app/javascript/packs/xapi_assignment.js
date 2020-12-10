@@ -1,8 +1,11 @@
 // This JS module is used to save inputs entered by the user
 // For an example, see the view used for project_submissions_controller#new
 import Rails from '@rails/ujs';
+import { HoneycombXhrSpan } from './honeycomb'
+import { HoneycombSpan } from './honeycomb'
 
 const AUTH_HEADER = 'LtiState '+ document.querySelector('meta[name="state"]').content;
+const HONEYCOMB_CONTROLLER_NAME = 'javascript.project.submission';
 
 // Passed in from the view using this JS
 const SUBMISSION_DATA_ATTR = 'data-project-submission-id';
@@ -18,35 +21,33 @@ const SUPPORTED_INPUT_ELEMENTS = [
  'textarea',
 ];
 
-// Main page logic.
 document.addEventListener('DOMContentLoaded', () => {
-    prefillInputs();
-
-    // If write-enabled, attach listeners to save intermediate responses
-    if (document.getElementById(WRAPPER_DIV_ID).attributes[READ_ONLY_ATTR].value === "false") {
-        attachInputListeners();
-    }
-});
-
-function getAllInputs() {
-    return document.querySelectorAll(SUPPORTED_INPUT_ELEMENTS.join(', '));   
-}
-
-function prefillInputs() {
-    const inputs = getAllInputs();
     const wrapperDiv = document.getElementById(WRAPPER_DIV_ID);
+    const isReadOnly = wrapperDiv.attributes[READ_ONLY_ATTR].value;
+    const projectSubmissionId = wrapperDiv.attributes[SUBMISSION_DATA_ATTR].value;
+    const courseProjectVersionId = wrapperDiv.attributes[COURSE_PROJECT_VERSION_DATA_ATTR].value;
 
-    // Mark all inputs as disabled if data-read-only is true.
-    if (wrapperDiv.attributes[READ_ONLY_ATTR].value === "true") {
-        inputs.forEach((input) => {
-            input.disabled = true;
-        });
+    function getAllInputs() {
+        return document.querySelectorAll(SUPPORTED_INPUT_ELEMENTS.join(', '));   
     }
+    
+    function prefillInputs() {
+        const api_url = `/project_submissions/${projectSubmissionId}/project_submission_answers`;
 
-    const project_submission_id = document.getElementById(WRAPPER_DIV_ID).attributes[SUBMISSION_DATA_ATTR].value;
-    if(project_submission_id){ // If no answers have been saved, there won't be a submission or anything to pre-fill.
-        const api_url = `/project_submissions/${project_submission_id}/project_submission_answers`;
-
+        const honey_span = new HoneycombXhrSpan(HONEYCOMB_CONTROLLER_NAME, 'prefillInputs', {
+                                             'id': projectSubmissionId,
+                                             'url': api_url,
+                                             'readonly': isReadOnly});
+    
+        const inputs = getAllInputs();
+    
+        // Mark all inputs as disabled if data-read-only is true.
+        if (isReadOnly === "true") {
+            inputs.forEach((input) => {
+                input.disabled = true;
+            });
+        }    
+    
         fetch(
           api_url,
           {
@@ -58,13 +59,14 @@ function prefillInputs() {
           },
          )
         .then((response) => {
+
             // Convert array of answer objects into map of {input_name: input_value}.
             response.json().then((answers) => {
                 const prefills = answers.reduce((map, obj) => {
                     map[obj.input_name] = obj.input_value;
                     return map;
                 }, {});
-
+    
                 inputs.forEach( input => {
                     // Prefill input values.
                     const prefill = prefills[input.name];
@@ -79,53 +81,66 @@ function prefillInputs() {
                     }
                 });
             });
-
+    
+        })
+        .catch((error) => {
+            const error_msg = 'Failed to populate previous answers.';
+            console.error(error_msg);
+            honey_span.addErrorDetails(error_msg, error);
+        });
+    }
+    
+    function attachInputListeners() {
+        getAllInputs().forEach(input => { input.onblur = sendStatement });
+    }
+    
+    function sendStatement(e) {
+        const input = e.target;
+        const input_name = input.name;
+        const input_value = input.value;
+     
+        const data = {
+            project_submission_answer: {
+                input_name: input_name,
+                input_value: input_value,
+            },
+        };
+    
+        // Ajax call to ProjectSubmissionAnswersController.
+        fetch(
+          `/course_project_versions/${courseProjectVersionId}/project_submission_answers`,
+          {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+              'X-CSRF-Token': Rails.csrfToken(),
+              'Content-Type': 'application/json;charset=utf-8',
+              'Authorization': AUTH_HEADER
+            },
+          },
+         )
+        .then((response) => {
+            // TODO
+            console.log(response);
         })
         .catch((error) => {
             // TODO
             console.log(error);
         });
     }
-}
 
-function attachInputListeners() {
-    getAllInputs().forEach(input => { input.onblur = sendStatement });
-}
+    /////////////////////////////
+    // Main page logic.
+    /////////////////////////////
 
-function sendStatement(e) {
-    const input = e.target;
-    const input_name = input.name;
-    const input_value = input.value;
-    const wrapperDiv = document.getElementById(WRAPPER_DIV_ID);
+    // If no answers have been saved in the past, there won't be a submission or anything to pre-fill.
+    if(projectSubmissionId) {
+        prefillInputs();
+    }
 
-    const course_custom_content_version_id = wrapperDiv.attributes[COURSE_PROJECT_VERSION_DATA_ATTR].value;
+    // If write-enabled, attach listeners to save intermediate responses
+    if (isReadOnly === "false") {
+        attachInputListeners();
+    }
 
-    const data = {
-        project_submission_answer: {
-            input_name: input_name,
-            input_value: input_value,
-        },
-    };
-
-    // Ajax call to ProjectSubmissionAnswersController.
-    fetch(
-      `/course_project_versions/${course_custom_content_version_id}/project_submission_answers`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'X-CSRF-Token': Rails.csrfToken(),
-          'Content-Type': 'application/json;charset=utf-8',
-          'Authorization': AUTH_HEADER
-        },
-      },
-     )
-    .then((response) => {
-        // TODO
-        console.log(response);
-    })
-    .catch((error) => {
-        // TODO
-        console.log(error);
-    });
-}
+});
