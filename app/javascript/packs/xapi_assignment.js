@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         };
     
-        // Ajax call to ProjectSubmissionAnswersController.
+        // AJAX call to ProjectSubmissionAnswersController.
         fetch(
           `/course_project_versions/${courseProjectVersionId}/project_submission_answers`,
           {
