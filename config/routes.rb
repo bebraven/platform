@@ -66,12 +66,10 @@ Rails.application.routes.draw do
   resources :course_project_versions, controller: 'course_custom_content_versions', type: 'CourseProjectVersion', only: [] do
     resources :project_submissions, only: [:new, :edit, :show]
     post 'project_submissions/submit', to: 'project_submissions#submit'
-
-    resources :project_submission_answers, only: [:index, :create]
   end
 
   resources :project_submissions, only: [] do
-    resources :project_submission_answers, only: [:index]
+    resources :project_submission_answers, only: [:index, :create]
   end
 
   resources :course_survey_versions, controller: 'course_custom_content_versions', type: 'CourseSurveyVersion', only: [] do

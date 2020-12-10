@@ -26,13 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const isReadOnly = wrapperDiv.attributes[READ_ONLY_ATTR].value;
     const projectSubmissionId = wrapperDiv.attributes[SUBMISSION_DATA_ATTR].value;
     const courseProjectVersionId = wrapperDiv.attributes[COURSE_PROJECT_VERSION_DATA_ATTR].value;
+    const api_url = `/project_submissions/${projectSubmissionId}/project_submission_answers`;
 
     function getAllInputs() {
         return document.querySelectorAll(SUPPORTED_INPUT_ELEMENTS.join(', '));   
     }
     
     function prefillInputs() {
-        const api_url = `/project_submissions/${projectSubmissionId}/project_submission_answers`;
 
         const honey_span = new HoneycombXhrSpan(HONEYCOMB_CONTROLLER_NAME, 'prefillInputs', {
                                              'id': projectSubmissionId,
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
          // AJAX call to ProjectSubmissionAnswersController.
         fetch(
-          `/course_project_versions/${courseProjectVersionId}/project_submission_answers`,
+          api_url,
           {
             method: 'POST',
             body: JSON.stringify(data),

@@ -61,32 +61,25 @@ class ProjectSubmissionsController < ApplicationController
   end
 
   # NOTE: This action exhibits nonstandard behavior!!
-  # See redirect below.
+  # 
+  # A new project submission is one that is in an unsubmitted state,
+  # not something that doesn't exist in the database. This just makes
+  # sure we have the proper unsubmitted one to work with and redirects
+  # to edit it.
   def new
-    # Only `new` if there is no existing unsubmitted submission.
-    # Otherwise, force a redirect to the unsubmitted's /edit.
-    unsubmitted_submission = ProjectSubmission.find_by(
+    @project_submission = ProjectSubmission.create_or_find_by!(
       user: current_user,
       course_project_version: @course_project_version,
       is_submitted: false,
     )
 
-    if unsubmitted_submission
-      authorize unsubmitted_submission
-      redirect_to edit_course_project_version_project_submission_path(
-        @course_project_version,
-        unsubmitted_submission,
-        state: @lti_launch.state
-      ) and return
-    end
-
-    # Standard `new` action behavior after this point.
-    @project_submission = ProjectSubmission.new(
-      user: current_user,
-      course_project_version: @course_project_version,
-      is_submitted: false,
-    )
     authorize @project_submission
+
+    redirect_to edit_course_project_version_project_submission_path(
+      @course_project_version,
+      @project_submission,
+      state: @lti_launch.state
+    )
   end
 
 private
