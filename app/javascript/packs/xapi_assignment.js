@@ -44,47 +44,48 @@ function prefillInputs() {
     }
 
     const project_submission_id = document.getElementById(WRAPPER_DIV_ID).attributes[SUBMISSION_DATA_ATTR].value;
-    const api_url = `/project_submissions/${project_submission_id}/project_submission_answers`;
+    if(project_submission_id){ // If no answers have been saved, there won't be a submission or anything to pre-fill.
+        const api_url = `/project_submissions/${project_submission_id}/project_submission_answers`;
 
-    fetch(
-      api_url,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Authorization': AUTH_HEADER
-        },
-      },
-     )
-    .then((response) => {
-        // Convert array of answer objects into map of {input_name: input_value}.
-        response.json().then((answers) => {
-            const prefills = answers.reduce((map, obj) => {
-                map[obj.input_name] = obj.input_value;
-                return map;
-            }, {});
+        fetch(
+          api_url,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              'Authorization': AUTH_HEADER
+            },
+          },
+         )
+        .then((response) => {
+            // Convert array of answer objects into map of {input_name: input_value}.
+            response.json().then((answers) => {
+                const prefills = answers.reduce((map, obj) => {
+                    map[obj.input_name] = obj.input_value;
+                    return map;
+                }, {});
 
-            inputs.forEach( input => {
-                // Prefill input values.
-                const prefill = prefills[input.name];
-                if (!prefill) {
-                    return; // Nothing previously entered by user.
-                } else if (input.type == 'radio') {
-                    if (input.value == prefill) {
-                        input.checked = true; // Check appropriate radio.
+                inputs.forEach( input => {
+                    // Prefill input values.
+                    const prefill = prefills[input.name];
+                    if (!prefill) {
+                        return; // Nothing previously entered by user.
+                    } else if (input.type == 'radio') {
+                        if (input.value == prefill) {
+                            input.checked = true; // Check appropriate radio.
+                        }
+                    } else {
+                        input.value = prefill; // Set input value.
                     }
-                } else {
-                    input.value = prefill; // Set input value.
-                }
+                });
             });
+
+        })
+        .catch((error) => {
+            // TODO
+            console.log(error);
         });
-
-    })
-    .catch((error) => {
-        // TODO
-        console.log(error);
-    });
-
+    }
 }
 
 function attachInputListeners() {
