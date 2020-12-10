@@ -41,9 +41,7 @@ services:
       AWS_PLATFORM_FILES_BUCKET: ${AWS_PLATFORM_FILES_BUCKET}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-       
 
-      
     # Need privileged mode to change the sysctl flags in docker-compose/scripts/docker_compose_run.sh
     privileged: true
     
@@ -52,10 +50,12 @@ services:
     command: ./docker-compose/scripts/docker_compose_run.sh
 
   platformdb:
-    image: postgres
-    env_file:
-      - .env.database
+    image: postgres:11.8  # 11.8 for Acc and Booster, 12.4 for Highlander
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     volumes:
+      - ./latest.dump:/latest.dump
       - db-platform:/var/lib/postgresql/data
     networks:
       - bravendev
