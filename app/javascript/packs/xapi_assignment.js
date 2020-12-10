@@ -2,8 +2,11 @@
 // For an example, see the view used for project_submissions_controller#new
 import Rails from '@rails/ujs';
 
+const AUTH_HEADER = 'LtiState '+ document.querySelector('meta[name="state"]').content;
+
 // Passed in from the view using this JS
 const SUBMISSION_DATA_ATTR = 'data-project-submission-id';
+const COURSE_PROJECT_VERSION_DATA_ATTR = 'data-course-project-version-id';
 const READ_ONLY_ATTR = 'data-read-only';
 const WRAPPER_DIV_ID = 'custom-content-wrapper';
 
@@ -48,7 +51,8 @@ function prefillInputs() {
       {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json;charset=utf-8'
+          'Content-Type': 'application/json;charset=utf-8',
+          'Authorization': AUTH_HEADER
         },
       },
      )
@@ -93,7 +97,7 @@ function sendStatement(e) {
     const input_value = input.value;
     const wrapperDiv = document.getElementById(WRAPPER_DIV_ID);
 
-    const course_custom_content_version_id = wrapperDiv.attributes[CCCV_DATA_ATTR].value;
+    const course_custom_content_version_id = wrapperDiv.attributes[COURSE_PROJECT_VERSION_DATA_ATTR].value;
 
     const data = {
         project_submission_answer: {
@@ -110,7 +114,8 @@ function sendStatement(e) {
         body: JSON.stringify(data),
         headers: {
           'X-CSRF-Token': Rails.csrfToken(),
-          'Content-Type': 'application/json;charset=utf-8'
+          'Content-Type': 'application/json;charset=utf-8',
+          'Authorization': AUTH_HEADER
         },
       },
      )

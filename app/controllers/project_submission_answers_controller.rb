@@ -5,6 +5,8 @@ class ProjectSubmissionAnswersController < ApplicationController
   # The index can be accessed under either of these nested parents.
   nested_resource_of [CourseProjectVersion, ProjectSubmission]
 
+  skip_before_action :verify_authenticity_token, only: [:create], if: :is_sessionless_lti_launch?
+
   def index
     @project_submission_answers = ProjectSubmission.last_answers_for_submissions(
       # If nested under project_submission, use that ID. Otherwise,

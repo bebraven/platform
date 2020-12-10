@@ -3,7 +3,9 @@
 <div class="bv-custom-content-container"
      id="custom-content-wrapper"
      data-read-only="false"
-     data-project-submission-id="<%= @project_submission.id %>">
+     data-project-submission-id="<%= @project_submission.id %>"
+     data-course-project-version-id="<%= @course_project_version.id %>">
+
   <%== @course_project_version.project_version.body %>
 
   <!-- Submit -->
