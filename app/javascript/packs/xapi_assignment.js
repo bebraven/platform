@@ -13,7 +13,7 @@ const COURSE_PROJECT_VERSION_DATA_ATTR = 'data-course-project-version-id';
 const READ_ONLY_ATTR = 'data-read-only';
 const WRAPPER_DIV_ID = 'custom-content-wrapper';
 
-// These are the HTML elements we'll attach sendStatement() to
+// These are the HTML elements we'll attach sendAnswer() to
 const SUPPORTED_INPUT_ELEMENTS = [
  'input[type="radio"]',
  'input[type="text"]',
@@ -91,10 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function attachInputListeners() {
-        getAllInputs().forEach(input => { input.onblur = sendStatement });
+        getAllInputs().forEach(input => { input.onblur = sendAnswer });
     }
     
-    function sendStatement(e) {
+    function sendAnswer(e) {
         const input = e.target;
         const input_name = input.name;
         const input_value = input.value;
@@ -106,7 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         };
     
-        // AJAX call to ProjectSubmissionAnswersController.
+        const honey_span = new HoneycombXhrSpan(HONEYCOMB_CONTROLLER_NAME, 'sendAnswer', {
+                                             'input.name': input_name,
+                                             'input.value': input_value});
+
+         // AJAX call to ProjectSubmissionAnswersController.
         fetch(
           `/course_project_versions/${courseProjectVersionId}/project_submission_answers`,
           {
@@ -124,8 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(response);
         })
         .catch((error) => {
-            // TODO
-            console.log(error);
+            const error_msg = `Failed to save answer: [name='${input_name}', value='${input_value}'`;
+            console.error(error_msg);
+            honey_span.addErrorDetails(error_msg, error);
         });
     }
 
