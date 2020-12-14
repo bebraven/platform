@@ -9,7 +9,8 @@ class SyncToBoosterSlackJob < ApplicationJob
     BackgroundSyncJobMailer.with(email: email).success_email.deliver_now
   end
 
-  rescue_from(StandardError) do |_|
+  rescue_from(StandardError) do |exception|
     BackgroundSyncJobMailer.with(email: arguments.second).failure_email.deliver_now
+    raise
   end
 end

@@ -18,7 +18,7 @@ RSpec.describe SyncToBoosterSlackJob, type: :job do
 
     context 'when args are valid' do
       
-      it 'starts to sync emails to booster slack', :focus => true do; 
+      it 'starts to sync emails to booster slack' do
         SyncToBoosterSlackJob.perform_now(emails,email)        
         expect(email_list).to have_received(:run)
       end 
@@ -29,14 +29,13 @@ RSpec.describe SyncToBoosterSlackJob, type: :job do
       end 
     end 
 
-    context 'when args are invalid || .run fails' do 
-      it 'sends failure email' do 
-        allow(email_list).to receive(:run).and_raise('uh oh')
-        SyncToBoosterSlackJob.perform_now(emails, email)
+    context 'when args are invalid || .run fails' do
+      it 'sends failure email', :focus => true do; 
+        allow(email_list).to receive(:run).and_raise(RuntimeError)
+        expect{SyncToBoosterSlackJob.perform_now(emails, email)}.to raise_exception
         expect(mail_status).to have_received(:failure_email)
-      end 
+      end        
     end 
-   
   end
 end 
 

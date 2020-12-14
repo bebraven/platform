@@ -13,28 +13,23 @@ RSpec.describe SyncSalesforceProgramToLmsJob, type: :job do
       allow(BackgroundSyncJobMailer).to receive(:with).and_return(mailer)
     end
 
-    it 'starts the sync process for a program id' do
-      program_id = 'some_fake_id'
-      email = 'example@example.com'
-      SyncSalesforceProgramToLmsJob.perform_now(program_id, email)
+    let(:program_id) {'some_fake_id'}
+    let(:email) {'some email address'}
 
+    it 'starts the sync process for a program id' do
+      SyncSalesforceProgramToLmsJob.perform_now(program_id, email)
       expect(program_portal_enrollments).to have_received(:run)
     end
 
-    it 'sends success mail if successful' do
-      program_id = 'some_fake_id'
-      email = 'example@example.com'
+    it 'sends success mail if successful', :focus => true do;
       SyncSalesforceProgramToLmsJob.perform_now(program_id, email)
-
       expect(mailer).to have_received(:success_email)
     end
 
     it 'sends failure mail if something bad happens' do
-      allow(program_portal_enrollments).to receive(:run).and_raise('something bad')
-      program_id = 'some_fake_id'
-      email = 'example@example.com'
-      SyncSalesforceProgramToLmsJob.perform_now(program_id, email)
-
+      allow(program_portal_enrollments).to receive(:run).and_raise('something bad') 
+      #SyncSalesforceProgramToLmsJob.perform_now(program_id, email)
+      expect{ SyncPortalEnrollmentsForProgram.perform_now(program_id, email) }.to raise_exception
       expect(mailer).to have_received(:failure_email)
     end
   end
