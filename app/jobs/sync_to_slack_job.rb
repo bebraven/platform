@@ -6,10 +6,10 @@ class SyncToSlackJob < ApplicationJob
 
   def perform(program_id, email)
     SyncSlackForProgram.new(salesforce_program_id: program_id).run
-    BackgroundSyncJobMailer.with(email: email).success_email.deliver_now
-  end
+    sync_status = BackgroundSyncJobMailer.with(email: email)
+    sync_status.success_email.deliver_now
 
-  rescue_from(StandardError) do |exception|
+  rescue StandardError => _ 
     BackgroundSyncJobMailer.with(email: arguments.second).failure_email.deliver_now
     raise
   end
