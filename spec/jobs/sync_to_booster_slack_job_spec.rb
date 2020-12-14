@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe SyncToBoosterSlackJob, type: :job do
   describe '#perform' do
-    let(:email_list) { instance_double(SyncBoosterSlackForEmails, run: nil) } 
+    let(:email_list) { double('SyncBoosterSlackForEmails', run: nil) } 
     let(:mail_status) { double('MailStatusInstance', success_email: delivery, failure_email: delivery) }
     let(:delivery) { double('DeliverNowInstance', deliver_now: nil)}
 
@@ -17,7 +17,6 @@ RSpec.describe SyncToBoosterSlackJob, type: :job do
     let(:email) {'some email address'}
 
     context 'when args are valid' do
-      
       it 'starts to sync emails to booster slack' do
         SyncToBoosterSlackJob.perform_now(emails,email)        
         expect(email_list).to have_received(:run)
@@ -32,10 +31,11 @@ RSpec.describe SyncToBoosterSlackJob, type: :job do
     context 'when args are invalid || .run fails' do
       it 'sends failure email', :focus => true do; 
         allow(email_list).to receive(:run).and_raise(RuntimeError)
-        expect{SyncToBoosterSlackJob.perform_now(emails, email)}.to raise_exception
+        expect{ SyncToBoosterSlackJob.perform_now(emails, email) }.to raise_exception
         expect(mail_status).to have_received(:failure_email)
       end        
     end 
+
   end
 end 
 
