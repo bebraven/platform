@@ -7,9 +7,9 @@ class SyncSalesforceProgramToLmsJob < ApplicationJob
   def perform(program_id, email)
     SyncPortalEnrollmentsForProgram.new(salesforce_program_id: program_id).run
     BackgroundSyncJobMailer.with(email: email).success_email.deliver_now
-  end
-
-  rescue_from(StandardError) do |_exception|
+    
+  rescue StandardError => _ 
     BackgroundSyncJobMailer.with(email: arguments.second).failure_email.deliver_now
+    raise
   end
 end
