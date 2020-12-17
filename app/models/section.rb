@@ -1,6 +1,10 @@
 class Section < ApplicationRecord
   resourcify
 
+  # Valid salesforce_type constants.
+  COHORT = 'cohort'
+  COHORT_SCHEDULE = 'cohort_schedule'
+
   belongs_to :course
 
   before_validation { name.try(:strip!) }

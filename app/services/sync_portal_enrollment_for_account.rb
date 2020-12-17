@@ -51,17 +51,20 @@ class SyncPortalEnrollmentForAccount
                       sf_program.leadership_coach_course_section_name)
     when SalesforceAPI::FELLOW
       sync_enrollment(sf_program.fellow_course_id, RoleConstants::STUDENT_ENROLLMENT,
-                      course_section_name)
+                      course_cohort_name, Section::COHORT)
+      sync_enrollment(sf_program.fellow_course_id, RoleConstants::STUDENT_ENROLLMENT,
+                      course_cohort_schedule_name, Section::COHORT_SCHEDULE)
     else
       logger.warn("Got unknown role #{sf_participant.role} from SF")
     end
   end
 
-  # If the CohortName isn't set, get their LL day/time schedule and use a placeholder section 
-  # that we setup before they are mapped to their real cohort in the 2nd or 3rd week.
-  def course_section_name
-    sf_participant.cohort || # E.g. SJSU Brian (Tues)
-      sf_participant.cohort_schedule # E.g. 'Monday, 7:00'
+  def course_cohort_name
+    sf_participant.cohort  # E.g. SJSU Brian (Tues)
+  end
+
+  def course_cohort_schedule_name
+    sf_participant.cohort_schedule  # E.g. 'Monday, 7:00'
   end
 
   def drop_enrollment!
@@ -93,9 +96,9 @@ class SyncPortalEnrollmentForAccount
   end
 
   # Enroll or update their enrollment in the proper course and section
-  def sync_enrollment(canvas_course_id, role, section_name)
+  def sync_enrollment(canvas_course_id, role, section_name, section_type='')
     section_name = section_name.blank? ? DEFAULT_SECTION : section_name
-    section = find_or_create_section(canvas_course_id, section_name)
+    section = find_or_create_section(canvas_course_id, section_name, section_type)
     enrollment = find_user_enrollment(canvas_course_id)
     if enrollment.nil?
       enroll_user(canvas_course_id, role, section)
@@ -116,18 +119,20 @@ class SyncPortalEnrollmentForAccount
   end
 
   # Creates a local DB Section and a Canvas section, but only returns the local one.
-  def find_or_create_section(canvas_course_id, section_name)
+  def find_or_create_section(canvas_course_id, section_name, section_type)
     canvas_section = find_canvas_course_section(canvas_course_id, section_name)
     if canvas_section.nil?
       canvas_section = canvas_client.create_lms_section(course_id: canvas_course_id, name: section_name)
     end
 
     course = Course.find_by!(canvas_course_id: canvas_course_id)
-    Section.find_or_create_by!(
+    section = Section.find_or_create_by!(
       course_id: course.id,
       name: section_name,
-      canvas_section_id: canvas_section.id
+      canvas_section_id: canvas_section.id,
     )
+    section.update!(salesforce_type: section_type)
+    section
   end
 
   # Returns Canvas section.

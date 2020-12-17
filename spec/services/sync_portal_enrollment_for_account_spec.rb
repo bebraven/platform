@@ -38,7 +38,7 @@ RSpec.describe SyncPortalEnrollmentForAccount do
                salesforce_participant: sf_participant,
                salesforce_program: sf_program)
           .run
-        expect(lms_client).to have_received(:create_lms_section)
+        expect(lms_client).to have_received(:create_lms_section).twice
       end
 
       it 'creates a default section if no section on salesforce' do
@@ -52,6 +52,7 @@ RSpec.describe SyncPortalEnrollmentForAccount do
         expect(lms_client)
           .to have_received(:create_lms_section)
           .with(course_id: fellow_canvas_course_id, name: SyncPortalEnrollmentForAccount::DEFAULT_SECTION)
+          .twice
       end
 
       # Add tests for other sections when implemented
@@ -73,7 +74,7 @@ RSpec.describe SyncPortalEnrollmentForAccount do
                salesforce_program: sf_program)
           .run
 
-        expect(lms_client).to have_received(:enroll_user_in_course).once
+        expect(lms_client).to have_received(:enroll_user_in_course).twice
       end
 
       it 'de-enrols a user if section changes' do
@@ -87,7 +88,7 @@ RSpec.describe SyncPortalEnrollmentForAccount do
                salesforce_program: sf_program)
           .run
 
-        expect(lms_client).to have_received(:delete_enrollment).once
+        expect(lms_client).to have_received(:delete_enrollment).twice
       end
 
       it 'reenrols the user if section changes' do
@@ -101,7 +102,7 @@ RSpec.describe SyncPortalEnrollmentForAccount do
                salesforce_program: sf_program)
           .run
 
-        expect(lms_client).to have_received(:enroll_user_in_course).once
+        expect(lms_client).to have_received(:enroll_user_in_course).twice
       end
 
       it 'de-enrols a user if role changes' do
@@ -114,7 +115,7 @@ RSpec.describe SyncPortalEnrollmentForAccount do
                salesforce_program: sf_program)
           .run
 
-        expect(lms_client).to have_received(:delete_enrollment).once
+        expect(lms_client).to have_received(:delete_enrollment).twice
       end
 
       it 'reenrols the user if role changes' do
@@ -127,7 +128,7 @@ RSpec.describe SyncPortalEnrollmentForAccount do
                salesforce_program: sf_program)
           .run
 
-        expect(lms_client).to have_received(:enroll_user_in_course).once
+        expect(lms_client).to have_received(:enroll_user_in_course).twice
       end
     end
 
@@ -146,7 +147,7 @@ RSpec.describe SyncPortalEnrollmentForAccount do
                salesforce_program: sf_program)
           .run
 
-        expect(lms_client).to have_received(:delete_enrollment).once
+        expect(lms_client).to have_received(:delete_enrollment)
       end
     end
   end
