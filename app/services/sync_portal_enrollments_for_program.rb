@@ -13,7 +13,7 @@ class SyncPortalEnrollmentsForProgram
         salesforce_contact_id: participant.contact_id,
         student_id: participant.student_id
       )
-      if portal_user.exist?
+      if portal_user.present?
         reconcile_email!(portal_user, participant) if email_inconsistent?(portal_user, participant)
         sync_portal_enrollment!(portal_user, participant)
       elsif sf_program.nlu?
