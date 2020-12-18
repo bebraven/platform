@@ -107,7 +107,7 @@ class SalesforceAPI
       "SELECT Id, Name, Target_Course_ID_in_LMS__c, LMS_Coach_Course_Id__c, School__c, Program_Shortname__c, School__r.Name, " \
         "Section_Name_in_LMS_Coach_Course__c, Default_Timezone__c, Docusign_Template_ID__c, " \
         "Preaccelerator_Qualtrics_Survey_ID__c, Postaccelerator_Qualtrics_Survey_ID__c, " \
-        "LC_DocuSign_Template_ID__c, TA_Sandbox_Course_ID__c, TA_Course_Section_Name__c" \
+        "LC_DocuSign_Template_ID__c, TA_Sandbox_Course_ID__c, TA_Course_Section_Name__c " \
       "FROM Program__c WHERE Id = '#{program_id}'"
 
     response = get("#{DATA_SERVICE_PATH}/query?q=#{CGI.escape(soql_query)}")
