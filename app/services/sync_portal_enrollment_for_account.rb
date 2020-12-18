@@ -7,7 +7,7 @@ class SyncPortalEnrollmentForAccount
     @portal_user = portal_user
     @sf_participant = salesforce_participant
     @sf_program = salesforce_program
-    @user = User.find_by!(email: sf_participant.email)
+    @user = nil
   end
 
   def run
@@ -26,7 +26,7 @@ class SyncPortalEnrollmentForAccount
 
   private
 
-  attr_reader :portal_user, :sf_participant, :sf_program, :user
+  attr_reader :portal_user, :sf_participant, :sf_program
 
   def add_enrollment!
     case sf_participant.role
@@ -36,6 +36,13 @@ class SyncPortalEnrollmentForAccount
       sync_enrollment(sf_program.leadership_coach_course_id,
                       RoleConstants::STUDENT_ENROLLMENT,
                       sf_program.leadership_coach_course_section_name)
+    when SalesforceAPI::TEACHING_ASSISTANT
+      sync_enrollment(sf_program.fellow_course_id, RoleConstants::TA_ENROLLMENT,
+                      sf_program.ta_course_section_name)
+      sync_enrollment(sf_program.ta_sandbox_course_id, RoleConstants::TA_ENROLLMENT, 
+                      sf_program.ta_course_section_name)
+      sync_enrollment(sf_program.leadership_coach_course_id, RoleConstants::STUDENT_ENROLLMENT,
+                      sf_program.ta_course_section_name)
     when SalesforceAPI::FELLOW
       sync_enrollment(sf_program.fellow_course_id, RoleConstants::STUDENT_ENROLLMENT,
                       course_section_name)
@@ -55,6 +62,10 @@ class SyncPortalEnrollmentForAccount
     case sf_participant.role
     when SalesforceAPI::LEADERSHIP_COACH
       drop_course_enrollment(sf_program.leadership_coach_course_id)
+      drop_course_enrollment(sf_program.fellow_course_id)
+    when SalesforceAPI::TEACHING_ASSISTANT
+      drop_course_enrollment(sf_program.leadership_coach_course_id)
+      drop_course_enrollment(sf_program.ta_sandbox_course_id)
       drop_course_enrollment(sf_program.fellow_course_id)
     when SalesforceAPI::FELLOW
       drop_course_enrollment(sf_program.fellow_course_id)
@@ -79,9 +90,7 @@ class SyncPortalEnrollmentForAccount
     # https://app.asana.com/0/1174274412967132/1197893935338145/f
     # At that point this should find_by! instead so it doesn't cover up issues.
     section = Section.find_by(canvas_section_id: enrollment.section_id)
-    if section
-      user.remove_role enrollment.type, section
-    end
+    user.remove_role enrollment.type, section if user_can_edit_role?(section)
   end
 
   def sync_enrollment(canvas_course_id, role, section_name)
@@ -100,7 +109,8 @@ class SyncPortalEnrollmentForAccount
 
   # Pass in a local db section.
   def enroll_user(canvas_course_id, role, section)
-    user.add_role role, section
+    user.add_role role, section if user_can_edit_role?(section)
+
     canvas_client.enroll_user_in_course(
       portal_user.id, canvas_course_id, role, section.canvas_section_id
     )
@@ -141,5 +151,14 @@ class SyncPortalEnrollmentForAccount
 
   def logger
     Rails.logger
+  end
+
+  def user
+    @user ||= User.find_by(email: sf_participant.email)
+  end
+
+  # To support nil users, like TAs, who need to be set for "cohort info upload" before launch
+  def user_can_edit_role?(section)
+    section && user
   end
 end

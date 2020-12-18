@@ -23,7 +23,7 @@ class SalesforceAPI
                          :docusign_template_id,
                          :pre_accelerator_qualtrics_survey_id,
                          :post_accelerator_qualtrics_survey_id,
-                         :lc_docusign_template_id, :short_name, :school_name) do
+                         :lc_docusign_template_id, :short_name, :school_name, :ta_sandbox_course_id, :ta_course_section_name) do
                            def nlu?
                              school_name.eql?(NLU_SCHOOL_NAME)
                            end
@@ -34,6 +34,7 @@ class SalesforceAPI
   COMPLETED = 'Completed'
   LEADERSHIP_COACH = :'Leadership Coach'
   FELLOW = :Fellow
+  TEACHING_ASSISTANT = :'Teaching Assistant'
 
   class SalesforceDataError < StandardError; end
   ParticipantNotOnSalesForceError = Class.new(StandardError)
@@ -106,7 +107,7 @@ class SalesforceAPI
       "SELECT Id, Name, Target_Course_ID_in_LMS__c, LMS_Coach_Course_Id__c, School__c, Program_Shortname__c, School__r.Name, " \
         "Section_Name_in_LMS_Coach_Course__c, Default_Timezone__c, Docusign_Template_ID__c, " \
         "Preaccelerator_Qualtrics_Survey_ID__c, Postaccelerator_Qualtrics_Survey_ID__c, " \
-        "LC_DocuSign_Template_ID__c " \
+        "LC_DocuSign_Template_ID__c, TA_Sandbox_Course_ID__c, TA_Course_Section_Name__c" \
       "FROM Program__c WHERE Id = '#{program_id}'"
 
     response = get("#{DATA_SERVICE_PATH}/query?q=#{CGI.escape(soql_query)}")
@@ -191,7 +192,9 @@ class SalesforceAPI
               program['Postaccelerator_Qualtrics_Survey_ID__c'],
               program['LC_DocuSign_Template_ID__c'],
               program['Program_Shortname__c'],
-              program.fetch('School__r', {})['Name'])
+              program.fetch('School__r', {})['Name'],
+              program['TA_Sandbox_Course_ID__c'],
+              program['TA_Course_Section_Name__c'])
   end
 
   def find_contact(id:)
