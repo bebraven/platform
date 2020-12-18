@@ -38,11 +38,11 @@ class SyncPortalEnrollmentForAccount
                       sf_program.leadership_coach_course_section_name)
     when SalesforceAPI::TEACHING_ASSISTANT
       sync_enrollment(sf_program.fellow_course_id, RoleConstants::TA_ENROLLMENT,
-                      sf_program.ta_course_section_name)
+                      DEFAULT_SECTION)
       sync_enrollment(sf_program.ta_sandbox_course_id, RoleConstants::TA_ENROLLMENT, 
                       sf_program.ta_course_section_name)
       sync_enrollment(sf_program.leadership_coach_course_id, RoleConstants::STUDENT_ENROLLMENT,
-                      sf_program.ta_course_section_name)
+                      sf_program.leadership_coach_course_section_name)
     when SalesforceAPI::FELLOW
       sync_enrollment(sf_program.fellow_course_id, RoleConstants::STUDENT_ENROLLMENT,
                       course_section_name)
