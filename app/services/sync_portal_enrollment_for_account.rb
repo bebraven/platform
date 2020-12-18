@@ -126,24 +126,14 @@ class SyncPortalEnrollmentForAccount
     # TODO: Remove this fallback code once Highlander is in production.
     # https://app.asana.com/0/1174274412967132/1197893935338145/f
     base_course = BaseCourse.find_by(canvas_course_id: canvas_course_id)
-    platform_section = nil
     if base_course.nil?
-      # If we're not in Highlander and using the Production Dummy, we'll
-      # run into database constraint issues when creating Canvas sections
-      # in different courses. We just want the dummy section by name.
       base_course = BaseCourse.find_by(name: 'Production Dummy')
-      platform_section = Section.find_or_create_by!(
-        base_course_id: base_course.id,
-        name: section_name,
-      )
-    else
-      platform_section = Section.find_or_create_by!(
-        base_course_id: base_course.id,
-        name: section_name,
-        canvas_section_id: canvas_section.id
-      )
     end
-    platform_section
+    Section.find_or_create_by!(
+      base_course_id: base_course.id,
+      name: section_name,
+      canvas_section_id: canvas_section.id
+    )
   end
 
   # Returns Canvas section.
