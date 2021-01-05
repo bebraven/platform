@@ -101,7 +101,7 @@ class SetupPortalAccount
   end
 
   def portal_username
-    if sf_program.nlu?
+    if sf_program.nlu? && !sf_participant.student_id.nil?
       # For NLU, the username is the student ID with the suffix @nlu.edu
       # this is what is stored as the login username and also what the SSO
       # returns
