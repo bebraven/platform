@@ -39,7 +39,7 @@ class SetupPortalAccount
   end
 
   def send_confirmation_notification(user)
-    if sf_program.nlu?
+    if sf_program.nlu? && !sf_participant.student_id.nil?
       user.skip_confirmation!
     else
       user.send_confirmation_instructions
