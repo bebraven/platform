@@ -16,7 +16,7 @@ class SyncPortalEnrollmentsForProgram
       if portal_user.present?
         reconcile_email!(portal_user, participant) if email_inconsistent?(portal_user, participant)
         sync_portal_enrollment!(portal_user, participant)
-      elsif sf_program.nlu?
+      elsif sf_program.nlu? && participant.student_id.nil?
         run_account_creation_for_nlu!(participant.contact_id)
       else
         Rails.logger.debug("no portal account yet for '#{participant.email}'; skipping")
