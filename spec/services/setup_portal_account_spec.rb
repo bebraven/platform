@@ -52,7 +52,7 @@ RSpec.describe SetupPortalAccount do
       expect(platform_user).to have_received(:update)
     end
 
-    it 'skips sending confirmation for nlu' do
+    xit 'skips sending confirmation for nlu' do
       nlu_program = SalesforceAPI::SFProgram.new(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, SalesforceAPI::NLU_SCHOOL_NAME)
       allow(sf_client).to receive(:find_program).and_return(nlu_program)
 
