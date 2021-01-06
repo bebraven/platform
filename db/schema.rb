@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_23_203123) do
+ActiveRecord::Schema.define(version: 2021_01_06_190034) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -314,7 +314,6 @@ ActiveRecord::Schema.define(version: 2020_10_23_203123) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["section_id"], name: "index_user_sections_on_section_id"
-    t.index ["user_id", "section_id"], name: "index_user_sections_on_user_id_and_section_id", unique: true
     t.index ["user_id"], name: "index_user_sections_on_user_id"
   end
 
