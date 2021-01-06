@@ -26,10 +26,10 @@ class Users::PasswordsController < Devise::PasswordsController
   # protected
 
   def after_resetting_password_path_for(resource)
-     login_url = cas_login_url
-     login_url += (URI.parse(cas_login_url).query ? '&' : '?')
-     login_url += "notice=Password reset successfully.".freeze
-     login_url
+    login_url = new_cas_login_url
+    login_url += (URI.parse(login_url).query ? '&' : '?')
+    login_url += "notice=Password reset successfully.".freeze
+    login_url
   end
 
   # The path used after sending reset password instructions
@@ -37,4 +37,11 @@ class Users::PasswordsController < Devise::PasswordsController
     users_password_check_email_path
   end
 
+  private
+
+  def new_cas_login_url
+    url_upto_question_mark = cas_login_url[0, cas_login_url.index('service')]
+    service_param = URI.encode_www_form([ ['service', ENV['CANVAS_URL'] ]])
+    url_upto_question_mark + service_param
+  end
 end
