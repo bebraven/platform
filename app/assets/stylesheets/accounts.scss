@@ -1002,6 +1002,12 @@ button.close {
 
 .plank.plain-md a {
 	color: #0071bc;
+	&:hover{
+		text-decoration: underline;
+	}
+	&:active {
+		text-decoration: underline;
+	}
 }
 
 .plank.plain-md .section-container {
