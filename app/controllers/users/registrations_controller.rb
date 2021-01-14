@@ -25,6 +25,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
     AccountCreator.new(sign_up_params: sign_up_params).run
 
     redirect_to action: :show
+  rescue ActiveRecord::RecordInvalid => e
+    flash[:notice] = e.message
+    redirect_to new_user_registration_path(u: sign_up_params['salesforce_id'])
   end
 
   # GET /resource/edit
@@ -58,7 +61,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def find_user_by_salesforce_id
-    User.find_by(salesforce_id: salesforce_id)
+    User.where('salesforce_id LIKE ?', "#{salesforce_id}%").first
   end
 
   protected
