@@ -27,6 +27,9 @@ Rails.application.routes.draw do
 
   get 'home/welcome'
 
+  get '/users/portal_password/:id/edit', to: 'users/portal_password#edit', as: 'edit_portal_password'
+  post '/users/portal_password/:id', to: 'users/portal_password#update', as: 'update_portal_password'
+
   resources :base_courses, only: [:index], path: 'course_management'
   get 'course_management/launch', to: 'base_courses#launch_new'
   post 'course_management/launch', to: 'base_courses#launch_create'
