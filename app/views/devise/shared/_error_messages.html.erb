@@ -9,3 +9,13 @@
     </ul>
   </div>
 <% end %>
+<% if flash[:messages] %>
+  <div id="error_explanation">
+  <h3>
+      Please try again
+  </h3>
+    <ul>
+      <li><%= flash[:messages] %></li>
+    </ul>
+  </div>
+<% end %>
