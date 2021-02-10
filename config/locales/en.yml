@@ -37,13 +37,13 @@ en:
         user:
           attributes:
             email:
-              taken: "Looks like you've already signed up. Please log-in instead."
+              taken: "looks like you've already signed up. Please log-in instead."
             password:
               blank: "Please enter a password"
-              confirmation: "Passwords don't match"
-              too_short: "Password is too short"
+              confirmation: "don't match"
+              too_short: "too short"
             password_confirmation:
               blank: "Please enter a password confirmation"
-              confirmation: "Passwords don't match"
-              too_short: "Password is too short"
+              confirmation: "don't match"
+              too_short: "too short"
 
