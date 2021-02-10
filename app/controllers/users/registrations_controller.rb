@@ -25,6 +25,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
     AccountCreator.new(sign_up_params: sign_up_params).run
 
     redirect_to action: :show
+  rescue ActiveRecord::RecordInvalid => e
+    flash[:messages] = e.message
+    redirect_to new_user_registration_path(u: sign_up_params['salesforce_id']) 
   end
 
   # GET /resource/edit

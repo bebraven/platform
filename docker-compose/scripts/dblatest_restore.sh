@@ -3,13 +3,16 @@ echo "Refreshing your local dev database from the latest Heroku snapshot db"
 
 
 docker-compose down
-docker volume rm platform_db-platform
-docker-compose run platformweb bundle exec rake db:create
-docker-compose up -d
+docker-compose up -d platformdb
 sleep 5
+
+
+echo "DROP SCHEMA public CASCADE;" | docker-compose exec -T platformdb psql -U user -d platform_development
+echo "CREATE SCHEMA public;" | docker-compose exec -T platformdb psql -U user -d platform_development
+docker-compose run platformweb bundle exec rake db:create
 #cpucores=`cat /proc/cpuinfo | grep "cpu cores" | uniq | awk -F'cpu cores\t:' '{print $2}'`
 #jobs=`expr $cpucores / 2`
-docker-compose exec platformdb pg_restore --verbose --clean --jobs 2 --no-acl --no-owner -U user -d platform_development /latest.dump
+docker-compose exec platformdb pg_restore --jobs 1 --no-acl --no-owner -U user -d platform_development /latest.dump
 
 # This is our normal test password for everyone. I got this by loading a staging db with the security keys 
 # and stuff we use, then setting someones password to the test one in the rails console.
