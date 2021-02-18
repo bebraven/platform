@@ -10,6 +10,12 @@ class CourseAttendanceEventsController < ApplicationController
 
   layout 'admin'
 
+  # Instead of having a separate controller/namespace, put it in the same
+  # contorller and use `json` responses
+  def index
+    authorize CourseAttendanceEvent
+  end
+
   def new
     authorize CourseAttendanceEvent
     @attendance_events = AttendanceEvent.all - @course.attendance_events

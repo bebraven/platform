@@ -6,7 +6,7 @@ import {
   Form,
   Button,
   Spinner,
-} from 'react-bootstrap'
+} from 'react-bootstrap';
 
 class ProjectSubmitButton extends React.Component {
   constructor(props) {

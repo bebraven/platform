@@ -2,6 +2,8 @@
 
 <% content_for :head do %>
   <%= stylesheet_link_tag 'layouts/admin', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'server_rendering' %>
+  <%= javascript_pack_tag 'take_attendance_application' %>
 <% end %>
 
 <% content_for :content do %>

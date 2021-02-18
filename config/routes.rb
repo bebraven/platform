@@ -3,6 +3,17 @@ Rails.application.routes.default_url_options[:host] = Rails.application.secrets.
 
 Rails.application.routes.draw do
 
+  # Separate namespace for API used by React for data fetching
+  # It would make sense to introduce other namespaces, e.g.:
+  # - admin: for course management, users, content editor, routes/controllers.
+  # - canvas/lti: things that are LTI-launched in Canvas.
+  # Roughly lines up with how we use layouts currently.
+  namespace :api do
+    resources :courses do
+      resources :course_attendance_events
+    end
+  end
+
   resources :course_resources
 
   resources :rise360_modules, only: [:index, :new, :create, :edit, :update, :destroy]
@@ -67,7 +78,7 @@ Rails.application.routes.draw do
       delete :unpublish, on: :member
     end
 
-    resources :course_attendance_events, only: [:new] do
+    resources :course_attendance_events, only: [:new, :index] do
       post :publish, on: :collection
       delete :unpublish, on: :member
     end
