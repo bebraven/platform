@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'salesforce_id_formatter'
+
 class Users::RegistrationsController < Devise::RegistrationsController
   layout 'accounts'
   before_action :configure_sign_up_params, only: [:create]
@@ -61,6 +63,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def find_user_by_salesforce_id
+    # TODO: update to check if an account exists with a 15-char or 18-char
     User.find_by(salesforce_id: salesforce_id)
   end
 
