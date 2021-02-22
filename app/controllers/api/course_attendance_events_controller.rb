@@ -8,7 +8,8 @@ module Api
     # GET course/{course_id}/course_attendance_events
     def index
       authorize CourseAttendanceEvent
-      render json: @course.attendance_events
+      course_attendance_events = @course.course_attendance_events.order_by_title
+      render json: course_attendance_events.map { |cae| cae.attendance_event }
     end
   end
 end

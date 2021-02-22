@@ -10,7 +10,12 @@ Rails.application.routes.draw do
   # Roughly lines up with how we use layouts currently.
   namespace :api do
     resources :courses do
-      resources :course_attendance_events
+      resources :course_attendance_events, path: 'attendance_events', only: [:index]
+      resources :course_attendance_sections, path: 'attendance_sections', only: [:index]
+    end
+
+    resources :sections do
+      resources :users, only: [:index]
     end
   end
 
