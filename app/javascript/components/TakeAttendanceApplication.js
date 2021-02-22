@@ -156,8 +156,6 @@ class TakeAttendanceApplication extends React.Component {
   }
 
   _handleChange(value) {
-    console.log('here');
-    console.log(value);
     this.setState({
       in_attendance: value,
       is_late: false,
@@ -175,7 +173,6 @@ class TakeAttendanceApplication extends React.Component {
 
   _renderAttendanceDetails() {
     const absenceReasons = [
-      "",
       "Sick / Dr. Appt",
       "Work",
       "School",
@@ -195,8 +192,9 @@ class TakeAttendanceApplication extends React.Component {
       case false:
         return (
           <Form.Group controlId="absenceReason">
-            <Form.Label>Reason for absence?</Form.Label>
+            <Form.Label srOnly>Reason for absence?</Form.Label>
             <Form.Control as="select" value={this.state.absence_reason} onChange={this._handleAbsenceReasonChange} >
+            <option value="" disabled>Reason for absence?</option>
               {absenceReasons.map( (reason) => <option>{reason}</option> )}
             </Form.Control>
           </Form.Group>
@@ -207,16 +205,12 @@ class TakeAttendanceApplication extends React.Component {
   }
 
   _handleAbsenceReasonChange(event) {
-    console.log('_handleAbsenceReasonChange');
-    console.log(event.target.value);
     this.setState({
       absence_reason: event.target.value,
     });
   }
 
   _handleLateChange(event) {
-    console.log('_handleLateChange');
-    console.log(!this.state.is_late);
     this.setState({
       is_late: !this.state.is_late,
     });
