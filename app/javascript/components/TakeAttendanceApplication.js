@@ -25,6 +25,19 @@ class TakeAttendanceApplication extends React.Component {
     this._fetchAttendanceEventSubmission = this._fetchAttendanceEventSubmission.bind(this);
   }
 
+
+  componentDidMount() {
+    if (!this.props.attendanceEventSubmission && this.state.selectedAttendanceEvent) {
+      this._fetchSubmissionAnswers();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.selectedAttendanceEvent.id != this.state.selectedAttendanceEvent.id) {
+      this._fetchAttendanceEventSubmission();
+    }
+  }
+
   _handleAttendanceEventChange(event) {
     console.log('_handleAttendanceEventChange');
     console.log(this.state.selectedAttendanceEvent);
@@ -34,14 +47,14 @@ class TakeAttendanceApplication extends React.Component {
     console.log(newAttendanceEvent);
     this.setState({
       isLoaded: false,
-      selectedAttendanceEvent: newAttendanceEvent
+      selectedAttendanceEvent: newAttendanceEvent,
     });
-    this._fetchAttendanceEventSubmission();
   }
 
   _fetchAttendanceEventSubmission() {
     // FIXME: This isn't returning the submission ID given the specified
     // attendance event. WTF.
+    //debugger;
     const url = `/attendance_event_submissions/launch.json?course_attendance_event_id=${this.state.selectedAttendanceEvent.id}&state=${this.props.state}`;
     console.log('_fetchAttendanceEventSubmission');
     console.log(url);

@@ -67,6 +67,8 @@ class AttendanceEventSubmissionsController < ApplicationController
           user: current_user,
           course_attendance_event: @course_attendance_event,
         )
+        # TODO: Add answers to the json we're returning so we don't have to do another
+        # network request
       end
     end
   end
