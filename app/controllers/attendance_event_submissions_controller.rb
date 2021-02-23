@@ -79,9 +79,15 @@ class AttendanceEventSubmissionsController < ApplicationController
     @attendance_event_submission = AttendanceEventSubmission.find(params[:id])
     authorize @attendance_event_submission
 
+    # Return an entry in the array for each student in the section, even if
+    # there isn't a `for_user_id` AttendanceEventSubmissionAnswer for them yet.
+    # This is so we have a name to render and an ID to submit attendance status
+    # for.
     render json: Section.find(params[:section_id]).students.map {
       |student| { for_user_name: student.full_name }.merge(
-        @attendance_event_submission.answers.find_by(for_user_id: student.id)&.as_json || {}
+        @attendance_event_submission.answers.find_by(for_user_id: student.id)&.as_json || {
+          for_user_id: student.id,
+        }
       )
     }
   end

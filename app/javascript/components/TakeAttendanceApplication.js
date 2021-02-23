@@ -52,9 +52,6 @@ class TakeAttendanceApplication extends React.Component {
   }
 
   _fetchAttendanceEventSubmission() {
-    // FIXME: This isn't returning the submission ID given the specified
-    // attendance event. WTF.
-    //debugger;
     const url = `/attendance_event_submissions/launch.json?course_attendance_event_id=${this.state.selectedAttendanceEvent.id}&state=${this.props.state}`;
     console.log('_fetchAttendanceEventSubmission');
     console.log(url);
