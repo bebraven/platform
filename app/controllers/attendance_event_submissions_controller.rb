@@ -127,7 +127,7 @@ class AttendanceEventSubmissionsController < ApplicationController
         ),
         notice: "Attendance for #{title} saved."
       ) }
-      format.json { head :no_content }
+      format.json { head :ok }
     end
   end
 

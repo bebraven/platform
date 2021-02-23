@@ -4,6 +4,7 @@ import React from "react";
 import AttendanceEventSubmissionAnswer from './AttendanceEventSubmissionAnswer';
 
 import {
+  Alert,
   Button,
   Navbar,
 } from 'react-bootstrap';
@@ -14,9 +15,8 @@ class AttendanceEventSubmissionForm extends React.Component {
     this.state = {
       isLoaded: false,
       isSubmitting: false,
-      error: null,
+      alert: null,
       attendanceEventSubmissionAnswers: null,
-      data: {},
     };
 
     this._handleSubmit = this._handleSubmit.bind(this);
@@ -61,13 +61,6 @@ class AttendanceEventSubmissionForm extends React.Component {
   }
 
   _onInAttendanceChange(value, event) {
-    //debugger;
-    // this.setState({
-    //   in_attendance: value,
-    //   late: false,
-    //   absence_reason: "",
-    // });
-    // this.props.onChange(props.answer.for_user_id, JSON.stringify(this.state));
     this._updateAttendanceEventSubmissionAnswer(
       parseInt(event.target.name),
       {
@@ -79,11 +72,6 @@ class AttendanceEventSubmissionForm extends React.Component {
   }
 
   _onLateChange(event) {
-    // this.setState({
-    //   late: !this.state.late,
-    // });
-    // this.props.onChange(props.answer.for_user_id, JSON.stringify(this.state));
-    //debugger;
     const idx = parseInt(event.target.name);
     const prevVal = this.state.attendanceEventSubmissionAnswers[idx].late == null
       ? false
@@ -99,11 +87,6 @@ class AttendanceEventSubmissionForm extends React.Component {
   }
 
   _onAbsenceReasonChange(event) {
-    // this.setState({
-    //   absence_reason: event.target.value,
-    // });
-    // this.props.onChange(props.answer.for_user_id, JSON.stringify(this.state));
-    //debugger;
     this._updateAttendanceEventSubmissionAnswer(
       parseInt(event.target.name),
       {
@@ -115,7 +98,6 @@ class AttendanceEventSubmissionForm extends React.Component {
   }
 
   _onClear(event) {
-    //debugger;
     this._updateAttendanceEventSubmissionAnswer(
       parseInt(event.target.name),
       {
@@ -142,43 +124,97 @@ class AttendanceEventSubmissionForm extends React.Component {
       return;
     }
 
-    this.setState({isSubmitting: true});
-    // JSON.stringify(state)
-    const data = this.state.data;
+    this.setState({
+      isSubmitting: true,
+    });
+
+    let data = {};
+    this.state.attendanceEventSubmissionAnswers.map(
+      (answer) => data[answer.for_user_id] = {
+        in_attendance: answer.in_attendance,
+        late: answer.late,
+        absence_reason: answer.absence_reason,
+      },
+    );
+    data = {
+      attendance_event_submission: data,
+    };
 
     fetch(
-      `/attendance_event_submissions/${this.props.submissionId}/`,
+      `/attendance_event_submissions/${this.props.submissionId}.json?state=${this.props.state}&section_id=${this.props.sectionId}`,
       {
         method: 'PUT',
-        body: data,
+        body: JSON.stringify(data),
         headers: {
+          'Content-Type': 'application/json',
           'X-CSRF-Token': Rails.csrfToken(),
         },
       },
      )
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isSubmitting: false,
-          });
-        },
-        (error) => {
-          this.setState({
-            isSubmitting: false,
-            error,
-          });
-        }
-      );
+    .then((response) => {
+      this.setState({
+        isSubmitting: false,
+        alert: response.ok ? this._successAlert() : this._errorAlert(),
+      });
+    })
+    .catch((error) => {
+      this.setState({
+        isSubmitting: false,
+        alert: this._errorAlert(),
+      });
+    });
+      // .then(res => res.json())
+      // .then(
+      //   (result) => {
+      //     this.setState({
+      //       isSubmitting: false,
+      //     });
+      //   },
+      //   (error) => {
+      //     this.setState({
+      //       isSubmitting: false,
+      //       error,
+      //     });
+      //   }
+      // );
+  }
+
+  _renderAlert() {
+    if (!this.state.alert) {
+      return;
+    }
+    const { heading, body, variant } = this.state.alert;
+    return (
+      <Alert
+        className="fixed-top"
+        dismissible
+        onClose={() => {this.setState({alert: null})}}
+        variant={variant}>
+        <Alert.Heading>{heading}</Alert.Heading>
+        <p>{body}</p>
+      </Alert>
+    );
+  }
+
+  _successAlert() {
+    return {
+      heading: 'Success!',
+      body: 'Your changes have been saved.',
+      variant: 'success',
+    };
+  }
+
+  _errorAlert() {
+    return {
+      heading: 'Something went wrong!',
+      body: 'Your changes have not been saved. Please try again.',
+      variant: 'warning',
+    };
   }
 
   render() {
     if (!this.state.isLoaded) {
       return <div><p>Loading...</p></div>;
-    }
-
-    if (this.state.error) {
-      return <div><p>this.state.error</p></div>;
     }
 
     return (
@@ -196,6 +232,9 @@ class AttendanceEventSubmissionForm extends React.Component {
               onClear={this._onClear}
             />
           )}
+        </div>
+        <div>
+          {this._renderAlert()}
         </div>
         <Navbar
         bg="transparent"
