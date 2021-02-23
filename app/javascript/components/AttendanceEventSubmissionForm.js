@@ -24,6 +24,7 @@ class AttendanceEventSubmissionForm extends React.Component {
       fellows: [],
       answers: [],
     };
+    this._handleSubmit = this._handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -38,7 +39,6 @@ class AttendanceEventSubmissionForm extends React.Component {
   }
 
   _fetchFellowsInSection() {
-
     fetch(`/api/sections/${this.props.sectionId}/users`)
       .then(res => res.json())
       .then(
@@ -101,6 +101,7 @@ class AttendanceEventSubmissionForm extends React.Component {
             answer={this.state.answers.find((answer) => answer.for_user_id == fellow.id)}
           />)}
         </div>
+        <Button variant="primary" type="submit" onClick={this._handleSubmit}>Save</Button>
       </div>
     );
   }
