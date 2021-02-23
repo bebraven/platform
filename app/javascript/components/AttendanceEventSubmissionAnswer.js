@@ -14,10 +14,9 @@ class AttendanceEventSubmissionAnswer extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log(props.answer);
     this.state = {
       in_attendance: props.answer.in_attendance,
-      late: props.answer.is_late || false,
+      late: props.answer.late || false,
       absence_reason: props.answer.absence_reason || "",
     };
 
@@ -30,7 +29,7 @@ class AttendanceEventSubmissionAnswer extends React.Component {
   _handleChange(value) {
     this.setState({
       in_attendance: value,
-      is_late: false,
+      late: false,
       absence_reason: "",
     });
   }
@@ -38,7 +37,7 @@ class AttendanceEventSubmissionAnswer extends React.Component {
   _resetInAttendance() {
     this.setState({
       in_attendance: null,
-      is_late: false,
+      late: false,
       absence_reason: "",
     });
   }
@@ -58,7 +57,7 @@ class AttendanceEventSubmissionAnswer extends React.Component {
       case true:
         return (
           <Form.Group controlId="isLateCheckbox">
-            <Form.Check type="checkbox" label="Late?" value={this.state.is_late} onChange={this._handleLateChange}/>
+            <Form.Check type="checkbox" label="Late?" checked={this.state.late} onChange={this._handleLateChange}/>
           </Form.Group>
         );
       case false:
@@ -84,7 +83,7 @@ class AttendanceEventSubmissionAnswer extends React.Component {
 
   _handleLateChange(event) {
     this.setState({
-      is_late: !this.state.is_late,
+      late: !this.state.late,
     });
   }
 
