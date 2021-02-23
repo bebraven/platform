@@ -6,6 +6,7 @@ import AttendanceEventSubmissionAnswer from './AttendanceEventSubmissionAnswer';
 import {
   Alert,
   Button,
+  Spinner,
   Navbar,
 } from 'react-bootstrap';
 
@@ -212,6 +213,38 @@ class AttendanceEventSubmissionForm extends React.Component {
     };
   }
 
+  _renderSaveButton() {
+    return (
+      <Button
+        onClick={this._handleSubmit}
+        disabled={this.state.isSubmitting}
+        type="submit">
+        {this.state.isSubmitting ? this._buttonSpinner() : null }
+        {this._buttonText()}
+      </Button>
+    );
+  }
+
+  _buttonSpinner() {
+    return (
+      <span>
+        <Spinner
+          className="align-middle align-center"
+          hidden={!this.state.isSubmitting}
+          animation="border"
+          role="status"
+          size="sm">
+          <span className="sr-only">{this._buttonText()}</span>
+        </Spinner>
+        {' '}
+      </span>
+    );
+  }
+
+  _buttonText() {
+    return this.state.isSubmitting ? 'Saving' : 'Save';
+  }
+
   render() {
     if (!this.state.isLoaded) {
       return <div><p>Loading...</p></div>;
@@ -237,10 +270,10 @@ class AttendanceEventSubmissionForm extends React.Component {
           {this._renderAlert()}
         </div>
         <Navbar
-        bg="transparent"
-        className="justify-content-end"
-        fixed="bottom">
-          <Button variant="primary" type="submit" onClick={this._handleSubmit}>Save</Button>
+          bg="transparent"
+          className="justify-content-end"
+          fixed="bottom">
+          {this._renderSaveButton()}
         </Navbar>
       </div>
     );
