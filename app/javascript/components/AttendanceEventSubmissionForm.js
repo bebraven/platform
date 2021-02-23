@@ -25,14 +25,19 @@ class AttendanceEventSubmissionForm extends React.Component {
     };
   }
 
-  _handleSubmit() {
-    // #update ID
-    // params: section_id
-    // form inputs from Answers
+  componentDidMount() {
+    this._fetchFellowsInSection();
   }
 
-  componentDidMount() {
-    fetch("/api/sections/1/users")
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.sectionId != prevProps.sectionId) {
+      this.setState({isLoaded: false});
+      this._fetchFellowsInSection();
+    }
+  }
+
+  _fetchFellowsInSection() {
+    fetch(`/api/sections/${this.props.sectionId}/users`)
       .then(res => res.json())
       .then(
         (result) => {
@@ -41,9 +46,6 @@ class AttendanceEventSubmissionForm extends React.Component {
             fellows: result,
           });
         },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
         (error) => {
           this.setState({
             isLoaded: true,
@@ -51,17 +53,27 @@ class AttendanceEventSubmissionForm extends React.Component {
           });
         }
       );
+  }
 
-    // 3. Fetch the submission based on (1) and (2).
+  _handleSubmit() {
+    // #update ID
+    // params: section_id
+    // form inputs from Answers
   }
 
   render() {
+    if (!this.state.isLoaded) {
+      return <div><p>Loading..</p></div>;
+    }
+
+    // TODO: Handle this.state.error
+    
     // Render form based on this.state.attendance_event_submission_id 
     // <AttendanceEventSubmissionForm url={submitURL} students={students} />
     // Need the submission URL, the list of students
     return (
       <div>
-        <h1>Attendance for {this.props.event_title}</h1>
+        <h1>Attendance for {this.props.eventTitle}</h1>
         <div>
           {this.state.fellows.map((fellow) => <AttendanceEventSubmissionAnswer fellow={fellow} />)}
         </div>

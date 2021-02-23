@@ -23,7 +23,7 @@ class TakeAttendanceApplication extends React.Component {
       course_attendance_events: [],
       sections: [],
 
-      isLoaded: false,
+      isLoaded: 0,
       selectedAttendanceEvent: null,
       selectedSection: null,
     };
@@ -44,7 +44,7 @@ class TakeAttendanceApplication extends React.Component {
       .then(
         (result) => {
           this.setState({
-            isLoaded: true,
+            isLoaded: this.state.isLoaded + 1,
             course_attendance_events: result,
             selectedAttendanceEvent: result[0],
           });
@@ -54,7 +54,7 @@ class TakeAttendanceApplication extends React.Component {
         // exceptions from actual bugs in components.
         (error) => {
           this.setState({
-            isLoaded: true,
+            isLoaded: this.state.isLoaded + 1,
             error,
           });
         }
@@ -66,8 +66,9 @@ class TakeAttendanceApplication extends React.Component {
       .then(
         (result) => {
           this.setState({
-            isLoaded: true,
-            sections: result
+            isLoaded: this.state.isLoaded + 1,
+            sections: result,
+            selectedSection: result[0],
           });
         },
         // Note: it's important to handle errors here
@@ -75,7 +76,7 @@ class TakeAttendanceApplication extends React.Component {
         // exceptions from actual bugs in components.
         (error) => {
           this.setState({
-            isLoaded: true,
+            isLoaded: this.state.isLoaded + 1,
             error,
           });
         }
@@ -90,9 +91,12 @@ class TakeAttendanceApplication extends React.Component {
   }
 
   _handleSectionChange(event) {
+    console.log('_handleSectionChange');
+    console.log(this.state.selectedSection);
     const newSection = this.state.sections.find(
       (section) => section.id == event.target.value
     );
+    console.log(newSection);
     this.setState({selectedSection: newSection});
   }
 
@@ -134,9 +138,13 @@ class TakeAttendanceApplication extends React.Component {
     // Render form based on this.state.attendance_event_submission_id 
     // <AttendanceEventSubmissionForm url={submitURL} students={students} />
     // Need the submission URL, the list of students
+    if (this.state.isLoaded < 2) {
+      return <div><p>Loading...</p></div>;
+    }
     return (
       <AttendanceEventSubmissionForm
-        event_title={this.state.selectedAttendanceEvent ? this.state.selectedAttendanceEvent.title : ""}
+        sectionId={this.state.selectedSection.id}
+        eventTitle={this.state.selectedAttendanceEvent.title}
       />
     );
   }

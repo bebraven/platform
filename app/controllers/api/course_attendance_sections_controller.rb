@@ -13,7 +13,8 @@ module Api
         .sections_with_role(RoleConstants::TA_ENROLLMENT)
         .select { |section| section.course_id == @course.id && section.name != SectionConstants::TA_SECTION }
 
-      render json: course_attendance_sections
+      # render json: course_attendance_sections
+      render json: @course.sections
     end
   end
 end
