@@ -17,92 +17,60 @@ class TakeAttendanceApplication extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
-      course_attendance_events: [],
-      sections: [],
-
-      isLoaded: 0,
-      selectedAttendanceEvent: null,
-      selectedSection: null,
+      selectedAttendanceEvent: props.courseAttendanceEvents && props.courseAttendanceEvents[0] || null,
+      attendanceEventSubmission: props.attendanceEventSubmission,
+      isLoaded: props.attendanceEventSubmission || false,
     };
-
     this._handleAttendanceEventChange = this._handleAttendanceEventChange.bind(this);
-    this._handleSectionChange = this._handleSectionChange.bind(this);
-  }
-
-  // First called when component mounts, e.g. <react_component ... /> from
-  // the ERB file. Do data fetching. This can be optimized away by bootstrapping
-  // in data as props to the component.
-  componentDidMount() {
-    // See: https://reactjs.org/docs/faq-ajax.html
-
-    // 1. Fetch attendance events for this course.
-    fetch("/api/courses/3/attendance_events")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: this.state.isLoaded + 1,
-            course_attendance_events: result,
-            selectedAttendanceEvent: result[0],
-          });
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-            isLoaded: this.state.isLoaded + 1,
-            error,
-          });
-        }
-      );
-
-    // 2. Fetch sections.
-    fetch("/api/courses/3/attendance_sections")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: this.state.isLoaded + 1,
-            sections: result,
-            selectedSection: result[0],
-          });
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-            isLoaded: this.state.isLoaded + 1,
-            error,
-          });
-        }
-      );
-
-    // Fetch the AttendanceEventSubmission based on the selected
+    this._fetchAttendanceEventSubmission = this._fetchAttendanceEventSubmission.bind(this);
   }
 
   _handleAttendanceEventChange(event) {
-    const newAttendanceEvent = this.state.course_attendance_events.find(
-      (attendance_event) => attendance_event.id == event.target.value
+    console.log('_handleAttendanceEventChange');
+    console.log(this.state.selectedAttendanceEvent);
+    const newAttendanceEvent = this.props.courseAttendanceEvents.find(
+      (cae) => cae.id == event.target.value
     );
-    this.setState({selectedAttendanceEvent: newAttendanceEvent});
+    console.log(newAttendanceEvent);
+    this.setState({
+      isLoaded: false,
+      selectedAttendanceEvent: newAttendanceEvent
+    });
+    this._fetchAttendanceEventSubmission();
   }
 
-  _handleSectionChange(event) {
-    const newSection = this.state.sections.find(
-      (section) => section.id == event.target.value
-    );
-    this.setState({selectedSection: newSection});
+  _fetchAttendanceEventSubmission() {
+    // FIXME: This isn't returning the submission ID given the specified
+    // attendance event. WTF.
+    const url = `/attendance_event_submissions/launch.json?course_attendance_event_id=${this.state.selectedAttendanceEvent.id}&state=${this.props.state}`;
+    console.log('_fetchAttendanceEventSubmission');
+    console.log(url);
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            attendanceEventSubmission: result,
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error,
+          });
+        }
+      );
   }
 
   _renderAttendanceSubmissionSelector() {
-    const course_attendance_events = this.state.course_attendance_events.map(
+    const course_attendance_events = this.props.courseAttendanceEvents.map(
       (event) => <option value={event.id}>{event.title}</option>
-    );
-    const sections = this.state.sections.map(
-      (section) => <option value={section.id}>{section.name}</option>
     );
     return (
       <Navbar
@@ -125,8 +93,8 @@ class TakeAttendanceApplication extends React.Component {
           <Col xs="auto">
             <Form.Group controlId="course_section">
               <Form.Label>Section</Form.Label>
-              <Form.Control as="select" onChange={this._handleSectionChange}>
-                {sections}
+              <Form.Control as="select">
+                <option value={this.props.section.id}>{this.props.section.name}</option>
               </Form.Control>
             </Form.Group>
           </Col>
@@ -137,17 +105,26 @@ class TakeAttendanceApplication extends React.Component {
   }
 
   _renderAttendanceEventSubmissionForm() {
-    // Render form based on this.state.attendance_event_submission_id 
-    // <AttendanceEventSubmissionForm url={submitURL} students={students} />
-    // Need the submission URL, the list of students
-    if (this.state.isLoaded < 2) {
-      return <div><p>Loading...</p></div>;
+    if (!this.state.selectedAttendanceEvent) {
+      return <div><p>Please select an event to take attendance for</p></div>;
     }
+
+    if (!this.state.isLoaded) {
+      return <div><p>Loading attendance form...</p></div>;
+    }
+
+    if (this.state.error) {
+      return <div>{this.state.error}</div>;
+    }
+
+    console.log(this.state.attendanceEventSubmission.id);
+
     return (
       <AttendanceEventSubmissionForm
-        submissionId={15}
-        sectionId={this.state.selectedSection.id}
+        submissionId={this.state.attendanceEventSubmission.id}
         eventTitle={this.state.selectedAttendanceEvent.title}
+        sectionId={this.props.section.id}
+        state={this.props.state}
       />
     );
   }

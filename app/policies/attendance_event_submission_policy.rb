@@ -22,6 +22,10 @@ class AttendanceEventSubmissionPolicy < ApplicationPolicy
     false
   end
 
+  def answers?
+    launch?
+  end
+
   def edit?
     launch?
   end

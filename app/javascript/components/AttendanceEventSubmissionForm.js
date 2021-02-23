@@ -19,57 +19,42 @@ class AttendanceEventSubmissionForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoaded: 0,
+      isLoaded: false,
       error: null,
-      fellows: [],
       answers: [],
     };
     this._handleSubmit = this._handleSubmit.bind(this);
   }
 
   componentDidMount() {
-    this._fetchFellowsInSection();
+    this._fetchSubmissionAnswers();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.sectionId != prevProps.sectionId) {
-      this.setState({isLoaded: 0});
-      this._fetchFellowsInSection();
+    if (this.props.submissionId != prevProps.submissionId) {
+      this._setState({isLoaded: false});
+      this._fetchSubmissionAnswers();
     }
   }
 
-  _fetchFellowsInSection() {
-    fetch(`/api/sections/${this.props.sectionId}/users`)
+  _fetchSubmissionAnswers() {
+    // TODO: This can go in Application whenever we change the submissionID
+    // we can have it re-fetch the answers when getting the id itself
+    const url = `/attendance_event_submissions/${this.props.submissionId}/answers.json?state=${this.props.state}&section_id=${this.props.sectionId}`;
+    console.log(url);
+    fetch(url)
       .then(res => res.json())
       .then(
         (result) => {
           this.setState({
-            isLoaded: this.state.isLoaded + 1,
-            fellows: result,
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: this.state.isLoaded + 1,
-            error,
-          });
-        }
-      );
-
-    // TODO: This can be reduced to a single fetch if we return all the 
-    // fellows in the section, even those without an entry
-    fetch(`/api/attendance_event_submissions/${this.props.submissionId}/answers`)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: this.state.isLoaded + 1,
+            isLoaded: true,
             answers: result,
           });
+          console.log(result);
         },
         (error) => {
           this.setState({
-            isLoaded: this.state.isLoaded + 1,
+            isLoaded: true,
             error,
           });
         }
@@ -83,8 +68,12 @@ class AttendanceEventSubmissionForm extends React.Component {
   }
 
   render() {
-    if (this.state.isLoaded < 2) {
+    if (!this.state.isLoaded) {
       return <div><p>Loading...</p></div>;
+    }
+
+    if (this.state.error) {
+      return <div><p>this.state.error</p></div>;
     }
 
     // TODO: Handle this.state.error
@@ -96,10 +85,9 @@ class AttendanceEventSubmissionForm extends React.Component {
       <div>
         <h1>Attendance for {this.props.eventTitle}</h1>
         <div>
-          {this.state.fellows.map((fellow) => <AttendanceEventSubmissionAnswer
-            fellow={fellow}
-            answer={this.state.answers.find((answer) => answer.for_user_id == fellow.id)}
-          />)}
+          {this.state.answers.map(
+            (answer) => <AttendanceEventSubmissionAnswer answer={answer} />
+          )}
         </div>
         <Navbar
         bg="transparent"

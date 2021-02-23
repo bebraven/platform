@@ -152,7 +152,12 @@ Rails.application.routes.draw do
   resources :attendance_event_submissions, only: [:edit, :update] do
     collection do
       get :launch
+      
     end
+    member do
+      get :answers
+    end
+    #resources :attendance_event_submission_answers, path: 'answers', only: [:index]
   end
 
   resources :attendance_event_submission_answers, only: [] do

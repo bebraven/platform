@@ -102,7 +102,7 @@ class AttendanceEventSubmissionAnswer extends React.Component {
     return (
       <Row className="align-middle">
         <Col>
-          <p>{this.props.fellow.name}</p>
+          {this.props.answer.for_user_name}
         </Col>
         <Col>
         <ToggleButtonGroup type="radio" name="in_attendance" value={this.state.in_attendance} onChange={this._handleChange}>
