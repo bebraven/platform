@@ -81,6 +81,8 @@ class TakeAttendanceApplication extends React.Component {
           });
         }
       );
+
+    // Fetch the AttendanceEventSubmission based on the selected
   }
 
   _handleAttendanceEventChange(event) {
@@ -91,12 +93,9 @@ class TakeAttendanceApplication extends React.Component {
   }
 
   _handleSectionChange(event) {
-    console.log('_handleSectionChange');
-    console.log(this.state.selectedSection);
     const newSection = this.state.sections.find(
       (section) => section.id == event.target.value
     );
-    console.log(newSection);
     this.setState({selectedSection: newSection});
   }
 
@@ -143,6 +142,7 @@ class TakeAttendanceApplication extends React.Component {
     }
     return (
       <AttendanceEventSubmissionForm
+        submissionId={15}
         sectionId={this.state.selectedSection.id}
         eventTitle={this.state.selectedAttendanceEvent.title}
       />

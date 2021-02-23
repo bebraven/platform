@@ -14,11 +14,11 @@ class AttendanceEventSubmissionAnswer extends React.Component {
 
   constructor(props) {
     super(props);
-
+    console.log(props.answer);
     this.state = {
-      in_attendance: null,
-      late: props.is_late,
-      absence_reason: "",
+      in_attendance: props.answer.in_attendance,
+      late: props.answer.is_late || false,
+      absence_reason: props.answer.absence_reason || "",
     };
 
     this._handleChange = this._handleChange.bind(this);

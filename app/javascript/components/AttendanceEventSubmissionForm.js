@@ -19,9 +19,10 @@ class AttendanceEventSubmissionForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoaded: false,
+      isLoaded: 0,
       error: null,
       fellows: [],
+      answers: [],
     };
   }
 
@@ -31,24 +32,44 @@ class AttendanceEventSubmissionForm extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.sectionId != prevProps.sectionId) {
-      this.setState({isLoaded: false});
+      this.setState({isLoaded: 0});
       this._fetchFellowsInSection();
     }
   }
 
   _fetchFellowsInSection() {
+
     fetch(`/api/sections/${this.props.sectionId}/users`)
       .then(res => res.json())
       .then(
         (result) => {
           this.setState({
-            isLoaded: true,
+            isLoaded: this.state.isLoaded + 1,
             fellows: result,
           });
         },
         (error) => {
           this.setState({
-            isLoaded: true,
+            isLoaded: this.state.isLoaded + 1,
+            error,
+          });
+        }
+      );
+
+    // TODO: This can be reduced to a single fetch if we return all the 
+    // fellows in the section, even those without an entry
+    fetch(`/api/attendance_event_submissions/${this.props.submissionId}/answers`)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: this.state.isLoaded + 1,
+            answers: result,
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: this.state.isLoaded + 1,
             error,
           });
         }
@@ -62,12 +83,12 @@ class AttendanceEventSubmissionForm extends React.Component {
   }
 
   render() {
-    if (!this.state.isLoaded) {
-      return <div><p>Loading..</p></div>;
+    if (this.state.isLoaded < 2) {
+      return <div><p>Loading...</p></div>;
     }
 
     // TODO: Handle this.state.error
-    
+
     // Render form based on this.state.attendance_event_submission_id 
     // <AttendanceEventSubmissionForm url={submitURL} students={students} />
     // Need the submission URL, the list of students
@@ -75,7 +96,10 @@ class AttendanceEventSubmissionForm extends React.Component {
       <div>
         <h1>Attendance for {this.props.eventTitle}</h1>
         <div>
-          {this.state.fellows.map((fellow) => <AttendanceEventSubmissionAnswer fellow={fellow} />)}
+          {this.state.fellows.map((fellow) => <AttendanceEventSubmissionAnswer
+            fellow={fellow}
+            answer={this.state.answers.find((answer) => answer.for_user_id == fellow.id)}
+          />)}
         </div>
       </div>
     );

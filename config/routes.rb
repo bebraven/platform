@@ -9,13 +9,17 @@ Rails.application.routes.draw do
   # - canvas/lti: things that are LTI-launched in Canvas.
   # Roughly lines up with how we use layouts currently.
   namespace :api do
+    resources :sections do
+      resources :users, only: [:index]
+    end
+
     resources :courses do
       resources :course_attendance_events, path: 'attendance_events', only: [:index]
       resources :course_attendance_sections, path: 'attendance_sections', only: [:index]
     end
 
-    resources :sections do
-      resources :users, only: [:index]
+    resources :attendance_event_submissions do
+      resources :attendance_event_submission_answers, path: 'answers', only: [:index]
     end
   end
 
