@@ -1,6 +1,8 @@
 import Rails from '@rails/ujs';
 import React from "react";
 
+import AttendanceEventSubmissionForm from './AttendanceEventSubmissionForm';
+
 import {
   Button,
   Col,
@@ -17,21 +19,17 @@ class TakeAttendanceApplication extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoaded: false,
       error: null,
       course_attendance_events: [],
       sections: [],
-      fellows: [],
 
-      in_attendance: null,
-      is_late: false,
-      absence_reason: "",
+      isLoaded: false,
+      selectedAttendanceEvent: null,
+      selectedSection: null,
     };
 
-    this._handleChange = this._handleChange.bind(this);
-    this._resetInAttendance = this._resetInAttendance.bind(this);
-    this._handleLateChange = this._handleLateChange.bind(this);
-    this._handleAbsenceReasonChange = this._handleAbsenceReasonChange.bind(this);
+    this._handleAttendanceEventChange = this._handleAttendanceEventChange.bind(this);
+    this._handleSectionChange = this._handleSectionChange.bind(this);
   }
 
   // First called when component mounts, e.g. <react_component ... /> from
@@ -47,7 +45,8 @@ class TakeAttendanceApplication extends React.Component {
         (result) => {
           this.setState({
             isLoaded: true,
-            course_attendance_events: result
+            course_attendance_events: result,
+            selectedAttendanceEvent: result[0],
           });
         },
         // Note: it's important to handle errors here
@@ -81,28 +80,20 @@ class TakeAttendanceApplication extends React.Component {
           });
         }
       );
+  }
 
-    fetch("/api/sections/1/users")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            fellows: result
-          });
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error,
-          });
-        }
-      );
+  _handleAttendanceEventChange(event) {
+    const newAttendanceEvent = this.state.course_attendance_events.find(
+      (attendance_event) => attendance_event.id == event.target.value
+    );
+    this.setState({selectedAttendanceEvent: newAttendanceEvent});
+  }
 
-    // 3. Fetch the submission based on (1) and (2).
+  _handleSectionChange(event) {
+    const newSection = this.state.sections.find(
+      (section) => section.id == event.target.value
+    );
+    this.setState({selectedSection: newSection});
   }
 
   _renderAttendanceSubmissionSelector() {
@@ -121,7 +112,7 @@ class TakeAttendanceApplication extends React.Component {
           <Col xs="auto">
             <Form.Group controlId="course_attendance_event">
               <Form.Label>Event</Form.Label>
-              <Form.Control as="select">
+              <Form.Control as="select" onChange={this._handleAttendanceEventChange}>
                 {course_attendance_events}
               </Form.Control>
             </Form.Group>
@@ -129,15 +120,10 @@ class TakeAttendanceApplication extends React.Component {
           <Col xs="auto">
             <Form.Group controlId="course_section">
               <Form.Label>Section</Form.Label>
-              <Form.Control as="select">
+              <Form.Control as="select" onChange={this._handleSectionChange}>
                 {sections}
               </Form.Control>
             </Form.Group>
-          </Col>
-          <Col xs="auto">
-            <Button variant="primary" type="submit">
-              Update
-            </Button>
           </Col>
         </Form.Row>
       </Form>
@@ -149,100 +135,9 @@ class TakeAttendanceApplication extends React.Component {
     // <AttendanceEventSubmissionForm url={submitURL} students={students} />
     // Need the submission URL, the list of students
     return (
-      <ListGroup>
-        {this.state.fellows.map( (fellow) => <ListGroup.Item>{fellow.name}</ListGroup.Item>)}
-      </ListGroup>
-    )
-  }
-
-  _handleChange(value) {
-    this.setState({
-      in_attendance: value,
-      is_late: false,
-      absence_reason: "",
-    });
-  }
-
-  _resetInAttendance() {
-    this.setState({
-      in_attendance: null,
-      is_late: false,
-      absence_reason: "",
-    });
-  }
-
-  _renderAttendanceDetails() {
-    const absenceReasons = [
-      "Sick / Dr. Appt",
-      "Work",
-      "School",
-      "Caregiving",
-      "Bereavement / Family Emergency",
-      "Transportation",
-      "Professional Development",
-      "Vacation",
-    ];
-    switch(this.state.in_attendance) {
-      case true:
-        return (
-          <Form.Group controlId="isLateCheckbox">
-            <Form.Check type="checkbox" label="Late?" value={this.state.is_late} onChange={this._handleLateChange}/>
-          </Form.Group>
-        );
-      case false:
-        return (
-          <Form.Group controlId="absenceReason">
-            <Form.Label srOnly>Reason for absence?</Form.Label>
-            <Form.Control as="select" value={this.state.absence_reason} onChange={this._handleAbsenceReasonChange} >
-            <option value="" disabled>Reason for absence?</option>
-              {absenceReasons.map( (reason) => <option>{reason}</option> )}
-            </Form.Control>
-          </Form.Group>
-        );
-      default:
-        return null;
-    }
-  }
-
-  _handleAbsenceReasonChange(event) {
-    this.setState({
-      absence_reason: event.target.value,
-    });
-  }
-
-  _handleLateChange(event) {
-    this.setState({
-      is_late: !this.state.is_late,
-    });
-  }
-
-  _renderAttendanceReset() {
-    if (this.state.in_attendance == null) {
-      return null;
-    }
-    return (
-      <Button onClick={this._resetInAttendance}>
-        Reset
-      </Button>
-    );
-  }
-
-  _renderAttendanceSubmissionAnswer() {
-    return (
-      <Row>
-        <Col>
-        <ToggleButtonGroup type="radio" name="in_attendance" value={this.state.in_attendance} onChange={this._handleChange}>
-          <ToggleButton value={true}>Present</ToggleButton>
-          <ToggleButton value={false}>Absent</ToggleButton>
-        </ToggleButtonGroup>
-        </Col>
-        <Col>
-          {this._renderAttendanceDetails()}
-        </Col>
-        <Col>
-          {this._renderAttendanceReset()}
-        </Col>
-      </Row>
+      <AttendanceEventSubmissionForm
+        event_title={this.state.selectedAttendanceEvent ? this.state.selectedAttendanceEvent.title : ""}
+      />
     );
   }
 
@@ -251,7 +146,6 @@ class TakeAttendanceApplication extends React.Component {
       <div>
         {this._renderAttendanceSubmissionSelector()}
         {this._renderAttendanceEventSubmissionForm()}
-        {this._renderAttendanceSubmissionAnswer()}
       </div>
     );
   }
