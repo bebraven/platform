@@ -216,6 +216,7 @@ class AttendanceEventSubmissionForm extends React.Component {
   _renderSaveButton() {
     return (
       <Button
+        block
         onClick={this._handleSubmit}
         disabled={this.state.isSubmitting}
         type="submit">
@@ -252,6 +253,9 @@ class AttendanceEventSubmissionForm extends React.Component {
 
     return (
       <div>
+        <div>
+          {this._renderAlert()}
+        </div>
         <h1>Attendance for {this.props.eventTitle}</h1>
         <div>
           {this.state.attendanceEventSubmissionAnswers.map(
@@ -265,16 +269,8 @@ class AttendanceEventSubmissionForm extends React.Component {
               onClear={this._onClear}
             />
           )}
-        </div>
-        <div>
-          {this._renderAlert()}
-        </div>
-        <Navbar
-          bg="transparent"
-          className="justify-content-end"
-          fixed="bottom">
           {this._renderSaveButton()}
-        </Navbar>
+        </div>
       </div>
     );
   }
