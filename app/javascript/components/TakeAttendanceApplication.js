@@ -6,12 +6,10 @@ import AttendanceEventSubmissionForm from './AttendanceEventSubmissionForm';
 import {
   Button,
   Col,
-  ListGroup,
   Form,
   ToggleButton,
   ToggleButtonGroup,
   Navbar,
-  Row,
 } from 'react-bootstrap';
 
 class TakeAttendanceApplication extends React.Component {
@@ -107,6 +105,10 @@ class TakeAttendanceApplication extends React.Component {
       (section) => <option value={section.id}>{section.name}</option>
     );
     return (
+      <Navbar
+        bg="primary"
+        className="justify-content-center"
+        sticky="top">
       <Form>
         <Form.Row className="align-items-center">
           <h1>Take Attendance For</h1>
@@ -130,6 +132,7 @@ class TakeAttendanceApplication extends React.Component {
           </Col>
         </Form.Row>
       </Form>
+      </Navbar>
     );
   }
 

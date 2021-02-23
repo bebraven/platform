@@ -101,8 +101,14 @@ class AttendanceEventSubmissionForm extends React.Component {
             answer={this.state.answers.find((answer) => answer.for_user_id == fellow.id)}
           />)}
         </div>
-        <Button variant="primary" type="submit" onClick={this._handleSubmit}>Save</Button>
+        <Navbar
+        bg="transparent"
+        className="justify-content-end"
+        fixed="bottom">
+          <Button variant="primary" type="submit" onClick={this._handleSubmit}>Save</Button>
+        </Navbar>
       </div>
+
     );
   }
 }

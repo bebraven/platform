@@ -92,7 +92,7 @@ class AttendanceEventSubmissionAnswer extends React.Component {
       return null;
     }
     return (
-      <Button onClick={this._resetInAttendance}>
+      <Button variant="secondary" onClick={this._resetInAttendance}>
         Clear
       </Button>
     );
