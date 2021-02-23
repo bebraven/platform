@@ -14,6 +14,7 @@ class FetchCanvasAssignmentsInfo
               :canvas_preaccelerator_survey_url, :canvas_preaccelerator_survey_assignment_id,
               :canvas_postaccelerator_survey_url, :canvas_postaccelerator_survey_assignment_id,
               :canvas_peer_reviews_url, :canvas_peer_reviews_assignment_id,
+              :canvas_peer_review_results_url, :canvas_peer_review_results_assignment_id,
               :canvas_fellow_evaluation_url, :canvas_fellow_evaluation_assignment_id,
               :course_project_versions, :course_survey_versions,
               :course_custom_content_versions_mapping,  # Maps the fetched canvas assignment ID to the cccv.
@@ -35,6 +36,9 @@ class FetchCanvasAssignmentsInfo
 
     @canvas_peer_reviews_url = nil
     @canvas_peer_reviews_assignment_id = nil
+
+    @canvas_peer_review_results_url = nil
+    @canvas_peer_review_results_assignment_id = nil
 
     @canvas_fellow_evaluation_url = nil
     @canvas_fellow_evaluation_assignment_id = nil
@@ -105,6 +109,9 @@ private
     peer_review_submission_path = 'peer_review_submissions/new'
     add_peer_review_info(canvas_assignment) and return if lti_launch_url =~ /#{peer_review_submission_path}/
 
+    peer_review_result_path = launch_peer_review_results_path
+    add_peer_review_result_info(canvas_assignment) and return if lti_launch_url =~ /#{peer_review_result_path}/
+
     fellow_evaluation_submission_path = 'fellow_evaluation_submissions/new'
     add_fellow_evaluation_info(canvas_assignment) and return if lti_launch_url =~ /#{fellow_evaluation_submission_path}/
 
@@ -156,6 +163,16 @@ private
     end
     @canvas_peer_reviews_url = canvas_assignment['html_url']
     @canvas_peer_reviews_assignment_id = canvas_assignment['id']
+  end
+
+  def add_peer_review_result_info(canvas_assignment)
+    if @canvas_peer_review_results_url
+      raise FetchCanvasAssignmentsInfoError, "Duplicate Peer Review Results assignment found."\
+        "First[#{@canvas_peer_review_results_url}]. "\
+        "Second[#{canvas_assignment['html_url']}]."
+    end
+    @canvas_peer_review_results_url = canvas_assignment['html_url']
+    @canvas_peer_review_results_assignment_id = canvas_assignment['id']
   end
 
   def add_fellow_evaluation_info(canvas_assignment)
