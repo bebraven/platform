@@ -9,6 +9,7 @@ module Api
     def index
       authorize @section.course
       # FIXME: Check for params[:section_roles]
+      # TODO: Filter out Teaching Assistants section
       render json: @section.students.map { |student| { id: student.id, name: student.full_name } }
     end
   end
