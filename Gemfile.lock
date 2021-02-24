@@ -1,17 +1,4 @@
 GIT
-  remote: https://github.com/bebraven/rowan_bot.git
-  revision: 2219da2e6f32b2ced662388092b255789ea4a9f9
-  ref: 2219da
-  specs:
-    rowan_bot (0.1.0)
-      capybara
-      docusign_esign
-      faraday
-      restforce (~> 4.2.2)
-      selenium-webdriver
-      slack-ruby-client
-
-GIT
   remote: https://github.com/bebraven/rubycas-server-core.git
   revision: a9ec315e242a3efb88ed2f5dcf01a51b9d238f78
   branch: platform-compat
@@ -505,8 +492,10 @@ DEPENDENCIES
   database_cleaner
   devise
   devise_cas_authenticatable
+  docusign_esign
   dotenv
   factory_bot_rails
+  faraday
   guard-livereload
   guard-rails
   guard-rspec
@@ -529,8 +518,8 @@ DEPENDENCIES
   rails_same_site_cookie
   react-rails
   rest-client
+  restforce (~> 4.2.2)
   rolify
-  rowan_bot!
   rspec-rails (~> 3.6)
   rubocop
   rubocop-performance
@@ -545,6 +534,7 @@ DEPENDENCIES
   shoulda-matchers
   simplecov
   simplecov-cobertura
+  slack-ruby-client
   spring
   spring-watcher-listen (~> 2.0.0)
   turbolinks (~> 5)
