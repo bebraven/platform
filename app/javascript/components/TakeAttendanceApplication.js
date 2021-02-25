@@ -1,60 +1,51 @@
 import Rails from '@rails/ujs';
-import React from "react";
+import React, { useState, useEffect } from 'react';
+
+require('react-dom');
+window.React2 = require('react');
+console.log('HOOKS CHECK!!!!');
+console.log(window.React1 === window.React2);
 
 import AttendanceEventSubmissionForm from './AttendanceEventSubmissionForm';
 
 import {
-  Button,
   Col,
   Form,
-  ToggleButton,
-  ToggleButtonGroup,
   Navbar,
 } from 'react-bootstrap';
 
-class TakeAttendanceApplication extends React.Component {
+function TakeAttendanceApplication(props) {
+  const [isLoading, setIsLoading] = useState(
+    props.attendanceEventSubmission ? false : true,
+  );
+  const [courseAttendanceEvent, setCourseAttendanceEvent] = useState(
+    props.courseAttendanceEvents[0],
+  );
+  const [attendanceEventSubmission, setAttendanceEventSubmission] = useState(
+    props.attendanceEventSubmission,
+    // null, // ignore bootstrapped data, fetch on first render based on courseAttendanceEvent
+  );
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedAttendanceEvent: props.courseAttendanceEvents && props.courseAttendanceEvents[0] || null,
-      attendanceEventSubmission: props.attendanceEventSubmission,
-      isLoaded: props.attendanceEventSubmission || false,
-    };
-    this._handleAttendanceEventChange = this._handleAttendanceEventChange.bind(this);
-    this._fetchAttendanceEventSubmission = this._fetchAttendanceEventSubmission.bind(this);
-  }
-
-
-  componentDidMount() {
-    if (!this.props.attendanceEventSubmission && this.state.selectedAttendanceEvent) {
-      this._fetchSubmissionAnswers();
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.selectedAttendanceEvent.id != this.state.selectedAttendanceEvent.id) {
-      this._fetchAttendanceEventSubmission();
-    }
-  }
-
-  _handleAttendanceEventChange(event) {
-    console.log('_handleAttendanceEventChange');
-    console.log(this.state.selectedAttendanceEvent);
-    const newAttendanceEvent = this.props.courseAttendanceEvents.find(
-      (cae) => cae.id == event.target.value
+  const onCourseAttendanceEventChange = event => {
+    const newCourseAttendanceEvent = props.courseAttendanceEvents.find(
+      (cae) => cae.id == event.target.value,
     );
-    console.log(newAttendanceEvent);
-    this.setState({
-      isLoaded: false,
-      selectedAttendanceEvent: newAttendanceEvent,
-    });
-  }
 
-  _fetchAttendanceEventSubmission() {
-    const url = `/attendance_event_submissions/launch.json?course_attendance_event_id=${this.state.selectedAttendanceEvent.id}&state=${this.props.state}`;
-    console.log('_fetchAttendanceEventSubmission');
+    setCourseAttendanceEvent(newCourseAttendanceEvent);
+    setIsLoading(true);
+
+    // Note: You can move the useEffect logic here and do the fetch and
+    // setAttendanceEventSubmission(result) inline.
+    // The different is: you won't fetch attendanceEventSubmission the first
+    // time this component renders, so you'll have to rely on props or do a
+    // fetch explicitly.
+    // The logic would be slightly different from useEffect() in that you wouldn't
+    // have to check whether attendanceEventSubmission has changed because the
+    // event tells you that there's been a change.
+    const url = `/attendance_event_submissions/launch.json?course_attendance_event_id=${newCourseAttendanceEvent.id}&state=${props.state}`;
+  
     console.log(url);
+
     fetch(url, {
       method: 'GET',
       headers: {
@@ -64,89 +55,71 @@ class TakeAttendanceApplication extends React.Component {
     }).then(res => res.json())
       .then(
         (result) => {
-          this.setState({
-            isLoaded: true,
-            attendanceEventSubmission: result,
-          });
+          setAttendanceEventSubmission(result);
+          setIsLoading(false);
         },
         (error) => {
-          this.setState({
-            isLoaded: true,
-            error,
-          });
+          setAttendanceEventSubmission(null);
+          setIsLoading(false);
         }
       );
-  }
+  };
 
-  _renderAttendanceSubmissionSelector() {
-    const course_attendance_events = this.props.courseAttendanceEvents.map(
-      (event) => <option value={event.id}>{event.title}</option>
-    );
-    return (
+  useEffect(() => {
+    // TODO: Get effect to do the fetch
+  });
+
+  return (
+    <div>
       <Navbar
         bg="primary"
         className="justify-content-center"
         sticky="top">
-      <Form>
-        <Form.Row className="align-items-center">
-          <h1>Take Attendance For</h1>
-        </Form.Row>
-        <Form.Row className="align-items-center">
-          <Col xs="auto">
-            <Form.Group controlId="course_attendance_event">
-              <Form.Label>Event</Form.Label>
-              <Form.Control as="select" onChange={this._handleAttendanceEventChange}>
-                {course_attendance_events}
-              </Form.Control>
-            </Form.Group>
-          </Col>
-          <Col xs="auto">
-            <Form.Group controlId="course_section">
-              <Form.Label>Section</Form.Label>
-              <Form.Control as="select">
-                <option value={this.props.section.id}>{this.props.section.name}</option>
-              </Form.Control>
-            </Form.Group>
-          </Col>
-        </Form.Row>
-      </Form>
+        <Form>
+          <Form.Row className="align-items-center">
+            <h1>Take Attendance For</h1>
+          </Form.Row>
+          <Form.Row className="align-items-center">
+            <Col xs="auto">
+              <Form.Group controlId="course_attendance_event">
+                <Form.Label>Event</Form.Label>
+                <Form.Control as="select" onChange={onCourseAttendanceEventChange}>
+                  {
+                    props.courseAttendanceEvents.map(
+                      (cae) => <option value={cae.id}>{cae.title}</option>
+                    )
+                  }
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col xs="auto">
+              <Form.Group controlId="course_section">
+                <Form.Label>Section</Form.Label>
+                <Form.Control as="select">
+                  <option value={props.section.id}>{props.section.name}</option>
+                </Form.Control>
+              </Form.Group>
+            </Col>
+          </Form.Row>
+        </Form>
       </Navbar>
-    );
-  }
-
-  _renderAttendanceEventSubmissionForm() {
-    if (!this.state.selectedAttendanceEvent) {
-      return <div><p>Please select an event to take attendance for</p></div>;
-    }
-
-    if (!this.state.isLoaded) {
-      return <div><p>Loading attendance form...</p></div>;
-    }
-
-    if (this.state.error) {
-      return <div>{this.state.error}</div>;
-    }
-
-    console.log(this.state.attendanceEventSubmission.id);
-
-    return (
-      <AttendanceEventSubmissionForm
-        submissionId={this.state.attendanceEventSubmission.id}
-        eventTitle={this.state.selectedAttendanceEvent.title}
-        sectionId={this.props.section.id}
-        state={this.props.state}
-      />
-    );
-  }
-
-  render() {
-    return (
-      <div>
-        {this._renderAttendanceSubmissionSelector()}
-        {this._renderAttendanceEventSubmissionForm()}
-      </div>
-    );
-  }
+      {
+        isLoading
+          ? <p>Loading attendance form...</p>
+          : !attendanceEventSubmission 
+            ? <p>Error loading attendance form. Try refreshing.</p> 
+            : <AttendanceEventSubmissionForm
+              submissionId={attendanceEventSubmission.id}
+              eventTitle={courseAttendanceEvent.title}
+              sectionId={props.section.id}
+              state={props.state}
+            />
+      }
+    </div>
+  );
 }
 
-export default TakeAttendanceApplication;
+// The error without this: https://reactjs.org/warnings/invalid-hook-call-warning.html
+// Different React instances: https://github.com/facebook/react/issues/13991
+// The fix (doesn't fix React instances, WTF?): https://github.com/shakacode/react_on_rails/issues/1198
+export default props => <TakeAttendanceApplication {...props} />;
