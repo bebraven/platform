@@ -16,14 +16,15 @@ import {
 
 function TakeAttendanceApplication(props) {
   const [isLoading, setIsLoading] = useState(
-    props.attendanceEventSubmission ? false : true,
+    // props.attendanceEventSubmission ? false : true,
+    false,
   );
   const [courseAttendanceEvent, setCourseAttendanceEvent] = useState(
     props.courseAttendanceEvents[0],
   );
   const [attendanceEventSubmission, setAttendanceEventSubmission] = useState(
-    props.attendanceEventSubmission,
-    // null, // ignore bootstrapped data, fetch on first render based on courseAttendanceEvent
+    // props.attendanceEventSubmission,
+    null, // ignore bootstrapped data, fetch on first render based on courseAttendanceEvent
   );
 
   const onCourseAttendanceEventChange = event => {
@@ -32,7 +33,7 @@ function TakeAttendanceApplication(props) {
     );
 
     setCourseAttendanceEvent(newCourseAttendanceEvent);
-    setIsLoading(true);
+    setAttendanceEventSubmission(null);
 
     // Note: You can move the useEffect logic here and do the fetch and
     // setAttendanceEventSubmission(result) inline.
@@ -42,7 +43,21 @@ function TakeAttendanceApplication(props) {
     // The logic would be slightly different from useEffect() in that you wouldn't
     // have to check whether attendanceEventSubmission has changed because the
     // event tells you that there's been a change.
-    const url = `/attendance_event_submissions/launch.json?course_attendance_event_id=${newCourseAttendanceEvent.id}&state=${props.state}`;
+
+  };
+
+  useEffect(() => {
+    if (attendanceEventSubmission) {
+      return; // Already loaded
+    }
+
+    if (isLoading) {
+      return; // Already fetching
+    }
+
+    setIsLoading(true);
+
+    const url = `/attendance_event_submissions/launch.json?course_attendance_event_id=${courseAttendanceEvent.id}&state=${props.state}`;
   
     console.log(url);
 
@@ -63,10 +78,6 @@ function TakeAttendanceApplication(props) {
           setIsLoading(false);
         }
       );
-  };
-
-  useEffect(() => {
-    // TODO: Get effect to do the fetch
   });
 
   return (
