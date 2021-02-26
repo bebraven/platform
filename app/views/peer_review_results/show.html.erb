@@ -1,0 +1,17 @@
+<h1>Peer Review Grade</h1>
+
+<% unless @total_score.nan? %>
+  <h2>Total Score</h2>
+
+  <p>Your Peer Review total score is: <%= @total_score %>.</p>
+
+  <h2>Score Breakdown</h2>
+
+  <ul>
+    <% @question_scores.each do |question, score| %>
+      <li><%= question %>: <%= score %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Your Peer Review grade has not yet been calculated.</p>
+<% end %>

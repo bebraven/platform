@@ -41,11 +41,13 @@ class PeerReviewResultsController < ApplicationController
 
   # Show results and score breakdown.
   def show
-    authorize @peer_review_result
+    # TODO: policy
+    authorize peer_review_submissions
+    @peer_review_submission_answers = peer_review_submission_answers
 
     # Initialize to zero.
     @question_scores = {}
-    PeerReviewQuestion.each do |question|
+    PeerReviewQuestion.all.each do |question|
       @question_scores[question.text] = 0.0
     end
 
@@ -59,6 +61,8 @@ class PeerReviewResultsController < ApplicationController
       # Note submission count is possible ONLY because of the uniqueness constraint on (user,course).
       @question_scores[k] = @question_scores[k] / peer_review_submissions.count
     end
+
+    @total_score = @question_scores.map { |k, v| v }.sum / @question_scores.count
   end
 
 private
