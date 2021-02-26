@@ -19,7 +19,7 @@ class PeerReviewResultsController < ApplicationController
 
   # Admin-only, nested under course.
   def index
-    @peer_review_submissions = peer_review_submissions
+    @peer_review_submissions = all_peer_review_submissions
     # TODO: results policy
     authorize @peer_review_submissions
 
@@ -30,10 +30,10 @@ class PeerReviewResultsController < ApplicationController
   # Admin-only, nested under course.
   def score
     # TODO: results policy
-    authorize peer_review_submissions
+    authorize all_peer_review_submissions
 
     transaction do
-      peer_review_submissions.each do |submission|
+      all_peer_review_submissions.each do |submission|
         submission.update!(new: false)
       end
     end
@@ -71,6 +71,13 @@ private
     PeerReviewSubmission.where(
       course: @course,
       new: false,
+    )
+  end
+
+  # Admin-only.
+  def all_peer_review_submissions
+    PeerReviewSubmission.where(
+      course: @course,
     )
   end
 
