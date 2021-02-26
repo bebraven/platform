@@ -1,9 +1,9 @@
-class PeerReviewResultsController < ApplicationController
+class PeerReviewSubmissionAnswersController < ApplicationController
   include DryCrud::Controllers::Nestable
   
   layout 'lti_canvas'
 
-  nested_resource_of Course
+  nested_resource_of User
 
   before_action :set_course, only: [:launch]
 
@@ -15,28 +15,6 @@ class PeerReviewResultsController < ApplicationController
 
     # TODO
     render plain: "No results yet"
-  end
-
-  # Admin-only, nested under course.
-  def index
-    @peer_review_submissions = all_peer_review_submissions
-    # TODO: results policy
-    authorize @peer_review_submissions
-
-    render layout: 'admin'
-  end
-
-  # POST
-  # Admin-only, nested under course.
-  def score
-    # TODO: results policy
-    authorize all_peer_review_submissions
-
-    transaction do
-      all_peer_review_submissions.each do |submission|
-        submission.update!(new: false)
-      end
-    end
   end
 
   # Show results and score breakdown.
@@ -75,13 +53,6 @@ private
     PeerReviewSubmission.where(
       course: @course,
       new: false,
-    )
-  end
-
-  # Admin-only.
-  def all_peer_review_submissions
-    PeerReviewSubmission.where(
-      course: @course,
     )
   end
 
