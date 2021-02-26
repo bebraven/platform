@@ -11,20 +11,20 @@
       <% end %>
       <br>
 
-      <p>Students who have submitted Peer Reviews:</p>
-
-      <ul>
-        <% @peer_review_submissions.each do |submission| %>
-          <li><%= submission.user.full_name %></li>
-        <% end %>
-      </ul>
-
       <p>Students who have not yet submitted Peer Reviews:</p>
 
       <ul>
         <% remaining_students = @course.students.uniq - @peer_review_submissions.map { |s| s.user } %>
         <% remaining_students.each do |student| %>
           <li><%= student.full_name %></li>
+        <% end %>
+      </ul>
+
+      <p>Students who have submitted Peer Reviews:</p>
+
+      <ul>
+        <% @peer_review_submissions.each do |submission| %>
+          <li><%= submission.user.full_name %></li>
         <% end %>
       </ul>
     </div>
