@@ -19,15 +19,19 @@ class PeerReviewResultsController < ApplicationController
 
   # Admin-only, nested under course.
   def index
-    authorize @peer_review_results
-
     @peer_review_submissions = peer_review_submissions
+    # TODO: results policy
+    authorize @peer_review_submissions
+
+    render layout: 'admin'
   end
 
   # POST
   # Admin-only, nested under course.
   def score
+    # TODO: results policy
     authorize peer_review_submissions
+
     transaction do
       peer_review_submissions.each do |submission|
         submission.update!(new: false)

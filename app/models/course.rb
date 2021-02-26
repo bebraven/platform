@@ -62,6 +62,10 @@ class Course < ApplicationRecord
     survey_versions.map { |v| v.survey }
   end
 
+  def students
+    sections.map { |s| s.students }.flatten.uniq
+  end
+
   def canvas_url
     "#{Rails.application.secrets.canvas_url}/courses/#{canvas_course_id}"
   end

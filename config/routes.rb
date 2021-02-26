@@ -73,6 +73,11 @@ Rails.application.routes.draw do
     end
 
     resources :peer_review_submissions, only: [:new, :create]
+    resources :peer_review_results, only: [:index] do
+      collection do
+        post :score
+      end
+    end
     resources :fellow_evaluation_submissions, only: [:new, :create]
 
     resources :waivers, only: [] do
