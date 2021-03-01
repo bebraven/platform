@@ -1,0 +1,146 @@
+# Keeping out the SOQL from the code
+PARTICIPANTS_BY_EMAILS: >
+  SELECT
+    Id,
+    Student_Waiver_Signed__c,
+    Status__c,
+    Candidate__r.Status__c,
+    Cohort__r.Name,
+    Cohort_Schedule__r.Id,
+    Cohort_Schedule__r.Letter__c,
+    Cohort_Schedule__r.Webinar_Registration_1__c,
+    Cohort_Schedule__r.Webinar_Registration_2__c,
+    Program__r.Id,
+    Program__r.Session__c,
+    Contact__r.Email,
+    Contact__r.Preferred_First_Name__c,
+    Contact__r.Name,
+    Cohort__r.DLRS_LC_FirstName__c,
+    Cohort__r.DLRS_LC_LastName__c
+  FROM
+    Participant__c
+  WHERE
+    Contact__r.Email IN (
+      %{email_list}
+    )
+    AND RecordTypeId IN (
+      SELECT
+        Id
+      FROM
+        RecordType
+      WHERE
+        sObjectType = 'Participant__c'
+        AND DeveloperName = %{record_type}
+    )
+
+PROGRAM_PARTICIPANTS: >
+  SELECT
+    Id,
+    Student_Waiver_Signed__c,
+    Status__c,
+    Candidate__r.Status__c,
+    Webinar_Access_1__c,
+    Webinar_Access_2__c,
+    Cohort__r.Name,
+    Cohort_Schedule__r.Id,
+    Cohort_Schedule__r.Letter__c,
+    Cohort_Schedule__r.Webinar_Registration_1__c,
+    Cohort_Schedule__r.Webinar_Registration_2__c,
+    Program__r.Id,
+    Program__r.Session__c,
+    Contact__r.Email,
+    Contact__r.Preferred_First_Name__c,
+    Contact__r.Name,
+    Candidate__r.Esig_Validated_CPP__c,
+    Contact__r.Canvas_User_ID__c,
+    Candidate__r.Coach_Partner_Role__c,
+    Cohort__r.DLRS_LC_FirstName__c,
+    Cohort__r.DLRS_LC_LastName__c
+  FROM
+    Participant__c
+  WHERE
+    RecordTypeId IN (
+      SELECT
+        Id
+      FROM
+        RecordType
+      WHERE
+        sObjectType = 'Participant__c'
+        AND DeveloperName = %{record_type}
+    )
+    AND Program__r.Id = %{program_id}
+
+LAST_PARTICIPANT_BY_EMAIL_AND_RECORD: >
+  SELECT
+    Id,
+    Student_Waiver_Signed__c,
+    Status__c,
+    Candidate__r.Status__c,
+    Cohort__r.Name,
+    Cohort_Schedule__r.Id,
+    Cohort_Schedule__r.Letter__c,
+    Cohort_Schedule__r.Webinar_Registration_1__c,
+    Cohort_Schedule__r.Webinar_Registration_2__c,
+    Program__r.Id,
+    Program__r.Session__c,
+    Contact__r.Email,
+    Contact__r.Preferred_First_Name__c,
+    Contact__r.Name,
+    Candidate__r.Coach_Partner_Role__c,
+    Cohort__r.DLRS_LC_FirstName__c,
+    Cohort__r.DLRS_LC_LastName__c
+  FROM
+    Participant__c
+  WHERE
+    Contact__r.Email = %{email}
+    AND RecordTypeId = %{record_type_id}
+  ORDER BY
+    Id DESC
+  LIMIT 1
+
+FIRST_PARTICIPANT_RECORD_TYPE: >
+  SELECT
+    Id
+  FROM
+    RecordType
+  WHERE
+    sObjectType = 'Participant__c'
+    AND DeveloperName = %{developer_name}
+  LIMIT 1
+
+PARTICIPANT_COUNT_BY_COHORT_AND_SCHEDULE: >
+  SELECT
+    COUNT(Id)
+  FROM
+    Participant__c
+  WHERE
+    Cohort_Schedule__c = %{cohort_schedule_id}
+    AND Cohort__c = %{cohort_id}
+
+LAST_COHORT_BY_SCHEDULE_AND_PROGRAM: >
+  SELECT
+    Id,
+    Name,
+    Peer_Group_ID__c
+  FROM
+    Cohort__c
+  WHERE
+    Cohort_Schedule__c = %{cohort_schedule_id}
+    AND Program__c = %{program_id}
+  ORDER BY
+    Peer_Group_ID__c DESC
+  LIMIT 1
+
+PROGRAM_BY_ID: >
+  SELECT
+    Id,
+    SLACK_USER__c,
+    SLACK_PASSWORD__c,
+    SLACK_TOKEN__c,
+    SLACK_URL__c,
+    SLACK_ADMIN_EMAILS__c
+  FROM
+    Program__c
+  WHERE
+    Id = %{program_id}
+  LIMIT 1

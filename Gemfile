@@ -23,8 +23,7 @@ gem 'jbuilder', '~> 2.7'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'byebug'
 
   gem 'dotenv'
   gem 'factory_bot_rails'
@@ -59,9 +58,6 @@ group :development do
 end
 
 group :test do
-  # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '>= 2.15'
-  gem 'selenium-webdriver'
   # Easy installation and use of web drivers to run system tests with browsers
   gem 'webdrivers'
   # HTTP request mocking
@@ -107,11 +103,6 @@ gem 'honeycomb-beeline'
 # See: https://github.com/heroku/platform-api
 gem 'platform-api', require: false
 
-# To develop locally, you can mount your local rowan_bot code as a volume in docker-compose.yml
-# and then change the following to this:
-# gem 'rowan_bot', path: '/app/rowan_bot'
-gem 'rowan_bot', github: 'bebraven/rowan_bot', ref: '1bfcee7'
-
 # Implementation of JSON Web Token (JWT) standard: https://github.com/jwt/ruby-jwt
 gem 'jwt'
 
@@ -126,3 +117,13 @@ gem 'rails_same_site_cookie'
 # authorization
 gem "pundit"
 gem "rolify"
+
+# needed for rowan_bot code
+gem 'docusign_esign'
+gem 'faraday'
+gem 'restforce', '~> 4.2.2'
+gem 'selenium-webdriver'
+# Adds support for Capybara system testing and selenium driver (for Slack)
+gem 'capybara', '>= 2.15'
+
+gem 'slack-ruby-client'
