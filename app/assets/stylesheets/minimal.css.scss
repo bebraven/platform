@@ -1,0 +1,137 @@
+@import 'application';
+
+hr {
+  margin-top: 0px;
+}
+
+body.sso_discovery {
+  background-color: #f2f2f2;
+}
+
+#sso_discovery {
+
+  font-size: 16px;
+  margin: 1em 2em;
+  text-align: center;
+
+  .login-link {
+    color: black;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+
+  .choose-your-university {
+    /*display: flex;*/
+  }
+
+  .choose-your-role a {
+    font-family: "TradeGothicNo.20-CondBold", "Oswald", "Open Sans", sans-serif;
+    display: inline-block;
+    vertical-align: top;
+    color: black;
+    width: 9em;
+    height: 9em;
+    font-size: 22px;
+    background-color: white;
+    text-transform: uppercase;
+    padding: 1em;
+    text-align: left;
+    margin-right: 1em;
+
+    position:relative;
+    margin-top:20px;
+  }
+
+  .choose-your-role a:after{
+    content: '';
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 1em 1em;
+    border-color: transparent transparent #9ad7d7 transparent;
+    -o-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+  }
+
+  @media (min-width: 990px){
+    h2 {
+      font-size: 24px;
+    }
+  }
+  h2 a {
+    font-size: 18px;
+    font-weight:normal;
+    text-decoration: underline;
+    color: #378383;
+  }
+
+  a.university {
+    color: #666;
+    display: inline-block;
+    margin: 1em;
+    box-sizing: border-box;
+    text-align: center;
+
+    vertical-align: top;
+    position: relative;
+    width: 50%;
+
+    div {
+      padding: 1em;
+      line-height: 4em; /* (height - vertical padding) / 2 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+    }
+
+    span {
+      font-family: "TradeGothicNo.20-CondBold", "Oswald", "Open Sans", sans-serif;
+      text-transform: uppercase;
+      font-weight: 200;
+      margin-top:10px;
+      color: black;
+      display: block;
+      line-height: 1.5;
+    }
+
+    img {
+      vertical-align: middle;
+      display: inline;
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+}
+
+@media(max-width: 640px) {
+  #sso_discovery {
+    a {
+      margin: 0.5em;
+    }
+  }
+}
+
+@media(min-width: 640px) and (max-width: 800px) {
+  #sso_discovery {
+    a {
+      line-height: 3em; /* height - vertical padding */
+      margin: 0.5em;
+    }
+  }
+}
+
+@media (min-width: 768px){
+  #sso_discovery a.university div {
+    height: 10em;
+  }
+  #sso_discovery a.university {
+    width: 10em;
+  }
+}

@@ -24,7 +24,8 @@ Rails.application.routes.draw do
     get 'users/registration', to: "users/registrations#show"
     post '/admin/users', to: 'users#create'
   end
-
+  get 'cas/sso_discovery', to: 'cas#sso_discovery'
+  
   get 'home/welcome'
 
   resources :base_courses, only: [:index], path: 'course_management'

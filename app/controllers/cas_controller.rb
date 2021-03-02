@@ -27,6 +27,10 @@ class CasController < ApplicationController
     false
   end
 
+  def sso_discovery
+    render layout: 'minimal'
+  end
+
   def login
     # make sure there's no caching
     request.headers['Pragma'] = 'no-cache'

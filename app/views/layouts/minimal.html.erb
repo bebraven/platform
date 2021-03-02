@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Braven - Choose Your University</title>
+    <meta name="description" content="Braven">
+    
+    <!-- Until we add a landing page and login, keep our site out of search engines -->
+    <meta name="robots" content="noindex">
+    <link rel="favorite icon" href="<%= image_path("favicon.ico") %>" />
+    <link rel="apple-touch-icon" href="<%= image_path("favicon-152.png") %>" />
+    <%= stylesheet_link_tag 'minimal', media: "all", "data-turbolinks-track" => true %>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,400italic' rel='stylesheet' type='text/css'>
+    <%= csrf_meta_tags %>
+    <script>
+        // set this as soon as possible to avoid flash of content in an iframe
+        if(window != window.top)
+          document.documentElement.className += ' in-iframe';
+    </script>
+  </head>
+  <body>
+    <div id="content">
+      <header class="hide-on-iframe">
+        <!--
+        <div class="program-header">
+          <a href="/"><%= image_tag "customLogo2.png", alt: "Braven" %></a>
+        </div>
+        <hr />
+        -->
+      </header>
+      <main role="main">
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
