@@ -39,10 +39,19 @@ namespace :grade do
     # Remove the reference to the extra records. Maybe the GC will delete them for us?
     records = nil
 
-    # Initialize a map to cache assignment overrides.
-    assignment_override_map = Hash.new
+    # From the list of "running" "programs" in Salesforce, fetch a list of "accelerator"
+    # (non-LC) courses.
+
+
+    # Eliminate courses with no new module interactions, and exit early if that
+    # leaves us with an empty list.
+
+
+    # From the remaining courses, compute grades for all users.
+
 
     # Compute.
+    assignment_override_map = Hash.new
     grades = Hash.new
     Honeycomb.start_span(name: 'rake:grade:modules:compute') do |span|
       filtered_records.each do |record|
