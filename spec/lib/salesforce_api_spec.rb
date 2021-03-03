@@ -60,6 +60,25 @@ RSpec.describe SalesforceAPI do
     end
   end
 
+  describe '#get_current_and_future_accelerator_programs' do
+    let(:request_url) {
+      SALESFORCE_DATA_SERVICE_QUERY_URL +
+        "?q=SELECT+Id,+Name,+Highlander_Accelerator_Course_ID__c+FROM+Program__c+" \
+        "WHERE+RecordType.Name+=+'Course'+" \
+          "AND+Highlander_Accelerator_Course_ID__c+<>+NULL+" \
+          "AND+Status__c+IN+('Current',+'Future')"
+    }
+    it 'calls the correct endpoint' do
+      programs_json = FactoryBot.json(:salesforce_current_and_future_programs)
+      stub_request(:get, request_url).to_return(body: programs_json )
+
+      response = SalesforceAPI.client.get_current_and_future_accelerator_programs()
+
+      expect(WebMock).to have_requested(:get, request_url).once
+      expect(response).to eq(JSON.parse(programs_json))
+    end
+  end
+
   describe '#get_program_info(program_id)' do
     let(:program_id) { '003170000125IpSAAU' }
 
