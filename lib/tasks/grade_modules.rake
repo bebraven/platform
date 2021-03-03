@@ -39,7 +39,7 @@ namespace :grade do
     # Remove the reference to the extra records. Maybe the GC will delete them for us?
     records = nil
 
-    # Initialize a map to cache assighment overrides.
+    # Initialize a map to cache assignment overrides.
     assignment_override_map = Hash.new
 
     # Compute.
