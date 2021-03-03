@@ -39,6 +39,9 @@ namespace :grade do
     # Remove the reference to the extra records. Maybe the GC will delete them for us?
     records = nil
 
+    # Initialize a map to cache assighment overrides.
+    assignment_override_map = Hash.new
+
     # Compute.
     grades = Hash.new
     Honeycomb.start_span(name: 'rake:grade:modules:compute') do |span|
@@ -46,10 +49,20 @@ namespace :grade do
         puts "Computing grade for: user_id = #{record.user_id}, canvas_course_id = #{record.canvas_course_id}, " \
              "canvas_assignment_id = #{record.canvas_assignment_id}, module activity_id = #{record.root_activity_id}"
         user = User.find(record.user_id)
+
+        # Fetch and store assignment overrides, one Canvas API call per course/assignment.
+        assignment_override_map[record.canvas_assignment_id] ||= CanvasAPI
+          .client.get_assignment_overrides(record.canvas_course_id, record.canvas_assignment_id)
+
         grades[record.canvas_course_id] ||= Hash.new
         grades[record.canvas_course_id][record.canvas_assignment_id] ||= Hash.new
         grades[record.canvas_course_id][record.canvas_assignment_id][user.canvas_user_id] =
-          "#{ModuleGradeCalculator.compute_grade(user.id, record.canvas_assignment_id, record.root_activity_id)}%"
+          "#{ModuleGradeCalculator.compute_grade(
+            user.id,
+            record.canvas_assignment_id,
+            record.root_activity_id,
+            assignment_override_map[record.canvas_assignment_id]
+          )}%"
       end
     end
 
