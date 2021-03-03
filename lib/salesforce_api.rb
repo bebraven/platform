@@ -95,6 +95,19 @@ class SalesforceAPI
     RestClient.patch("#{@salesforce_url}#{path}", body, @global_headers.merge(headers))
   end
 
+  # Gets a list of all Accelerator Programs (not LC Programs) that have been launched (aka
+  # they have a Canvas Course ID set) and are either currently running or will be in the future.
+  def get_current_and_future_accelerator_programs()
+    soql_query = 
+      "SELECT Id, Name, Highlander_Accelerator_Course_ID__c FROM Program__c " \
+      "WHERE RecordType.Name = 'Course' AND Highlander_Accelerator_Course_ID__c <> NULL AND Status__c IN ('Current', 'Future')"
+
+    response = get("#{DATA_SERVICE_PATH}/query?q=#{CGI.escape(soql_query)}")
+    response_json = JSON.parse(response.body)
+    raise SalesforceDataError, "Got paginated response which isn't implemented" if response_json['nextRecordsUrl'].present?
+    response_json
+  end
+
   # TODO: remove the Qualtrics IDs from here. We don't use them anymore.
   def get_program_info(program_id)
     soql_query = 
