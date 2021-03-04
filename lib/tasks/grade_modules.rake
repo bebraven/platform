@@ -14,6 +14,8 @@ namespace :grade do
     # Select the max id at the very beginning, so we can use it at the bottom to mark only things
     # before this as old. If we don't do this, we run the risk of marking things as old that we
     # haven't actually processed yet, causing students to get missing or incorrect grades.
+    # The `new` column is NOT used here as an optimization, since that would break automatic zero
+    # grades for users with no interactions before the due date.
     # NOTE: the `new` column should only be considered an estimate with +/- 1 day resolution.
     max_id = Rise360ModuleInteraction.maximum(:id)
 
