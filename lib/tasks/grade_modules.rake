@@ -39,6 +39,7 @@ namespace :grade do
 
     # From the list of "running" "programs" in Salesforce, fetch a list of "accelerator"
     # (non-LC) courses.
+    # TODO: Remember to swap this hardcoded Highlander stuff out when we switch to prod.
     programs = SalesforceAPI.client.get_current_and_future_accelerator_programs
     canvas_course_ids = programs['records']&.map { |r| r['Highlander_Accelerator_Course_ID__c'] }
 
