@@ -98,7 +98,8 @@ namespace :grade do
           end
 
           # Send grades to Canvas, one API call per course/assignment.
-          CanvasAPI.client.update_grades(canvas_course_id, canvas_assignment_id, grades)
+          puts "Sending new grades to Canvas for canvas_course_id = #{course.canvas_course_id}, canvas_assignment_id = #{canvas_assignment_id}"
+          CanvasAPI.client.update_grades(course.canvas_course_id, canvas_assignment_id, grades)
         end
       end
     end
