@@ -32,8 +32,8 @@ namespace :grade do
       Honeycomb.start_span(name: 'rake:grade:modules:course') do |span|
         # We're doing some less-readable queries here because they're drastically
         # more efficient than using the more-readable model associations would be.
-        sections = Section.where(course: course)
-        roles = Role.where(resource: sections)
+        sections = Section.select(:id).where(course: course)
+        roles = Role.select(:id).where(resource: sections)
         # We're loading all the User IDs into memory right now, so keep an eye out
         # if this needs to be batched or something.
         # NOTE: Don't copy this UserRole code anywhere else unless you *really* need the performance.
