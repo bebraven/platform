@@ -11,6 +11,12 @@ namespace :grade do
   task modules: :environment do
     puts("### Running rake grade:modules - #{Time.now.strftime("%Y-%m-%d %H:%M:%S %Z")}")
 
+    # Select the max id at the very beginning, so we can use it at the bottom to mark only things
+    # before this as old. If we don't do this, we run the risk of marking things as old that we
+    # haven't actually processed yet, causing students to get missing or incorrect grades.
+    # NOTE: the `new` column should only be considered an estimate with +/- 1 day resolution.
+    max_id = Rise360ModuleInteraction.maximum(:id)
+
     # From the list of "running" "programs" in Salesforce, fetch a list of "accelerator"
     # (non-LC) courses.
     # TODO: Remember to swap this hardcoded Highlander stuff out when we switch to prod.
@@ -100,6 +106,14 @@ namespace :grade do
           # Send grades to Canvas, one API call per course/assignment.
           puts "Sending new grades to Canvas for canvas_course_id = #{course.canvas_course_id}, canvas_assignment_id = #{canvas_assignment_id}"
           CanvasAPI.client.update_grades(course.canvas_course_id, canvas_assignment_id, grades)
+
+          # Mark an *estimate* of the consumed interactions as `new: false`.
+          # Some interactions used to calculate grades may not be included in this list.
+          Rise360ModuleInteraction.where(
+            new: true,
+            canvas_course_id: course.canvas_course_id,
+            canvas_assignment_id: canvas_assignment_id
+          ).where('id <= ?', max_id).update_all(new: false)
         end
       end
     end
