@@ -20,53 +20,54 @@ class ModuleGradeCalculator
   # necessary. For an example, see:
   #   lib/tasks/grade_modules.rake
   def self.compute_grade(user_id, canvas_assignment_id, activity_id, assignment_overrides)
-
-    interactions = Rise360ModuleInteraction.where(
-      "canvas_assignment_id = ? AND user_id = ? AND activity_id LIKE ?",
-      canvas_assignment_id,
-      user_id,
-      "#{activity_id}%",
-    )
-
-    # If there are no interactions, exit early with a zero grade.
-    # exists? is the fastest check when records aren't preloaded.
-    return 0 unless interactions.exists?
-
-    # Figure out which due date applies to this user.
-    due_date = due_date_for_user(user_id, assignment_overrides)
-
-    # Start computing grades.
-    progressed_interactions = interactions.where(verb: Rise360ModuleInteraction::PROGRESSED)
-
-    engagement_grade = grade_module_engagement(progressed_interactions)
-    on_time_grade = grade_completed_on_time(progressed_interactions, due_date)
-
-    # Note: a Rise360 package has the same activity ID when you update it and
-    # export it again. This means, we can have multiple Rise360ModuleVersions with
-    # the same activity ID. That's why we use the canvas_assignment_id to find the
-    # the correct version.
-    crmv = CourseRise360ModuleVersion.find_by!(canvas_assignment_id: canvas_assignment_id)
-    rmv = Rise360ModuleVersion.find(crmv.rise360_module_version_id)
-    total_quiz_questions = rmv.quiz_questions
-
-    if total_quiz_questions && total_quiz_questions > 0
-      quiz_grade = grade_mastery_quiz(
-        interactions.where(verb: Rise360ModuleInteraction::ANSWERED),
-        total_quiz_questions,
+    Honeycomb.start_span(name: 'ModuleGradeCalculator.compute_grade') do |span|
+      interactions = Rise360ModuleInteraction.where(
+        "canvas_assignment_id = ? AND user_id = ? AND activity_id LIKE ?",
+        canvas_assignment_id,
+        user_id,
+        "#{activity_id}%",
       )
 
-      (
-        grade_weights[:module_engagement] * engagement_grade +
-        grade_weights[:mastery_quiz] * quiz_grade +
-        grade_weights[:on_time] * on_time_grade
-      )
-    else
-      # If there are no mastery questions, fold the mastery weight in with the engagement
-      # weight, so that engagement is just worth more.
-      (
-        (grade_weights[:module_engagement] + grade_weights[:mastery_quiz]) * engagement_grade +
-        grade_weights[:on_time] * on_time_grade
-      )
+      # If there are no interactions, exit early with a zero grade.
+      # exists? is the fastest check when records aren't preloaded.
+      return 0 unless interactions.exists?
+
+      # Figure out which due date applies to this user.
+      due_date = due_date_for_user(user_id, assignment_overrides)
+
+      # Start computing grades.
+      progressed_interactions = interactions.where(verb: Rise360ModuleInteraction::PROGRESSED)
+
+      engagement_grade = grade_module_engagement(progressed_interactions)
+      on_time_grade = grade_completed_on_time(progressed_interactions, due_date)
+
+      # Note: a Rise360 package has the same activity ID when you update it and
+      # export it again. This means, we can have multiple Rise360ModuleVersions with
+      # the same activity ID. That's why we use the canvas_assignment_id to find the
+      # the correct version.
+      crmv = CourseRise360ModuleVersion.find_by!(canvas_assignment_id: canvas_assignment_id)
+      rmv = Rise360ModuleVersion.find(crmv.rise360_module_version_id)
+      total_quiz_questions = rmv.quiz_questions
+
+      if total_quiz_questions && total_quiz_questions > 0
+        quiz_grade = grade_mastery_quiz(
+          interactions.where(verb: Rise360ModuleInteraction::ANSWERED),
+          total_quiz_questions,
+        )
+
+        (
+          grade_weights[:module_engagement] * engagement_grade +
+          grade_weights[:mastery_quiz] * quiz_grade +
+          grade_weights[:on_time] * on_time_grade
+        )
+      else
+        # If there are no mastery questions, fold the mastery weight in with the engagement
+        # weight, so that engagement is just worth more.
+        (
+          (grade_weights[:module_engagement] + grade_weights[:mastery_quiz]) * engagement_grade +
+          grade_weights[:on_time] * on_time_grade
+        )
+      end
     end
   end
 
