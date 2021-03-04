@@ -67,8 +67,8 @@ namespace :grade do
 
           # Fetch assignment overrides, one Canvas API call per course/assignment.
           assignment_overrides = CanvasAPI.client.get_assignment_overrides(
-            record.canvas_course_id,
-            record.canvas_assignment_id
+            course.canvas_course_id,
+            canvas_assignment_id
           )
 
           # All users in the course, even if they haven't interacted with this assignment.
