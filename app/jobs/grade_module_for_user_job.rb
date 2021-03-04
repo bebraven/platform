@@ -19,7 +19,18 @@ class GradeModuleForUserJob < ApplicationJob
       span.add_field('grade_module_for_user_job.canvas_assignment_id', canvas_assignment_id)
       span.add_field('grade_module_for_user_job.activity_id', activity_id)
 
-      grade = "#{ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, activity_id)}%"
+      # Select the max id at the very beginning, so we can use it at the bottom to mark only things
+      # before this as old. If we don't do this, we run the risk of marking things as old that we
+      # haven't actually processed yet, causing students to get missing or incorrect grades.
+      max_id = Rise360ModuleInteraction.maximum(:id)
+
+      # Fetch assignment overrides.
+      assignment_overrides = CanvasAPI.client.get_assignment_overrides(
+        canvas_course_id,
+        canvas_assignment_id
+      )
+
+      grade = "#{ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, activity_id, assignment_overrides)}%"
 
       span.add_field('grade_module_for_user_job.grade', grade)
       Rails.logger.info("Graded finished Rise360ModuleVersion[user_id = #{user.id}, canvas_course_id = #{canvas_course_id}, " \
@@ -30,8 +41,12 @@ class GradeModuleForUserJob < ApplicationJob
 
       Rails.logger.debug(result)
 
-      Rise360ModuleInteraction.where(new: true, user: user, canvas_course_id: canvas_course_id,
-        canvas_assignment_id: canvas_assignment_id).update_all(new: false)
+      Rise360ModuleInteraction.where(
+        new: true,
+        user: user,
+        canvas_course_id: canvas_course_id,
+        canvas_assignment_id: canvas_assignment_id,
+      ).where('id <= ?', max_id).update_all(new: false)
     end
   end
 
