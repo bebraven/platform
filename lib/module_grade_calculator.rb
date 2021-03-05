@@ -19,13 +19,15 @@ class ModuleGradeCalculator
   # The caller should do any logic to determine whether the computation is
   # necessary. For an example, see:
   #   lib/tasks/grade_modules.rake
-  def self.compute_grade(user_id, canvas_assignment_id, activity_id, assignment_overrides)
+  def self.compute_grade(user_id, canvas_assignment_id, assignment_overrides)
     Honeycomb.start_span(name: 'ModuleGradeCalculator.compute_grade') do |span|
+      # Note: If a content designer publishes a new Rise360 package to the same
+      # assignment, all old interactions are technically invalidated. But we
+      # can't easily detect that here, so make sure outdated interactions are
+      # handled elsewhere in the Rise360Module-related code.
       interactions = Rise360ModuleInteraction.where(
-        "canvas_assignment_id = ? AND user_id = ? AND activity_id LIKE ?",
-        canvas_assignment_id,
-        user_id,
-        "#{activity_id}%",
+        canvas_assignment_id: canvas_assignment_id,
+        user_id: user_id,
       )
 
       # If there are no interactions, exit early with a zero grade.

@@ -73,11 +73,13 @@ namespace :grade do
 
           # All users in the course, even if they haven't interacted with this assignment.
           user_ids.each do |user_id|
-            # If we're before the due date, and there are no interactions, skip
-            # this user. If we're after the due date and there are no interactions,
-            # we run the grader and it gives them a zero for the assignment.
+            # If we're before the due date, and there are no *new* interactions, skip this user.
             due_date = Time.parse(ModuleGradeCalculator.due_date_for_user(user_id, assignment_overrides))
-            interactions = Rise360ModuleInteraction.where(user_id: user_id, canvas_assignment_id: canvas_assignment_id)
+            interactions = Rise360ModuleInteraction.where(
+              user_id: user_id,
+              canvas_assignment_id: canvas_assignment_id,
+              new: true,
+            )
             # Note since we only call exists?, the slow `select *` query implied above never actually runs.
             if interactions.exists? && due_date < Time.utc.now
               puts "Skip user_id = #{user_id}, canvas_assignment_id = #{canvas_assignment_id}; " \
@@ -85,22 +87,18 @@ namespace :grade do
               next
             end
 
-            # ASSUMPTION: Root activity ID will be the same for all canvas_assignment_id,
-            # so just select the first one.
-            root_activity_id = Rise360ModuleInteraction
-              .where(canvas_assignment_id: canvas_assignment_id)
-              .first
-              .root_activity_id
+            # If we're before the due date and there are new interactions, grade.
+            # If we're after the due date, grade regardless of interactions, so
+            # people who skipped this module get auto-zero grades in Canvas.
 
             puts "Computing grade for: user_id = #{user_id}, canvas_course_id = #{course.canvas_course_id}, " \
-                "canvas_assignment_id = #{canvas_assignment_id}, module activity_id = #{root_activity_id}"
+                "canvas_assignment_id = #{canvas_assignment_id}"
 
             user = User.find(user_id)
             grades[user.canvas_user_id] =
               "#{ModuleGradeCalculator.compute_grade(
                 user_id,
                 canvas_assignment_id,
-                root_activity_id,
                 assignment_overrides
               )}%"
           end
