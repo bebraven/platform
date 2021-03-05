@@ -117,7 +117,7 @@ class GradeModules
         if interactions.exists? && due_date > Time.utc.now
           puts "Skip user_id = #{user_id}, canvas_assignment_id = #{canvas_assignment_id}; " \
               "no interactions and assignment isn't due yet"
-          next
+          return
         end
 
         # If we're before the due date and there are new interactions, grade.
