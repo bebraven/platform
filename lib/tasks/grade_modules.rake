@@ -11,14 +11,6 @@ namespace :grade do
   task modules: :environment do
     puts("### Running rake grade:modules - #{Time.now.strftime("%Y-%m-%d %H:%M:%S %Z")}")
 
-    # Select the max id at the very beginning, so we can use it at the bottom to mark only things
-    # before this as old. If we don't do this, we run the risk of marking things as old that we
-    # haven't actually processed yet, causing students to get missing or incorrect grades.
-    # The `new` column is NOT used here as an optimization, since that would break automatic zero
-    # grades for users with no interactions before the due date.
-    # NOTE: the `new` column should only be considered an estimate with +/- 1 day resolution.
-    max_id = Rise360ModuleInteraction.maximum(:id)
-
     # From the list of "running" "programs" in Salesforce, fetch a list of "accelerator"
     # (non-LC) courses.
     # TODO: Remember to swap this hardcoded Highlander stuff out when we switch to prod.
@@ -70,6 +62,14 @@ namespace :grade do
             course.canvas_course_id,
             canvas_assignment_id
           )
+
+          # Select the max id before starting grading, so we can use it at the bottom to mark only things
+          # before this as old. If we don't do this, we run the risk of marking things as old that we
+          # haven't actually processed yet, causing students to get missing or incorrect grades.
+          # The `new` column is NOT used here as an optimization, since that would break automatic zero
+          # grades for users with no interactions before the due date.
+          # NOTE: the `new` column should only be considered an estimate with +/- 1 day resolution.
+          max_id = Rise360ModuleInteraction.maximum(:id)
 
           # All users in the course, even if they haven't interacted with this assignment.
           user_ids.each do |user_id|
