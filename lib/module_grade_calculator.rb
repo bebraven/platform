@@ -132,9 +132,9 @@ class ModuleGradeCalculator
     on_time_progress = interactions.where('created_at <= ?', due_date)
       .order(:created_at)
       .last
-      .progress
+      &.progress
 
-    if progress < 100
+    if on_time_progress.nil? or on_time_progress < 100
       0
     else
       100

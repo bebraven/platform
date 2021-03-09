@@ -6,11 +6,18 @@ RSpec.describe ModuleGradeCalculator do
   describe "computes grade for module" do 
 
     let(:activity_id) { 'someactivityid' }
-    let(:user) { build(:fellow_user) }
+    let(:course) { create(:course) }
+    let(:section) { create(:section_with_canvas_id, course: course) }
+    let(:user) { create(:fellow_user, section: section) }
     let(:canvas_assignment_id) { course_rise360_module_version.canvas_assignment_id }
-    let(:course_rise360_module_version) { build(:course_rise360_module_version) }
+    let(:course_rise360_module_version) { create(:course_rise360_module_version, course: course) }
     let(:rise360_module_version) { course_rise360_module_version.rise360_module_version }
-
+    let(:assignment_overrides) { [ create(:canvas_assignment_override_section,
+      assignment_id: canvas_assignment_id,
+      course_section_id: section.canvas_section_id,
+      # Arbitrary future date.
+      due_at: 3.days.from_now.utc.to_time.iso8601,
+    ) ] }
 
     before(:each) do 
       allow(CourseRise360ModuleVersion)
@@ -66,14 +73,8 @@ RSpec.describe ModuleGradeCalculator do
         allow(ModuleGradeCalculator)
           .to receive(:grade_module_engagement)
           .and_return(interaction.progress)
-        allow(ModuleGradeCalculator)
-          .to receive(:grade_weights)
-          .and_return({
-            module_engagement: 0.5,
-            mastery_quiz: 0.5,
-          })
 
-        grade = ModuleGradeCalculator.compute_grade(user.id, interaction.canvas_assignment_id, activity_id)
+        grade = ModuleGradeCalculator.compute_grade(user.id, interaction.canvas_assignment_id, assignment_overrides)
 
         # Called each grading method
         expect(ModuleGradeCalculator)
@@ -82,11 +83,6 @@ RSpec.describe ModuleGradeCalculator do
         expect(ModuleGradeCalculator)
           .to have_received(:grade_mastery_quiz)
           .once
-
-        # Weighted grades
-        expect(ModuleGradeCalculator)
-          .to have_received(:grade_weights)
-          .at_least(:once)
 
         expect(grade).to eq(100)
       end
@@ -115,7 +111,7 @@ RSpec.describe ModuleGradeCalculator do
         expect(ModuleGradeCalculator)
           .not_to receive(:grade_mastery_quiz)
 
-         grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, activity_id)
+         grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, assignment_overrides)
 
         # Called each grading method
         expect(ModuleGradeCalculator)

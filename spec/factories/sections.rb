@@ -7,5 +7,9 @@ FactoryBot.define do
       name { SectionConstants::TA_SECTION }
       association :course
     end
+
+    factory :section_with_canvas_id do
+      sequence(:canvas_section_id)
+    end
   end
 end
