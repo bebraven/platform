@@ -48,13 +48,19 @@ class GradeModules
     Honeycomb.start_span(name: 'GradeModules.grade_course') do |span|
       # We're doing some less-readable queries here because they're drastically
       # more efficient than using the more-readable model associations would be.
-      sections = Section.select(:id).where(course: course)
-      roles = Role.select(:id).where(resource: sections)
+      # For reference, the query built by ActiveRecord becomes:
+      #
+      #   SELECT "users_roles"."user_id" FROM "users_roles" WHERE "users_roles"."role_id" IN (
+      #     SELECT "roles"."id" FROM "roles" WHERE "roles"."resource_type" = $1 AND "roles"."resource_id" IN (
+      #       SELECT "sections"."id" FROM "sections" WHERE "sections"."course_id" = $2
+      #     )
+      #   ) GROUP BY "users_roles"."user_id"  [["resource_type", "Section"], ["course_id", course.id]]
+      sections = Section.where(course: course)
+      roles = Role.where(resource: sections)
       # We're loading all the User IDs into memory right now, so keep an eye out
       # if this needs to be batched or something.
       # NOTE: Don't copy this UserRole code anywhere else unless you *really* need the performance.
-      # TODO: Can this be .where.group.pluck?
-      user_ids = UserRole.select(:user_id).where(role: roles).group(:user_id).map { |ur| ur.user_id }
+      user_ids = UserRole.where(role: roles).group(:user_id).pluck(:user_id)
 
       canvas_assignment_ids = CourseRise360ModuleVersion
         .where(course: course)
