@@ -143,8 +143,7 @@ RSpec.describe LrsXapiMock do
           expect(GradeModuleForUserJob).to have_received(:perform_later)
             .with(user,
                   lti_launch.request_message.canvas_course_id,
-                  lti_launch.request_message.custom['assignment_id'],
-                  'http://example_activity_id',
+                  lti_launch.request_message.custom['assignment_id']
             ).once 
         end
 
