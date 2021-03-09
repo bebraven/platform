@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_01_154020) do
+ActiveRecord::Schema.define(version: 2021_03_09_151146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -327,8 +327,10 @@ ActiveRecord::Schema.define(version: 2021_03_01_154020) do
     t.boolean "new", default: true, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["new", "user_id", "activity_id", "verb"], name: "index_lesson_interactions_1"
-    t.index ["user_id", "canvas_assignment_id"], name: "index_rise360_module_interactions_on_user_id_and_assignment_id"
+    t.index ["canvas_assignment_id", "user_id", "verb"], name: "index_rise360_module_interactions_on_assignment_user_verb"
+    t.index ["canvas_assignment_id"], name: "index_rise360_module_interactions_on_canvas_assignment_id"
+    t.index ["canvas_course_id", "canvas_assignment_id"], name: "index_rise360_module_interactions_on_course_assignment"
+    t.index ["new", "canvas_course_id", "canvas_assignment_id", "user_id"], name: "index_rise360_module_interactions_on_new_course_assignment_user"
     t.index ["user_id"], name: "index_rise360_module_interactions_on_user_id"
   end
 
