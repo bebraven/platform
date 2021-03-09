@@ -12,11 +12,6 @@
     <%= stylesheet_link_tag 'minimal', media: "all", "data-turbolinks-track" => true %>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,400italic' rel='stylesheet' type='text/css'>
     <%= csrf_meta_tags %>
-    <script>
-        // set this as soon as possible to avoid flash of content in an iframe
-        if(window != window.top)
-          document.documentElement.className += ' in-iframe';
-    </script>
   </head>
   <body class="sso_discovery">
     <div id="content">
