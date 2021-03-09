@@ -1,7 +1,7 @@
 class NetworkController < ApplicationController
 
   def connect
-    authorize NetworkPolicy
+    authorize :network
   end
 
 end
