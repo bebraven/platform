@@ -42,7 +42,7 @@ RSpec.describe ModuleGradeCalculator do
         expect(interactions).to be_empty
 
         grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, activity_id)
-        expect(grade).to be(0.0)
+        expect(grade).to eq(0.0)
       end
     end
 
