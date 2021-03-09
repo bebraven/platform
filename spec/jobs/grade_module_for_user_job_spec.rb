@@ -10,21 +10,23 @@ RSpec.describe GradeModuleForUserJob, type: :job do
     let(:activity_id) { 'https://some/activity/id' }
     let(:raw_grade) { 75 }
     let(:canvas_client) { double(CanvasAPI) }
+    let(:assignment_overrides) { [] }
 
     before(:each) do
       allow(CanvasAPI).to receive(:client).and_return(canvas_client)
       allow(canvas_client).to receive(:update_grade)
+      allow(canvas_client).to receive(:get_assignment_overrides).and_return(assignment_overrides)
       allow(ModuleGradeCalculator).to receive(:compute_grade).and_return(raw_grade)
     end
 
     subject(:run_job) do
-      GradeModuleForUserJob.perform_now(user, canvas_course_id, canvas_assignment_id, activity_id)
+      GradeModuleForUserJob.perform_now(user, canvas_course_id, canvas_assignment_id)
     end
 
     it 'calls ModuleGradeCalculator with the correct params' do
       run_job
       expect(ModuleGradeCalculator).to have_received(:compute_grade)
-        .with(user.id, canvas_assignment_id, activity_id).once
+        .with(user.id, canvas_assignment_id, assignment_overrides).once
     end
 
     it 'calls into CanvasAPI to update the grade' do
