@@ -131,6 +131,9 @@ Rails.application.routes.draw do
   # There is a route similar to the commented out one below that doesn't show up here. See 'lib/lti_rise360_proxy.rb' and 'config/application.rb'
   # match '/rise360_proxy/*endpoint', to: AWS_S3
 
+  # Braven Network endpoints
+  get '/network/connect', to: 'network#connect'
+
   # Honeycomb Instrumentation Routes
   post '/honeycomb_js/send_span', to: 'honeycomb_js#send_span'
 end
