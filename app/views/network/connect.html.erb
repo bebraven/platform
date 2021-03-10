@@ -1,0 +1,34 @@
+<script>/* this needs to be there because some broken script adds a google analytics reference before the first script tag, and the next one in the file needs to have nothing inserted before it! */</script>
+<div id="new-champion-page">
+  <div class="plank plain-lt">
+    <div class="section-container">
+      <section>
+        <div class="col-sm-6">
+          <h1>Braven Network</h1>
+
+          <p class="lead">
+            Welcome to the Braven Network! Search for friends of Braven who work in your desired career field. You will be prompted to reach out to these professionals to request an informational interview.
+          </p>
+
+          <p>
+            Please remember that members of the Braven Network are located all over the country and will not necessarily be able to meet you in person. Most informational interviews will be done over the phone or online.
+          </p>
+
+          <p>
+            <input id="terms-check" <%= @search_attempted ? 'checked' : '' %> type="checkbox" />
+            I agree to our <a href="/champions/terms" target="_BLANK">Terms of Service</a> and will act professionally in my interactions with Braven Volunteers.
+          </p>
+
+          <form>
+            <div>
+              Your interests:
+                <input name="interests_csv" class="multi-complete" type="text" />
+              <input value="Search" type="submit" />
+            </div>
+          </form>
+        </div>
+        <div class="col-sm-12">
+      </section>
+    </div>
+  </div>
+</div>

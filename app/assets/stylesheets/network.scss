@@ -1,0 +1,56 @@
+/*
+ * This is a manifest file that'll be compiled into accounts.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add accounts-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ */
+
+ @import "standalone";
+
+ #new-champion-page {
+  ul {
+    list-style: initial;
+  }
+  input[type="submit"] {
+    font-family: TradeGothic, Oswald, sans-serif;
+    font-weight: 100;
+    background: #DB2B36;
+    padding: 5px;
+    border-radius: 0;
+    margin: 5px;
+    text-transform: uppercase;
+  }
+  input[type="submit"]:hover {
+    background: #000;
+  }
+  input[type="text"] {
+    padding: 3px;
+  }
+}
+
+.header_loggedin {
+  background: #DB2B36;
+  padding-bottom: 8px;
+  padding-top: 8px;
+  text-align: right;
+
+  #logout_container {
+    padding-right: 10em;
+
+    span 
+      a {
+        color: white;
+        font-weight: bold;
+      }
+      a:hover {
+        color: black;
+      }
+  }
+}

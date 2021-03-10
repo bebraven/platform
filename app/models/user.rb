@@ -33,7 +33,7 @@ class User < ApplicationRecord
   validates :email, presence: true
 
   def full_name
-    [first_name, last_name].join(' ')
+    [first_name, last_name].compact.join(' ')
   end
 
   # All sections where this user has any role.
