@@ -76,10 +76,6 @@ Rails.application.configure do
   config.hosts << "platformweb"
   config.hosts << "boosterplatformweb"
 
-  # Used for filtering out the parameters that you don't want shown in the logs,
-  # such as passwords or credit card numbers.
-  #config.filter_parameters += [:password, :state]
-
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
   config.log_level = ENV.fetch('LOG_LEVEL') { :debug }
