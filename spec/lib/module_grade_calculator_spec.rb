@@ -17,7 +17,7 @@ RSpec.describe ModuleGradeCalculator do
     due_at: 3.days.from_now.utc.to_time.iso8601,
   ) ] }
 
-  describe "grade_weights" do
+  describe "#grade_weights" do
     it "sums up to 1" do
       total = 0.0
       ModuleGradeCalculator.grade_weights.each do |key, weight|
@@ -27,7 +27,7 @@ RSpec.describe ModuleGradeCalculator do
     end
   end  # grade_weights 
 
-  describe "compute_grade" do
+  describe "#compute_grade" do
     context "empty Rise360ModuleInteraction table" do
       it "returns 0" do
         interactions = Rise360ModuleInteraction.where(new: true)
@@ -111,7 +111,7 @@ RSpec.describe ModuleGradeCalculator do
     end
   end  # compute_grade
 
-  describe "grade_module_engagement" do
+  describe "#grade_module_engagement" do
     context "module engagement grade" do
       it "returns 0 for no interactions" do
         interactions = Rise360ModuleInteraction
@@ -166,7 +166,7 @@ RSpec.describe ModuleGradeCalculator do
     end
   end  # grade_module_engagement
 
-  describe "grade_mastery_quiz" do
+  describe "#grade_mastery_quiz" do
     context "mastery quiz" do 
       it "returns percent of correct answers" do
         # Use denominator that generates remainder to test division
@@ -241,7 +241,7 @@ RSpec.describe ModuleGradeCalculator do
     end
   end  # grade_mastery_quiz
 
-  describe "due_date_for_user" do
+  describe "#due_date_for_user" do
     context "with empty overrides" do
       # TODO
       xit "returns nil" do
@@ -287,7 +287,7 @@ RSpec.describe ModuleGradeCalculator do
     end
   end  # due_date_for_user
 
-  describe "grade_completed_on_time" do
+  describe "#grade_completed_on_time" do
     let(:interactions) { Rise360ModuleInteraction.all }
     let(:due_date_obj) { 1.day.from_now.utc }
     let(:due_date) { due_date_obj.to_time.iso8601 }
