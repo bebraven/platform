@@ -240,4 +240,90 @@ RSpec.describe ModuleGradeCalculator do
       end
     end
   end  # grade_mastery_quiz
+
+  describe "due_date_for_user" do
+    context "with empty overrides" do
+      # TODO
+      xit "returns nil" do
+      end
+    end
+
+    context "with no matching override" do
+      # TODO
+      xit "returns nil" do
+      end
+    end
+
+    context "with user-match override" do
+      context "with user not in any sections" do
+        # TODO
+        xit "returns due date" do
+        end
+      end
+
+      context "with user in a non-matching section" do
+        # TODO
+        xit "returns due date" do
+        end
+      end
+    end
+
+    context "with section-match override" do
+      # TODO
+      xit "returns due date" do
+      end
+    end
+
+    context "with user-match and section-match overrides, user-match last" do
+      # TODO
+      xit "returns user-match due date" do
+      end
+    end
+
+    context "with user-match and section-match overrides, section-match last" do
+      # TODO
+      xit "returns section-match due date" do
+      end
+    end
+  end  # due_date_for_user
+
+  describe "grade_completed_on_time" do
+    let(:interactions) { Rise360ModuleInteraction.all }
+    let(:due_date_obj) { 1.day.from_now.utc }
+    let(:due_date) { due_date_obj.to_time.iso8601 }
+
+    shared_examples 'incomplete module' do
+      xscenario 'returns 0' do
+        on_time_grade = ModuleGradeCalculator.grade_completed_on_time(interactions, due_date)
+        expect(on_time_grade).to eq(0)
+      end
+    end
+
+    shared_examples 'completed module' do
+      xscenario 'returns 100' do
+        on_time_grade = ModuleGradeCalculator.grade_completed_on_time(interactions, due_date)
+        expect(on_time_grade).to eq(100)
+      end
+    end
+
+    context "with no interactions" do
+      # TODO: set up context
+      it_behaves_like "incomplete module"
+    end
+
+    context "with only interactions after due date" do
+      # TODO: set up context
+      it_behaves_like "incomplete module"
+    end
+
+    context "with some interactions before, completed interaction after due date" do
+      # TODO: set up context
+      it_behaves_like "incomplete module"
+    end
+
+    context "with completed interaction before due date" do
+      # TODO: set up context
+      it_behaves_like "completed module"
+    end
+  end  # grade_completed_on_time
 end
