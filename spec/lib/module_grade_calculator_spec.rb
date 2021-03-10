@@ -19,20 +19,6 @@ RSpec.describe ModuleGradeCalculator do
       due_at: 3.days.from_now.utc.to_time.iso8601,
     ) ] }
 
-    before(:each) do 
-      allow(CourseRise360ModuleVersion)
-        .to receive(:find_by!)
-        .and_return(course_rise360_module_version)
-
-      allow(Rise360ModuleVersion)
-        .to receive(:find)
-        .and_return(rise360_module_version)
-
-      allow_any_instance_of(Rise360ModuleVersion)
-        .to receive(:quiz_questions)
-        .and_return(2)
-    end
-
     context "grade weighting" do 
       it "sums up to 1" do
         total = 0.0
@@ -106,6 +92,9 @@ RSpec.describe ModuleGradeCalculator do
         allow(ModuleGradeCalculator)
           .to receive(:grade_module_engagement)
           .and_return(interaction.progress)
+        allow(Rise360ModuleVersion)
+          .to receive(:find)
+          .and_return(rise360_module_version)
 
         # Test that the mastery part of grading is skipped
         expect(ModuleGradeCalculator)
