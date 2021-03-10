@@ -3,32 +3,31 @@ require 'module_grade_calculator'
 
 RSpec.describe ModuleGradeCalculator do
 
-  describe "computes grade for module" do 
+  let(:activity_id) { 'someactivityid' }
+  let(:course) { create(:course) }
+  let(:section) { create(:section_with_canvas_id, course: course) }
+  let(:user) { create(:fellow_user, section: section) }
+  let(:canvas_assignment_id) { course_rise360_module_version.canvas_assignment_id }
+  let(:course_rise360_module_version) { create(:course_rise360_module_version, course: course) }
+  let(:rise360_module_version) { course_rise360_module_version.rise360_module_version }
+  let(:assignment_overrides) { [ create(:canvas_assignment_override_section,
+    assignment_id: canvas_assignment_id,
+    course_section_id: section.canvas_section_id,
+    # Arbitrary future date.
+    due_at: 3.days.from_now.utc.to_time.iso8601,
+  ) ] }
 
-    let(:activity_id) { 'someactivityid' }
-    let(:course) { create(:course) }
-    let(:section) { create(:section_with_canvas_id, course: course) }
-    let(:user) { create(:fellow_user, section: section) }
-    let(:canvas_assignment_id) { course_rise360_module_version.canvas_assignment_id }
-    let(:course_rise360_module_version) { create(:course_rise360_module_version, course: course) }
-    let(:rise360_module_version) { course_rise360_module_version.rise360_module_version }
-    let(:assignment_overrides) { [ create(:canvas_assignment_override_section,
-      assignment_id: canvas_assignment_id,
-      course_section_id: section.canvas_section_id,
-      # Arbitrary future date.
-      due_at: 3.days.from_now.utc.to_time.iso8601,
-    ) ] }
-
-    context "grade weighting" do 
-      it "sums up to 1" do
-        total = 0.0
-        ModuleGradeCalculator.grade_weights.each do |key, weight|
-          total += weight
-        end
-        expect(total).to eq(1.0)
+  describe "grade_weights" do
+    it "sums up to 1" do
+      total = 0.0
+      ModuleGradeCalculator.grade_weights.each do |key, weight|
+        total += weight
       end
+      expect(total).to eq(1.0)
     end
+  end  # grade_weights 
 
+  describe "compute_grade" do
     context "empty Rise360ModuleInteraction table" do
       it "returns 0" do
         interactions = Rise360ModuleInteraction.where(new: true)
@@ -110,7 +109,9 @@ RSpec.describe ModuleGradeCalculator do
         expect(grade).to eq(100)
       end
     end
+  end  # compute_grade
 
+  describe "grade_module_engagement" do
     context "module engagement grade" do
       it "returns 0 for no interactions" do
         interactions = Rise360ModuleInteraction
@@ -163,7 +164,9 @@ RSpec.describe ModuleGradeCalculator do
         expect(grade).to eq(maximum)
       end
     end
+  end  # grade_module_engagement
 
+  describe "grade_mastery_quiz" do
     context "mastery quiz" do 
       it "returns percent of correct answers" do
         # Use denominator that generates remainder to test division
@@ -236,5 +239,5 @@ RSpec.describe ModuleGradeCalculator do
         expect(grade).to eq(0)
       end
     end
-  end
+  end  # grade_mastery_quiz
 end
