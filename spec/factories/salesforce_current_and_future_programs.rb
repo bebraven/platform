@@ -6,12 +6,12 @@ FactoryBot.define do
   factory :salesforce_current_and_future_programs, class: Hash do
     skip_create # This isn't stored in the DB.
     transient do
-      course_ids { [] }
+      canvas_course_ids { [] }
     end
     done { true }
     records {
-      course_ids.map do |course_id|
-        build(:salesforce_current_and_future_program_record, course_id: course_id)
+      canvas_course_ids.map do |canvas_course_id|
+        build(:salesforce_current_and_future_program_record, canvas_course_id: canvas_course_id)
       end
     }
     totalSize { records.count }
@@ -22,11 +22,11 @@ FactoryBot.define do
     skip_create # This isn't stored in the DB.
     transient do
       sequence(:program_id) { |i| "a2Y17#{i}00000WLxqEAG" }
-      sequence(:course_id)
+      sequence(:canvas_course_id)
     end
     sequence(:Id) { program_id }
     sequence(:Name) { |i| "TEST: Program#{i}" }
-    sequence(:Highlander_Accelerator_Course_ID__c) { course_id }
+    sequence(:Highlander_Accelerator_Course_ID__c) { canvas_course_id }
     # Leaving out 'attributes' key b/c we don't currently use it.
     initialize_with { attributes.stringify_keys }
   end

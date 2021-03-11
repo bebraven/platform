@@ -6,7 +6,7 @@ RSpec.describe GradeModules do
 
   let(:grade_modules) { GradeModules.new }
   let(:sf_client) { double(SalesforceAPI) }
-  # Override in context below.
+  # Default: no programs. Override in context below where appropriate.
   let(:sf_programs) { create(:salesforce_current_and_future_programs) }
 
   describe "#run" do
@@ -29,16 +29,16 @@ RSpec.describe GradeModules do
         subject
 
         expect(sf_client).to have_received(:get_current_and_future_accelerator_programs)
+        # We should exit before Course.where gets called.
         expect(Course).not_to have_received(:where)
       end
     end
 
     context "with some running programs" do
-      # TODO: set up SF mock response
+      let(:course) { create(:course) }
+      let(:sf_programs) { create(:salesforce_current_and_future_programs, canvas_course_ids: [course.canvas_course_id]) }
 
       context "with no interactions that match the courses" do
-        # TODO
-
         before :each do
           allow(grade_modules).to receive(:grade_course).and_return(nil)
 
@@ -46,14 +46,41 @@ RSpec.describe GradeModules do
             .to receive(:get_current_and_future_accelerator_programs)
             .and_return(sf_programs)
           allow(SalesforceAPI).to receive(:client).and_return(sf_client)
+
+          # Create some non-matching interactions.
+          create(:progressed_module_interaction, canvas_course_id: course.canvas_course_id + 1)
+          create(:progressed_module_interaction, canvas_course_id: course.canvas_course_id + 1)
         end
 
-        xit "exits early" do
+        it "exits early" do
+          subject
+
+          expect(sf_client).to have_received(:get_current_and_future_accelerator_programs)
+          # We should exit before grade_course gets called.
+          expect(grade_modules).not_to have_received(:grade_course)
         end
       end
 
       context "with interactions that match the courses" do
-        # TODO
+        # Two running programs, two courses, arbitrary Canvas IDs.
+        let(:course1) { create(:course, canvas_course_id: 55) }
+        let(:course2) { create(:course, canvas_course_id: 56) }
+        let(:course3) { create(:course, canvas_course_id: 57) }
+        let(:sf_programs) { create(:salesforce_current_and_future_programs,
+          canvas_course_ids: [
+            course1.canvas_course_id,
+            course2.canvas_course_id,
+            course3.canvas_course_id,
+          ]
+        ) }
+        # Be sure to adjust this if you change `interactions` below.
+        let(:courses_with_interactions) { [course1, course2] }
+        # Create some matching interactions for the courses.
+        let!(:interactions) { [
+          create(:progressed_module_interaction, canvas_course_id: course1.canvas_course_id),
+          create(:progressed_module_interaction, canvas_course_id: course1.canvas_course_id),
+          create(:progressed_module_interaction, canvas_course_id: course2.canvas_course_id),
+        ] }
 
         before :each do
           allow(grade_modules).to receive(:grade_course).and_return(nil)
@@ -64,10 +91,21 @@ RSpec.describe GradeModules do
           allow(SalesforceAPI).to receive(:client).and_return(sf_client)
         end
 
-        xit "calls grade_course once for each course with interactions" do
+        it "calls grade_course once for each course with interactions" do
+          subject
+
+          expect(grade_modules)
+            .to have_received(:grade_course)
+            .exactly(courses_with_interactions.count)
+            .times
         end
 
-        xit "doesn't call grade_course for courses that have no interactions" do
+        it "doesn't call grade_course for courses that have no interactions" do
+          subject
+
+          expect(grade_modules)
+            .not_to have_received(:grade_course)
+            .with(course3)
         end
       end
     end
