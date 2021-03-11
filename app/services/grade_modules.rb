@@ -81,7 +81,12 @@ class GradeModules
 
   def grade_assignment(canvas_assignment_id, user_ids)
     Honeycomb.start_span(name: 'GradeModules.grade_assignment') do |span|
+      # Select course again, because it's not that expensive and saves us passing it in.
+      course = CourseRise360ModuleVersion.find_by(canvas_assignment_id: canvas_assignment_id).course
+
       span.add_field('canvas_assignment_id', canvas_assignment_id)
+      span.add_field('course.id', course.id)
+      span.add_field('course.canvas_course_id', course.canvas_course_id)
 
       # Initialize map of grades[canvas_user_id] = 'X%'.
       grades = Hash.new
@@ -113,14 +118,14 @@ class GradeModules
         # If we're before the due date, and there are no *new* interactions, skip this user.
         # This might crash if there are no due dates at all, but that shouldn't ever
         # happen in a real, running course.
-        due_date = Time.parse(ModuleGradeCalculator.due_date_for_user(user_id, assignment_overrides))
+        due_date = ModuleGradeCalculator.due_date_for_user(user_id, assignment_overrides)
         interactions = Rise360ModuleInteraction.where(
           user_id: user_id,
           canvas_assignment_id: canvas_assignment_id,
           new: true,
         )
         # Note since we only call exists?, the slow `select *` query implied above never actually runs.
-        if interactions.exists? && due_date > Time.utc.now
+        if interactions.exists? && !due_date.nil? && Time.parse(due_date) > Time.utc.now
           puts "Skip user_id = #{user_id}, canvas_assignment_id = #{canvas_assignment_id}; " \
               "no interactions and assignment isn't due yet"
           return
