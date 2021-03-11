@@ -116,29 +116,41 @@ RSpec.describe GradeModules do
 
     let(:course) { create(:course) }
 
-    before :each do
-      allow(grade_modules).to receive(:grade_course).and_return(nil)
-    end
-
     context "with no sections in course" do
+      before :each do
+        allow(grade_modules).to receive(:grade_course).and_return(nil)
+      end
+
       # TODO
       xit "gets empty user_ids" do
       end
     end
 
     context "with no enrolled users in course" do
+      before :each do
+        allow(grade_modules).to receive(:grade_course).and_return(nil)
+      end
+
       # TODO
       xit "gets empty user_ids" do
       end
     end
 
     context "with no module versions in course" do
+      before :each do
+        allow(grade_modules).to receive(:grade_course).and_return(nil)
+      end
+
       # TODO
       xit "gets empty canvas_assignment_ids" do
       end
     end
 
     context "with proper setup" do
+      before :each do
+        allow(grade_modules).to receive(:grade_course).and_return(nil)
+      end
+
       xit "calls grade_assignment once for each assignment with correct user_ids" do
       end
     end
