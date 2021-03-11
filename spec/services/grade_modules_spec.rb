@@ -117,38 +117,66 @@ RSpec.describe GradeModules do
     let(:course) { create(:course) }
 
     context "with no sections in course" do
+      # Create one assignment, so we can check grade_assignment calls.
+      let!(:course_rise360_module_version) { create(:course_rise360_module_version,
+        course: course
+      ) }
+      let(:canvas_assignment_id) {
+        course_rise360_module_version.canvas_assignment_id
+      }
+
       before :each do
-        allow(grade_modules).to receive(:grade_course).and_return(nil)
+        allow(grade_modules).to receive(:grade_assignment).and_return(nil)
       end
 
-      # TODO
-      xit "gets empty user_ids" do
+      it "gets empty user_ids" do
+        subject
+
+        expect(grade_modules)
+          .to have_received(:grade_assignment)
+          .with(canvas_assignment_id, [])
       end
     end
 
     context "with no enrolled users in course" do
+      # Create one assignment, so we can check grade_assignment calls.
+      let!(:course_rise360_module_version) { create(:course_rise360_module_version,
+        course: course
+      ) }
+      let(:canvas_assignment_id) {
+        course_rise360_module_version.canvas_assignment_id
+      }
+      let!(:section) { create(:section, course: course) }
+
       before :each do
-        allow(grade_modules).to receive(:grade_course).and_return(nil)
+        allow(grade_modules).to receive(:grade_assignment).and_return(nil)
       end
 
-      # TODO
-      xit "gets empty user_ids" do
+      it "gets empty user_ids" do
+        subject
+
+        expect(grade_modules)
+          .to have_received(:grade_assignment)
+          .with(canvas_assignment_id, [])
       end
     end
 
     context "with no module versions in course" do
       before :each do
-        allow(grade_modules).to receive(:grade_course).and_return(nil)
+        allow(grade_modules).to receive(:grade_assignment).and_return(nil)
       end
 
-      # TODO
-      xit "gets empty canvas_assignment_ids" do
+      it "gets empty canvas_assignment_ids" do
+        subject
+
+        expect(grade_modules)
+          .not_to have_received(:grade_assignment)
       end
     end
 
     context "with proper setup" do
       before :each do
-        allow(grade_modules).to receive(:grade_course).and_return(nil)
+        allow(grade_modules).to receive(:grade_assignment).and_return(nil)
       end
 
       xit "calls grade_assignment once for each assignment with correct user_ids" do
