@@ -592,41 +592,106 @@ RSpec.describe ModuleGradeCalculator do
   end  # due_date_for_user
 
   describe "#grade_completed_on_time" do
+    subject { ModuleGradeCalculator.grade_completed_on_time(interactions, due_date) }
+
     let(:interactions) { Rise360ModuleInteraction.all }
     let(:due_date_obj) { 1.day.from_now.utc }
     let(:due_date) { due_date_obj.to_time.iso8601 }
 
     shared_examples 'incomplete module' do
-      xscenario 'returns 0' do
-        on_time_grade = ModuleGradeCalculator.grade_completed_on_time(interactions, due_date)
-        expect(on_time_grade).to eq(0)
-      end
+      it { is_expected.to eq(0) }
     end
 
     shared_examples 'completed module' do
-      xscenario 'returns 100' do
-        on_time_grade = ModuleGradeCalculator.grade_completed_on_time(interactions, due_date)
-        expect(on_time_grade).to eq(100)
-      end
+      it { is_expected.to eq(100) }
     end
 
     context "with no interactions" do
-      # TODO: set up context
       it_behaves_like "incomplete module"
     end
 
     context "with only interactions after due date" do
-      # TODO: set up context
+      before :each do
+        # All interactions after the due date.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 50,
+          new: true,
+          created_at: due_date_obj + 3.days
+        )
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 100,
+          new: true,
+          created_at: due_date_obj + 4.days
+        )
+      end
+
       it_behaves_like "incomplete module"
     end
 
     context "with some interactions before, completed interaction after due date" do
-      # TODO: set up context
+      before :each do
+        # Completed interaction after the due date.
+        # All other interactions before the due date.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 50,
+          new: true,
+          created_at: due_date_obj - 3.days,
+        )
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 100,
+          new: true,
+          created_at: due_date_obj + 3.days,
+        )
+      end
+
       it_behaves_like "incomplete module"
     end
 
     context "with completed interaction before due date" do
-      # TODO: set up context
+      before :each do
+        # All interactions before the due date.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 50,
+          new: true,
+          created_at: due_date_obj - 4.days
+        )
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 100,
+          new: true,
+          created_at: due_date_obj - 3.days
+        )
+      end
+
       it_behaves_like "completed module"
     end
   end  # grade_completed_on_time

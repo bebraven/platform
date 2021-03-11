@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'time'
+
 class ModuleGradeCalculator
   ModuleGradeCalculatorError = Class.new(StandardError)
 
@@ -129,7 +131,7 @@ class ModuleGradeCalculator
   # Returns 0 *or* 100, representing whether the user reached 100%
   # progression before the due date.
   def self.grade_completed_on_time(interactions, due_date)
-    on_time_progress = interactions.where('created_at <= ?', due_date)
+    on_time_progress = interactions.where('created_at <= ?', Time.parse(due_date))
       .order(:created_at)
       .last
       &.progress
