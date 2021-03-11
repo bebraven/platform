@@ -8,6 +8,7 @@ RSpec.describe GradeModules do
   let(:sf_client) { double(SalesforceAPI) }
   # Default: no programs. Override in context below where appropriate.
   let(:sf_programs) { create(:salesforce_current_and_future_programs) }
+  let(:canvas_client) { double(CanvasAPI) }
 
   describe "#run" do
     subject { grade_modules.run }
@@ -223,8 +224,17 @@ RSpec.describe GradeModules do
     let(:user_ids) { [ user.id ] }
 
     context "with no matching interactions for assignment" do
-      # TODO
-      xit "exits early" do
+      before :each do
+        allow(canvas_client).to receive(:get_assignment_overrides)
+
+        allow(CanvasAPI).to receive(:client).and_return(canvas_client)
+      end
+
+      it "exits early" do
+        subject
+
+        # Should exit before get_assignment_overrides call.
+        expect(canvas_client).not_to have_received(:get_assignment_overrides)
       end
     end
 
