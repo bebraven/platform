@@ -13,77 +13,49 @@
   <%= hidden_field_tag 'showform', params[:showform] %>
   <%= render :partial => 'shared/form_errors', locals: { object: @champion } %>
 
-  <%= f.text_field :first_name, :class => 'form-control', required: 'required', placeholder: 'First Name'  %>
-  <br />
-  <%= f.text_field :last_name, :class => 'form-control', required: 'required', placeholder: 'Last Name'  %>
-  <br />
-  <%= f.text_field :email, :class => 'form-control', required: 'required', placeholder: 'Email'  %>
-  <br />
-  <%= f.text_field :phone, :class => 'form-control', placeholder: 'Phone'  %>
-  <br />
-  <%= f.text_field :company, :class => 'form-control', required: 'required', placeholder: 'Company'  %>
-  <br />
-  <%= f.text_field :job_title, :class => 'form-control', required: 'required', placeholder: 'Job Title'  %>
-  <br />
-  <%= f.text_field :linkedin_url, :class => 'form-control', placeholder: 'LinkedIn URL', required: 'required'  %>
-  <br />
+  <%= f.text_field :first_name, :class => 'form-control', required: 'required', placeholder: 'First Name' %><br />
+  <%= f.text_field :last_name, :class => 'form-control', required: 'required', placeholder: 'Last Name' %><br />
+  <%= f.text_field :email, :class => 'form-control', required: 'required', placeholder: 'Email' %><br />
+  <%= f.text_field :phone, :class => 'form-control', placeholder: 'Phone'  %><br />
+  <%= f.text_field :company, :class => 'form-control', required: 'required', placeholder: 'Company' %><br />
+  <%= f.text_field :job_title, :class => 'form-control', required: 'required', placeholder: 'Job Title' %><br />
+  <%= f.text_field :linkedin_url, :class => 'form-control', placeholder: 'LinkedIn URL', required: 'required' %><br />
   <label>
-    <strong>Were you a Braven Fellow in the past?</strong>
-    <br />
-      <label><%= f.radio_button :braven_fellow, :true, required: 'required' %> Yes</label>
-    <br />
-      <label><%= f.radio_button :braven_fellow, :false, required: 'required' %> No</label>
+    <strong>Were you a Braven Fellow in the past?</strong><br />
+    <label><%= f.radio_button :braven_fellow, :true, required: 'required' %> Yes</label><br />
+    label><%= f.radio_button :braven_fellow, :false, required: 'required' %> No</label>
   </label>
   <br />
   <br />
   <label>
-    <strong>Were/are you a Braven Leadership Coach?</strong>
-
-    <br />
-      <label><%= f.radio_button :braven_lc, :true, required: 'required' %> Yes</label>
-    <br />
-      <label><%= f.radio_button :braven_lc, :false, required: 'required' %> No</label>
+    <strong>Were/are you a Braven Leadership Coach?</strong><br />
+    <label><%= f.radio_button :braven_lc, :true, required: 'required' %> Yes</label><br />
+    <label><%= f.radio_button :braven_lc, :false, required: 'required' %> No</label>
   </label>
-
   <br />
   <br />
-  <noscript>
-  <strong>In which industries do you work or have you worked in the past? (Check all that apply. If yours is not listed, please select a similar field and/or select ‘other.’)</strong>
-  </noscript>
-  <strong class="script-only">In which industries do you work or have you worked in the past? Start typing to select an item, then add more. You may also enter your own.</strong>
-  <br />
-
-  <input type="text" class="multi-complete script-only" id="industries" name="industries_csv" value="<%= params[:industries_csv] ? params[:industries_csv] : (@champion.industries.nil? ? '' : @champion.industries.join(', ')) %>" />
-
-  <div class="long-list-of-checkboxes">
-  <% @industries.sort.map(&:strip).each do |industry| %>
-    <label><input type="checkbox" value="<%= industry %>" name="champion[industries][]"
-      <%= (params[:champion] && params[:champion][:industries] && params[:champion][:industries].include?(industry)) ? "checked" : "" %>
-    /> <%= industry %></label><br>
-  <% end %>
-  </div>
+  <strong>
+    In which industries do you work or have you worked in the past? Start typing to select an item, then add more. You may also enter your own.
+  </strong><br />
+  <input type="text" class="multi-complete script-only" id="industries" name="industries_csv" value="<%= @champion.industries_as_string %>" />
 
   <label class="other">Other:
     <input type="text" class="form-field" name="champion[industries][]" />
   </label>
 
+  <br \>
+
+  <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
+    <option value="AL">Alabama</option>
+    <option value="WY">Wyoming</option>
+  </select>
+
+
+
   <br /><br />
-
-  <noscript>
-  <strong>What was your undergraduate and/or graduate fields of study? (Check all that apply. If yours is not listed, please select a similar field and/or select ‘other.’)</strong>
-  </noscript>
-  <strong class="script-only">What was your undergraduate and/or graduate fields of study? Start typing to select an item, then add more. You may also enter your own.</strong>
+  <strong >What was your undergraduate and/or graduate fields of study? Start typing to select an item, then add more. You may also enter your own.</strong>
   <br />
-
-  <input type="text" class="multi-complete script-only" id="studies" name="studies_csv" value="<%= params[:studies_csv] ? params[:studies_csv] : (@champion.studies.nil? ? '' : @champion.studies.join(', ')) %>" />
-  <div class="long-list-of-checkboxes">
-  <% @fields.sort.map(&:strip).each do |field| %>
-    <label><input type="checkbox" value="<%= field %>" name="champion[studies][]"
-      <%= (params[:champion] && params[:champion][:studies] && params[:champion][:studies].include?(field)) ? "checked" : "" %>
-    /> <%= field %></label><br>
-  <% end %>
-  </div>
-
+  <input type="text" class="multi-complete script-only" id="studies" name="studies_csv" value="<%= @champion.studies_as_string %>" />
   <label class="other">Other:
     <input type="text" class="form-field" name="champion[studies][]" />
   </label>
@@ -91,25 +63,21 @@
 
   <br /><br />
   <strong>All volunteer opportunities are currently virtual. However, Braven knows the power of local connections. If you would like to be informed of volunteer opportunities for a particular region, please indicate which one below. If you have no preference, select National.</strong>
-    <div class="form-group">
-      <%  regions = ["Newark, NJ", "New York City, NY", "San Francisco Bay Area, San Jose", "Chicago", "National"]
-          regions.each_with_index do |region, idx| %>
-          <div>
-            <label>
-              <%= f.radio_button :region, region %>
-              <span><%= region %></span>
-            </label>
-          </div>
-      <%  end %>
-    </div>
+  <div class="form-group">
+    <%  regions = ["Newark, NJ", "New York City, NY", "San Francisco Bay Area, San Jose", "Chicago", "National"]
+        regions.each_with_index do |region, idx| %>
+        <div>
+          <label>
+            <%= f.radio_button :region, region %>
+            <span><%= region %></span>
+          </label>
+        </div>
+    <%  end %>
+  </div>
 
-
-  <strong>Are you willing to be contacted by Braven Fellows who are interested in learning more about your career? </strong>
-  <br />
-    <label><%= f.radio_button :willing_to_be_contacted, :true, required: 'required' %> Yes</label>
-  <br />
-    <label><%= f.radio_button :willing_to_be_contacted, :false, required: 'required' %> No</label>
-  <br /><br />
+  <strong>Are you willing to be contacted by Braven Fellows who are interested in learning more about your career? </strong><br />
+  <label><%= f.radio_button :willing_to_be_contacted, :true, required: 'required' %> Yes</label><br />
+  <label><%= f.radio_button :willing_to_be_contacted, :false, required: 'required' %> No</label><br /><br />
 
   <%= f.submit 'Register', :class => 'button-primary' %>
 <% end %>
@@ -194,4 +162,11 @@ $(document).ready(function($) {
 	});
 
 });
+</script>
+
+
+<script>
+  $(document).ready(function() {
+    $('.js-example-basic-multiple').select2();
+  });
 </script>
