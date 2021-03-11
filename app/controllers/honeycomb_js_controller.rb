@@ -148,6 +148,9 @@ class HoneycombJsController < ApplicationController
       ensure
         Rails.logger.debug("  Sending JS span '#{@name}' to Honeycomb: trace.trace_id=#{@trace_id}")
         if (event.writekey)
+          # We have to explicitly run the logic in the Honeycomb.config.presend_hook here
+          # b/c apparently using the lower layer "libhoney" object doesn't run the hook.
+          FilterHoneycombData.run(event.data)
           event.send
         else
           Rails.logger.debug("  Skipped sending. Honeycomb isn't configured.")
