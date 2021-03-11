@@ -1,0 +1,15 @@
+  <% if @message != nil || ((defined? object) && object.errors.any?) %>
+    <div id="error-explanation">
+      <h2>Please note:</h2>
+      <ul>
+        <% if @message != nil %>
+          <li><%= @message.html_safe %></li>
+        <% end %>
+        <% if (defined? object) && object.errors.any? %>
+            <% object.errors.full_messages.each do |msg| %>
+              <li><%= msg.html_safe %></li>
+            <% end %>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>

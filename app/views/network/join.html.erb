@@ -1,0 +1,197 @@
+<div id="new-champion-page">
+  <div class="plank plain-lt">
+    <div class="section-container">
+      <section>
+        <div class="col-sm-6">
+          <h1>Join the Braven Network</h1>
+
+          <p class="lead">Please fill out the form below and click "Register". Thank you for your support!</p>
+
+<div>
+<%= form_for :champion, :url => champions_path do |f| %>
+  <%= hidden_field_tag 'referrer', @referrer %>
+  <%= hidden_field_tag 'showform', params[:showform] %>
+  <%= render :partial => 'shared/form_errors', locals: { object: @champion } %>
+
+  <%= f.text_field :first_name, :class => 'form-control', required: 'required', placeholder: 'First Name'  %>
+  <br />
+  <%= f.text_field :last_name, :class => 'form-control', required: 'required', placeholder: 'Last Name'  %>
+  <br />
+  <%= f.text_field :email, :class => 'form-control', required: 'required', placeholder: 'Email'  %>
+  <br />
+  <%= f.text_field :phone, :class => 'form-control', placeholder: 'Phone'  %>
+  <br />
+  <%= f.text_field :company, :class => 'form-control', required: 'required', placeholder: 'Company'  %>
+  <br />
+  <%= f.text_field :job_title, :class => 'form-control', required: 'required', placeholder: 'Job Title'  %>
+  <br />
+  <%= f.text_field :linkedin_url, :class => 'form-control', placeholder: 'LinkedIn URL', required: 'required'  %>
+  <br />
+  <label>
+    <strong>Were you a Braven Fellow in the past?</strong>
+    <br />
+      <label><%= f.radio_button :braven_fellow, :true, required: 'required' %> Yes</label>
+    <br />
+      <label><%= f.radio_button :braven_fellow, :false, required: 'required' %> No</label>
+  </label>
+  <br />
+  <br />
+  <label>
+    <strong>Were/are you a Braven Leadership Coach?</strong>
+
+    <br />
+      <label><%= f.radio_button :braven_lc, :true, required: 'required' %> Yes</label>
+    <br />
+      <label><%= f.radio_button :braven_lc, :false, required: 'required' %> No</label>
+  </label>
+
+  <br />
+  <br />
+  <noscript>
+  <strong>In which industries do you work or have you worked in the past? (Check all that apply. If yours is not listed, please select a similar field and/or select ‘other.’)</strong>
+  </noscript>
+  <strong class="script-only">In which industries do you work or have you worked in the past? Start typing to select an item, then add more. You may also enter your own.</strong>
+  <br />
+
+  <input type="text" class="multi-complete script-only" id="industries" name="industries_csv" value="<%= params[:industries_csv] ? params[:industries_csv] : (@champion.industries.nil? ? '' : @champion.industries.join(', ')) %>" />
+
+  <div class="long-list-of-checkboxes">
+  <% @industries.sort.map(&:strip).each do |industry| %>
+    <label><input type="checkbox" value="<%= industry %>" name="champion[industries][]"
+      <%= (params[:champion] && params[:champion][:industries] && params[:champion][:industries].include?(industry)) ? "checked" : "" %>
+    /> <%= industry %></label><br>
+  <% end %>
+  </div>
+
+  <label class="other">Other:
+    <input type="text" class="form-field" name="champion[industries][]" />
+  </label>
+
+  <br /><br />
+
+  <noscript>
+  <strong>What was your undergraduate and/or graduate fields of study? (Check all that apply. If yours is not listed, please select a similar field and/or select ‘other.’)</strong>
+  </noscript>
+  <strong class="script-only">What was your undergraduate and/or graduate fields of study? Start typing to select an item, then add more. You may also enter your own.</strong>
+  <br />
+
+  <input type="text" class="multi-complete script-only" id="studies" name="studies_csv" value="<%= params[:studies_csv] ? params[:studies_csv] : (@champion.studies.nil? ? '' : @champion.studies.join(', ')) %>" />
+  <div class="long-list-of-checkboxes">
+  <% @fields.sort.map(&:strip).each do |field| %>
+    <label><input type="checkbox" value="<%= field %>" name="champion[studies][]"
+      <%= (params[:champion] && params[:champion][:studies] && params[:champion][:studies].include?(field)) ? "checked" : "" %>
+    /> <%= field %></label><br>
+  <% end %>
+  </div>
+
+  <label class="other">Other:
+    <input type="text" class="form-field" name="champion[studies][]" />
+  </label>
+
+
+  <br /><br />
+  <strong>All volunteer opportunities are currently virtual. However, Braven knows the power of local connections. If you would like to be informed of volunteer opportunities for a particular region, please indicate which one below. If you have no preference, select National.</strong>
+    <div class="form-group">
+      <%  regions = ["Newark, NJ", "New York City, NY", "San Francisco Bay Area, San Jose", "Chicago", "National"]
+          regions.each_with_index do |region, idx| %>
+          <div>
+            <label>
+              <%= f.radio_button :region, region %>
+              <span><%= region %></span>
+            </label>
+          </div>
+      <%  end %>
+    </div>
+
+
+  <strong>Are you willing to be contacted by Braven Fellows who are interested in learning more about your career? </strong>
+  <br />
+    <label><%= f.radio_button :willing_to_be_contacted, :true, required: 'required' %> Yes</label>
+  <br />
+    <label><%= f.radio_button :willing_to_be_contacted, :false, required: 'required' %> No</label>
+  <br /><br />
+
+  <%= f.submit 'Register', :class => 'button-primary' %>
+<% end %>
+</div>
+
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+.js-present .multi-complete {
+	width: 100%;
+}
+
+.js-present .multi-complete + .long-list-of-checkboxes,
+.js-present .multi-complete + .long-list-of-checkboxes + .other {
+	display: none;
+}
+</style>
+<noscript>
+<style>
+  .script-only { display: none; }
+</style>
+</noscript>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+<script>
+document.body.className += " js-present";
+$(document).ready(function($) {
+	// Generate multiple-autocomplete input:
+	
+	function split( val ) {
+		return val.split( /,\s*/ );
+	}
+	function extractLast( term ) {
+		return split( term ).pop();
+	}
+	
+	$('.multi-complete').each(function(){
+		var availableTags = [];
+		$(this).next('.long-list-of-checkboxes').find('input').each(function(){
+			availableTags.push($(this).val());
+		});
+		$(this)
+			// don't navigate away from the field on tab when selecting an item
+			.on( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB && this.isOpenedByUser ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				minLength: 0,
+				source: function( request, response ) {
+					// delegate back to autocomplete, but extract the last term
+					response( $.ui.autocomplete.filter( availableTags, extractLast( request.term ) ) );
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				open: function( event, ui ) {
+                                  this.isOpenedByUser = true;
+                                },
+				close: function( event, ui ) {
+                                  this.isOpenedByUser = false;
+                                },
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( ", " );
+					return false;
+				}
+		});
+	});
+
+});
+</script>

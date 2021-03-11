@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_06_190055) do
+ActiveRecord::Schema.define(version: 2021_03_10_210000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -67,6 +67,26 @@ ActiveRecord::Schema.define(version: 2021_01_06_190055) do
     t.index ["name"], name: "index_base_courses_on_name", unique: true
   end
 
+  create_table "champions", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "phone"
+    t.string "linkedin_url"
+    t.boolean "braven_fellow"
+    t.boolean "braven_lc"
+    t.boolean "willing_to_be_contacted"
+    t.string "industries", default: [], array: true
+    t.string "studies", default: [], array: true
+    t.string "region"
+    t.string "access_token"
+    t.string "company"
+    t.string "job_title"
+    t.string "salesforce_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "course_resources", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -98,6 +118,12 @@ ActiveRecord::Schema.define(version: 2021_01_06_190055) do
     t.string "type"
   end
 
+  create_table "fields", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "grade_categories", force: :cascade do |t|
     t.bigint "base_course_id", null: false
     t.string "name", null: false
@@ -105,6 +131,18 @@ ActiveRecord::Schema.define(version: 2021_01_06_190055) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["base_course_id"], name: "index_grade_categories_on_base_course_id"
+  end
+
+  create_table "industries", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "job_functions", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "keypairs", force: :cascade do |t|

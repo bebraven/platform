@@ -133,6 +133,8 @@ Rails.application.routes.draw do
 
   # Braven Network endpoints
   get '/network/connect', to: 'network#connect'
+  get '/network/join', to: 'network#join'
+  resources :champions
 
   # Honeycomb Instrumentation Routes
   post '/honeycomb_js/send_span', to: 'honeycomb_js#send_span'

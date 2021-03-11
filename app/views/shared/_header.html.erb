@@ -1,3 +1,13 @@
+<div class="header_loggedin">
+  <% if current_user %>
+    <div id="logout_container">
+      <span>
+        <%= link_to "Log out [#{current_user.full_name}]", cas_logout_path %>
+      </span>
+    </div>
+  <% end %>
+</div>
+
 <div class="public-container" style="min-height: 0px;">
   <div id="topheader" class="container">
     <div id="blogo" class="col-md-4">
