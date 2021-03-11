@@ -296,8 +296,8 @@ RSpec.describe CanvasAPI do
     let(:assignemnt_id) { 1 }
     let(:section_id1) { 3 }
     let(:section_id2) { 4 }
-    let(:override1) { create(:canvas_assignment_override_section, assignment_id: assignemnt_id, course_section_id: section_id1) }
-    let(:override2) { create(:canvas_assignment_override_section, assignment_id: assignemnt_id, course_section_id: section_id2) }
+    let(:override1) { create(:canvas_assignment_override_section, assignment_id: assignemnt_id, course_section_id: section_id1, due_at: nil) }
+    let(:override2) { create(:canvas_assignment_override_section, assignment_id: assignemnt_id, course_section_id: section_id2, due_at: nil) }
 
     before :each do
       override1.delete('id')
