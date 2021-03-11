@@ -20,6 +20,8 @@ module RestClientInstrumentation
       span.add_field('method', method)
       span.add_field('url', redacted_url) # Strips out password if it's in there.
       span.add_field('timestamp', DateTime.now)
+
+      # TODO: move this to FilterLogging. Also, make sure and filter out the session ID header
       redacted_headers = processed_headers.dup
       redacted_headers['Authorization'] = '[REDACTED]' if redacted_headers['Authorization']
       span.add_field('headers', redacted_headers)
