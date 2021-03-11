@@ -40,7 +40,7 @@ class FilterLogging
 
   # Filters the value out of ActiveRecord SQL logging for sensitive columns
   def self.filter_sql(column_name, column_value)
-    if column_name == 'state' || column_name.include?('password')
+    if column_name == 'state' || column_name&.include?('password')
       '[FILTERED]'
     else
       column_value
