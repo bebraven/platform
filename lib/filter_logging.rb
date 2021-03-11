@@ -20,7 +20,7 @@ class FilterLogging
 
       # Note: we have to alter the strings in place because we don't have access to
       # the hash to update the key's value
-      if param_name == 'state' || param_name == 'password' || param_name == 'auth'
+      if param_name == 'state' || param_name.include?('password') || param_name == 'auth'
         value.clear()
         value.insert(0, '[FILTERED]')
 
@@ -39,6 +39,15 @@ class FilterLogging
         value.gsub!(/state\=([^\"\&]+)/, 'state=[FILTERED]')
 
       end
+    end
+  end
+
+  # Filters the value out of ActiveRecord SQL logging for sensitive columns
+  def self.filter_sql(column_name, column_value)
+    if column_name == 'state' || column_name.include?('password')
+      '[FILTERED]'
+    else
+      column_value
     end
   end
 
