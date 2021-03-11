@@ -4,7 +4,10 @@ require 'rails_helper'
 
 RSpec.describe GradeModules do
 
+  let(:grade_modules) { GradeModules.new }
+
   describe "#run" do
+    subject { grade_modules.run }
 
     before :each do
       allow(GradeModules).to receive(:grade_course).and_return(nil)
@@ -40,6 +43,9 @@ RSpec.describe GradeModules do
   end  # run
 
   describe "#grade_course" do
+    subject { grade_modules.grade_course(course) }
+
+    let(:course) { create(:course) }
 
     before :each do
       allow(GradeModules).to receive(:grade_course).and_return(nil)
@@ -70,6 +76,12 @@ RSpec.describe GradeModules do
   end  # grade_course
 
   describe "#grade_assignment" do
+    subject { grade_modules.grade_assignment(canvas_assignment_id, user_ids) }
+
+    # Arbitrary Canvas ID.
+    let(:canvas_assignment_id) { 55 }
+    let(:user) { create(:fellow_user) }
+    let(:user_ids) { [ user.id ] }
 
     context "with no matching interactions for assignment" do
       # TODO
