@@ -16,8 +16,6 @@ RSpec.describe ModuleGradeCalculator do
   let(:assignment_overrides) { [ create(:canvas_assignment_override_section,
     assignment_id: canvas_assignment_id,
     course_section_id: section.canvas_section_id,
-    # Arbitrary future date.
-    due_at: 3.days.from_now.utc.to_time.iso8601,
   ) ] }
 
   describe "#grade_weights" do
@@ -426,48 +424,170 @@ RSpec.describe ModuleGradeCalculator do
   end  # grade_mastery_quiz
 
   describe "#due_date_for_user" do
+    subject { ModuleGradeCalculator.due_date_for_user(user.id, assignment_overrides) }
+    # Arbitrary Canvas IDs.
+    let(:canvas_user_id) { 55 }
+    let(:canvas_section_id) { 55 }
+    let(:section) { create(:section, canvas_section_id: canvas_section_id) }
+    # User and section dates don't match, so we can tell them apart.
+    let(:user_due_date) { 1.days.from_now.utc.to_time.iso8601 }
+    let(:section_due_date) { 5.days.from_now.utc.to_time.iso8601 }
+
     context "with empty overrides" do
-      # TODO
-      xit "returns nil" do
-      end
+      # Note: I manually verified get_assignment_overrides returns an empty
+      # list when there are no overrides for the assignment.
+      let(:assignment_overrides) { [] }
+
+      it { is_expected.to eq(nil) }
     end
 
     context "with no matching override" do
-      # TODO
-      xit "returns nil" do
-      end
+      let(:assignment_overrides) { [
+        create(:canvas_assignment_override_section,
+          # NOT the user's section.
+          course_section_id: section.canvas_section_id + 1,
+        ),
+        create(:canvas_assignment_override_user,
+          # NOT the user's ID.
+          student_ids: [ user.canvas_user_id + 1 ],
+        ),
+      ] }
+
+      it { is_expected.to eq(nil) }
     end
 
     context "with user-match override" do
+      let(:assignment_override_user) { create(:canvas_assignment_override_user,
+        # The user's ID.
+        student_ids: [ canvas_user_id ],
+        due_at: user_due_date,
+      ) }
+      let(:assignment_override_section) { create(:canvas_assignment_override_section,
+        # NOT the user's section.
+        course_section_id: canvas_section_id + 1,
+        due_at: section_due_date,
+      ) }
+      let(:assignment_overrides) { [
+        assignment_override_user,
+        assignment_override_section,
+      ] }
+
       context "with user not in any sections" do
-        # TODO
-        xit "returns due date" do
+        let(:user) { create(:registered_user) }
+
+        before :each do
+          user.update!(canvas_user_id: canvas_user_id)
         end
+
+        it { is_expected.to eq(user_due_date) }
       end
 
       context "with user in a non-matching section" do
-        # TODO
-        xit "returns due date" do
+        before :each do
+          user.update!(canvas_user_id: canvas_user_id)
         end
+
+        it { is_expected.to eq(user_due_date) }
       end
     end
 
     context "with section-match override" do
-      # TODO
-      xit "returns due date" do
+      let(:assignment_override_user) { create(:canvas_assignment_override_user,
+        # NOT the user's ID.
+        student_ids: [ canvas_user_id + 1 ],
+        due_at: user_due_date,
+      ) }
+      let(:assignment_override_section) { create(:canvas_assignment_override_section,
+        # The user's section.
+        course_section_id: canvas_section_id,
+        due_at: section_due_date,
+      ) }
+      let(:assignment_overrides) { [
+        assignment_override_user,
+        assignment_override_section,
+      ] }
+
+      before :each do
+        user.update!(canvas_user_id: canvas_user_id)
       end
+
+      it { is_expected.to eq(section_due_date) }
     end
 
     context "with user-match and section-match overrides, user-match last" do
-      # TODO
-      xit "returns user-match due date" do
+      let(:user_due_date) { 5.days.from_now.utc.to_time.iso8601 }
+      let(:section_due_date) { 1.day.from_now.utc.to_time.iso8601 }
+      let(:assignment_override_user) { create(:canvas_assignment_override_user,
+        # The user's ID.
+        student_ids: [ canvas_user_id ],
+        due_at: user_due_date,
+      ) }
+      let(:assignment_override_section) { create(:canvas_assignment_override_section,
+        # The user's section.
+        course_section_id: canvas_section_id,
+        due_at: section_due_date,
+      ) }
+      let(:assignment_overrides) { [
+        assignment_override_user,
+        assignment_override_section,
+        # Add in some extra overrides for good measure.
+        create(:canvas_assignment_override_user,
+          student_ids: [ canvas_user_id ],
+          due_at: 3.days.from_now.utc.to_time.iso8601
+        ),
+        create(:canvas_assignment_override_user,
+          student_ids: [ canvas_user_id + 1 ],
+          due_at: 100.days.from_now.utc.to_time.iso8601
+        ),
+        create(:canvas_assignment_override_section,
+          course_section_id: canvas_section_id,
+          due_at: 3.days.from_now.utc.to_time.iso8601
+        ),
+      ] }
+
+      before :each do
+        user.update!(canvas_user_id: canvas_user_id)
       end
+
+      it { is_expected.to eq(user_due_date) }
     end
 
     context "with user-match and section-match overrides, section-match last" do
-      # TODO
-      xit "returns section-match due date" do
+      let(:user_due_date) { 1.day.from_now.utc.to_time.iso8601 }
+      let(:section_due_date) { 5.days.from_now.utc.to_time.iso8601 }
+      let(:assignment_override_user) { create(:canvas_assignment_override_user,
+        # The user's ID.
+        student_ids: [ canvas_user_id ],
+        due_at: user_due_date,
+      ) }
+      let(:assignment_override_section) { create(:canvas_assignment_override_section,
+        # The user's section.
+        course_section_id: canvas_section_id,
+        due_at: section_due_date,
+      ) }
+      let(:assignment_overrides) { [
+        assignment_override_user,
+        assignment_override_section,
+        # Add in some extra overrides for good measure.
+        create(:canvas_assignment_override_user,
+          student_ids: [ canvas_user_id ],
+          due_at: 3.days.from_now.utc.to_time.iso8601
+        ),
+        create(:canvas_assignment_override_user,
+          student_ids: [ canvas_user_id + 1 ],
+          due_at: 100.days.from_now.utc.to_time.iso8601
+        ),
+        create(:canvas_assignment_override_section,
+          course_section_id: canvas_section_id,
+          due_at: 3.days.from_now.utc.to_time.iso8601
+        ),
+      ] }
+
+      before :each do
+        user.update!(canvas_user_id: canvas_user_id)
       end
+
+      it { is_expected.to eq(section_due_date) }
     end
   end  # due_date_for_user
 
