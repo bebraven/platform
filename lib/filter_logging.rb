@@ -5,8 +5,7 @@
 class FilterLogging
 
   def self.is_enabled?
-    #(Rails.env.development? ? false : true) # TODO: uncomment me
-    true
+    (Rails.env.development? ? false : true)
   end
 
   # Returns a lambda function meant to be used with Rails.application.config.filter_parameters
