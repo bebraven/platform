@@ -1,5 +1,5 @@
-require 'lti_launch'
 require 'filter_logging'
+require 'lti_launch'
 
 # Used for filtering out the parameters that you don't want shown in the logs,
 # such as passwords or credit card numbers.
@@ -7,12 +7,10 @@ if FilterLogging.is_enabled?
 
   Rails.application.config.filter_parameters << FilterLogging.filter_parameters
 
-  # TODO: this filters the whole redirect path. We just want to filter the state or auth params.
-  # Look into monkey patching the filtered_location method here:
-  # https://github.com/rails/rails/blob/291a3d2ef29a3842d1156ada7526f4ee60dd2b59/actionpack/lib/action_dispatch/http/filter_redirect.rb#L8
-
-  # Filter logs that say "Redirected to <blah_path>/state=<the_state_value>" as well.
-  Rails.application.config.filter_redirect.concat [/state\=([^\&]+)/, /auth\=([^\&]+)/]
+  # Note: instead of using the following to filter the "Redirected to <some_path>" logs,
+  # see lib/core_ext/filter_redirect.rb for how we do that since this is meant for filtering
+  # the entire path out.
+  # Rails.application.config.filter_redirect.concat [/state\=([^\&]+)/, /auth\=([^\&]+)/]
 
   # TODO: this doesn't seem to work
   # Filter database SQL queries as well.
