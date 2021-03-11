@@ -19,7 +19,7 @@ class GradeModules
       # From the list of "running" "programs" in Salesforce, fetch a list of "accelerator"
       # (non-LC) courses.
       programs = SalesforceAPI.client.get_current_and_future_accelerator_programs
-      if programs.empty?
+      if programs['records'].empty?
         puts "Exit early: no current/future accelerator programs"
         return
       end

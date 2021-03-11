@@ -5,19 +5,31 @@ require 'rails_helper'
 RSpec.describe GradeModules do
 
   let(:grade_modules) { GradeModules.new }
+  let(:sf_client) { double(SalesforceAPI) }
+  # Override in context below.
+  let(:sf_programs) { create(:salesforce_current_and_future_programs) }
 
   describe "#run" do
     subject { grade_modules.run }
 
-    before :each do
-      allow(GradeModules).to receive(:grade_course).and_return(nil)
-    end
-
     context "with no running programs" do
-      # TODO: set up SF mock response
+      before :each do
+        allow(grade_modules).to receive(:grade_course).and_return(nil)
 
-      xit "exits early" do
-        # TODO
+        allow(sf_client)
+          .to receive(:get_current_and_future_accelerator_programs)
+          .and_return(sf_programs)
+        allow(SalesforceAPI).to receive(:client).and_return(sf_client)
+      end
+
+      it "exits early" do
+        # Stub Course.where so we can check if it was called.
+        allow(Course).to receive(:where)
+
+        subject
+
+        expect(sf_client).to have_received(:get_current_and_future_accelerator_programs)
+        expect(Course).not_to have_received(:where)
       end
     end
 
@@ -26,12 +38,31 @@ RSpec.describe GradeModules do
 
       context "with no interactions that match the courses" do
         # TODO
+
+        before :each do
+          allow(grade_modules).to receive(:grade_course).and_return(nil)
+
+          allow(sf_client)
+            .to receive(:get_current_and_future_accelerator_programs)
+            .and_return(sf_programs)
+          allow(SalesforceAPI).to receive(:client).and_return(sf_client)
+        end
+
         xit "exits early" do
         end
       end
 
       context "with interactions that match the courses" do
         # TODO
+
+        before :each do
+          allow(grade_modules).to receive(:grade_course).and_return(nil)
+
+          allow(sf_client)
+            .to receive(:get_current_and_future_accelerator_programs)
+            .and_return(sf_programs)
+          allow(SalesforceAPI).to receive(:client).and_return(sf_client)
+        end
 
         xit "calls grade_course once for each course with interactions" do
         end
@@ -48,7 +79,7 @@ RSpec.describe GradeModules do
     let(:course) { create(:course) }
 
     before :each do
-      allow(GradeModules).to receive(:grade_course).and_return(nil)
+      allow(grade_modules).to receive(:grade_course).and_return(nil)
     end
 
     context "with no sections in course" do
