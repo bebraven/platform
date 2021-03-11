@@ -7,9 +7,12 @@ RSpec.describe ModuleGradeCalculator do
   let(:course) { create(:course) }
   let(:section) { create(:section_with_canvas_id, course: course) }
   let(:user) { create(:fellow_user, section: section) }
+  let(:rise360_module_version) { create(:rise360_module_version) }
+  let(:course_rise360_module_version) { create(:course_rise360_module_version,
+    course: course,
+    rise360_module_version: rise360_module_version,
+  ) }
   let(:canvas_assignment_id) { course_rise360_module_version.canvas_assignment_id }
-  let(:course_rise360_module_version) { create(:course_rise360_module_version, course: course) }
-  let(:rise360_module_version) { course_rise360_module_version.rise360_module_version }
   let(:assignment_overrides) { [ create(:canvas_assignment_override_section,
     assignment_id: canvas_assignment_id,
     course_section_id: section.canvas_section_id,
@@ -38,8 +41,8 @@ RSpec.describe ModuleGradeCalculator do
       end
     end
 
-    context "total grade" do
-      it "grades engagement and quiz" do
+    context "with 100s for everything" do
+      before :each do
         # Need a new interaction to trigger computation
         interaction = Rise360ModuleInteraction.create!(
           verb: Rise360ModuleInteraction::PROGRESSED,
@@ -58,8 +61,13 @@ RSpec.describe ModuleGradeCalculator do
         allow(ModuleGradeCalculator)
           .to receive(:grade_module_engagement)
           .and_return(interaction.progress)
+        allow(ModuleGradeCalculator)
+          .to receive(:grade_completed_on_time)
+          .and_return(100)
+      end
 
-        grade = ModuleGradeCalculator.compute_grade(user.id, interaction.canvas_assignment_id, assignment_overrides)
+      it "grades engagement and quiz" do
+        grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, assignment_overrides)
 
         # Called each grading method
         expect(ModuleGradeCalculator)
@@ -71,8 +79,10 @@ RSpec.describe ModuleGradeCalculator do
 
         expect(grade).to eq(100)
       end
+    end
 
-      it "only grades engagement if no quiz" do
+    context "with no quiz" do
+      before :each do
         # Need a new engagement interaction to trigger computation
         interaction = Rise360ModuleInteraction.create!(
           verb: Rise360ModuleInteraction::PROGRESSED,
@@ -94,12 +104,14 @@ RSpec.describe ModuleGradeCalculator do
         allow(Rise360ModuleVersion)
           .to receive(:find)
           .and_return(rise360_module_version)
+      end
 
+      it "only grades engagement if no quiz" do
         # Test that the mastery part of grading is skipped
         expect(ModuleGradeCalculator)
           .not_to receive(:grade_mastery_quiz)
 
-         grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, assignment_overrides)
+        grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, assignment_overrides)
 
         # Called each grading method
         expect(ModuleGradeCalculator)
@@ -107,6 +119,178 @@ RSpec.describe ModuleGradeCalculator do
           .once
 
         expect(grade).to eq(100)
+      end
+    end
+
+    context "with half scores for everything" do
+      # Two total questions.
+      let(:rise360_module_version) { create(:rise360_module_version, quiz_questions: 2) }
+
+      before :each do
+        # 50% progress.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 50,
+          new: true,
+        )
+
+        # One correct, one incorrect.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::ANSWERED,
+          user: user,
+          canvas_course_id: 333,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: "#{activity_id}/somequizid/firstquestion",
+          success: true,
+          new: true,
+        )
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::ANSWERED,
+          user: user,
+          canvas_course_id: 333,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: "#{activity_id}/somequizid/secondquestion",
+          success: false,
+          new: true,
+        )
+      end
+
+      it "computes the correct grade" do
+        grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, assignment_overrides)
+        expect(grade).to eq( 50*0.4 + 50*0.4 + 0*0.2 )
+      end
+    end
+
+    context "with all old interactions" do
+      # Two total questions.
+      let(:rise360_module_version) { create(:rise360_module_version, quiz_questions: 2) }
+
+      before :each do
+        # 50% progress.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 50,
+          new: false,
+        )
+
+        # One correct, one incorrect.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::ANSWERED,
+          user: user,
+          canvas_course_id: 333,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: "#{activity_id}/somequizid/firstquestion",
+          success: true,
+          new: false,
+        )
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::ANSWERED,
+          user: user,
+          canvas_course_id: 333,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: "#{activity_id}/somequizid/secondquestion",
+          success: false,
+          new: false,
+        )
+      end
+
+      it "still computes the correct grade" do
+        grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, assignment_overrides)
+        expect(grade).to eq( 50*0.4 + 50*0.4 + 0*0.2 )
+      end
+    end
+
+    context "with full engagement and partial mastery" do
+      # Two total questions.
+      let(:rise360_module_version) { create(:rise360_module_version, quiz_questions: 2) }
+
+      before :each do
+        # 100% progress.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 100,
+          new: true,
+        )
+
+        # One correct, one incorrect.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::ANSWERED,
+          user: user,
+          canvas_course_id: 333,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: "#{activity_id}/somequizid/firstquestion",
+          success: true,
+          new: true,
+        )
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::ANSWERED,
+          user: user,
+          canvas_course_id: 333,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: "#{activity_id}/somequizid/secondquestion",
+          success: false,
+          new: true,
+        )
+      end
+
+      it "computes the correct grade" do
+        grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, assignment_overrides)
+        expect(grade).to eq( 100*0.4 + 50*0.4 + 100*0.2 )
+      end
+    end
+
+    context "with full mastery and partial engagenemt" do
+      # Two total questions.
+      let(:rise360_module_version) { create(:rise360_module_version, quiz_questions: 2) }
+
+      before :each do
+        # 50% progress.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::PROGRESSED,
+          user: user,
+          canvas_course_id: course.canvas_course_id,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: activity_id,
+          progress: 50,
+          new: true,
+        )
+
+        # Both correct.
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::ANSWERED,
+          user: user,
+          canvas_course_id: 333,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: "#{activity_id}/somequizid/firstquestion",
+          success: true,
+          new: true,
+        )
+        Rise360ModuleInteraction.create!(
+          verb: Rise360ModuleInteraction::ANSWERED,
+          user: user,
+          canvas_course_id: 333,
+          canvas_assignment_id: canvas_assignment_id,
+          activity_id: "#{activity_id}/somequizid/secondquestion",
+          success: true,
+          new: true,
+        )
+      end
+
+      it "computes the correct grade" do
+        grade = ModuleGradeCalculator.compute_grade(user.id, canvas_assignment_id, assignment_overrides)
+        expect(grade).to eq( 50*0.4 + 100*0.4 + 0*0.2 )
       end
     end
   end  # compute_grade
