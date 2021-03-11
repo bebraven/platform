@@ -175,11 +175,41 @@ RSpec.describe GradeModules do
     end
 
     context "with proper setup" do
+      # Set up users and assignments.
+      let!(:course_rise360_module_versions) { [
+        create(:course_rise360_module_version, course: course),
+        create(:course_rise360_module_version, course: course),
+      ] }
+      let(:section1) { create(:section, course: course) }
+      let(:section2) { create(:section, course: course) }
+      let!(:users) { [
+        # Arbitrary Canvas user IDs.
+        create(:fellow_user, section: section1, canvas_user_id: 1),
+        create(:fellow_user, section: section1, canvas_user_id: 2),
+        create(:fellow_user, section: section2, canvas_user_id: 3),
+      ] }
+      # Add users not in this course, just to be sure we're selecting the
+      # right things.
+      let(:course2) { create(:course) }
+      let(:section3) { create(:section, course: course2) }
+      let!(:not_this_user) { create(:fellow_user, section: section3, canvas_user_id: 4) }
+
       before :each do
         allow(grade_modules).to receive(:grade_assignment).and_return(nil)
       end
 
-      xit "calls grade_assignment once for each assignment with correct user_ids" do
+      it "calls grade_assignment once for each assignment with correct user_ids" do
+        subject
+
+        expect(grade_modules)
+          .to have_received(:grade_assignment)
+          .exactly(course_rise360_module_versions.count)
+          .times
+        course_rise360_module_versions.each do |crmv|
+          expect(grade_modules)
+            .to have_received(:grade_assignment)
+            .with(crmv.canvas_assignment_id, users.map { |u| u.id })
+        end
       end
     end
   end  # grade_course
