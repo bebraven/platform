@@ -6,4 +6,8 @@ class NetworkPolicy < ApplicationPolicy
   def join?
     true
   end
+
+  def create_champion?
+    true
+  end
 end
